@@ -1,6 +1,7 @@
 /* ============================================
    TOTAL LAKAY - Application Complète
    Firebase configuré - Tous les boutons OK
+   Avec vérification d'email
    ============================================ */
 
 // ---------- CONFIGURATION FIREBASE ----------
@@ -63,7 +64,11 @@ const i18n = {
     noSpecialOffers: "Pa gen òf espesyal pou kounye a",
     orderConfirmed: "Kòmand konfime",
     pending: "An atant",
-    confirmed: "Konfime"
+    confirmed: "Konfime",
+    emailVerifySent: "📩 Tcheke email ou pou verifye kont lan!",
+    emailNotVerified: "❌ Verifye email ou avan ou konekte!",
+    emailVerifyWarning: "⚠️ Verifye email ou pou kontinye",
+    resendEmail: "⏳ Si w poko wè email la, tcheke spam ou..."
   },
   fr: {
     home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -97,7 +102,11 @@ const i18n = {
     noSpecialOffers: "Pas d'offres spéciales pour le moment",
     orderConfirmed: "Commande confirmée",
     pending: "En attente",
-    confirmed: "Confirmé"
+    confirmed: "Confirmé",
+    emailVerifySent: "📩 Vérifiez votre email pour activer votre compte !",
+    emailNotVerified: "❌ Vérifiez votre email avant de vous connecter !",
+    emailVerifyWarning: "⚠️ Vérifiez votre email pour continuer",
+    resendEmail: "⏳ Si vous ne voyez pas l'email, vérifiez vos spams..."
   },
   en: {
     home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -131,7 +140,11 @@ const i18n = {
     noSpecialOffers: "No special offers at the moment",
     orderConfirmed: "Order confirmed",
     pending: "Pending",
-    confirmed: "Confirmed"
+    confirmed: "Confirmed",
+    emailVerifySent: "📩 Check your email to verify your account!",
+    emailNotVerified: "❌ Verify your email before logging in!",
+    emailVerifyWarning: "⚠️ Verify your email to continue",
+    resendEmail: "⏳ If you don't see the email, check your spam folder..."
   },
   es: {
     home: "Inicio", shop: "Tienda", orders: "Pedidos", admin: "Admin",
@@ -165,7 +178,11 @@ const i18n = {
     noSpecialOffers: "No hay ofertas especiales ahora",
     orderConfirmed: "Pedido confirmado",
     pending: "Pendiente",
-    confirmed: "Confirmado"
+    confirmed: "Confirmado",
+    emailVerifySent: "📩 ¡Revisa tu email para verificar tu cuenta!",
+    emailNotVerified: "❌ ¡Verifica tu email antes de iniciar sesión!",
+    emailVerifyWarning: "⚠️ Verifica tu email para continuar",
+    resendEmail: "⏳ Si no ves el email, revisa tu carpeta de spam..."
   }
 };
 
@@ -209,6 +226,21 @@ auth.onAuthStateChanged(async (user) => {
   const userElements = document.querySelectorAll('.user-only');
   
   if (user) {
+    // ✅ VÉRIFICATION EMAIL
+    if (!user.emailVerified) {
+      showMessage(t('emailVerifyWarning'), 'error');
+      
+      // Si l'utilisateur n'a pas vérifié son email, on le déconnecte après un court délai
+      // mais on lui laisse le temps de voir le message
+      setTimeout(() => {
+        if (currentUser && !currentUser.emailVerified) {
+          auth.signOut();
+        }
+      }, 5000);
+      
+      return;
+    }
+    
     if (authBtn) authBtn.classList.add('hidden');
     if (logoutBtn) logoutBtn.classList.remove('hidden');
     userElements.forEach(el => el.classList.remove('hidden'));
@@ -235,7 +267,13 @@ auth.onAuthStateChanged(async (user) => {
         displayName: user.displayName || '',
         photoURL: user.photoURL || '',
         role: 'customer',
+        emailVerified: user.emailVerified,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } else {
+      // Mettre à jour le statut emailVerified
+      await db.collection('users').doc(user.uid).update({
+        emailVerified: user.emailVerified
       });
     }
   } else {
@@ -298,7 +336,7 @@ document.getElementById('googleLoginBtn')?.addEventListener('click', () => {
     .catch(err => showMessage(err.message, 'error'));
 });
 
-// Email Login
+// Email Login avec vérification d'email
 document.getElementById('emailLoginBtn')?.addEventListener('click', () => {
   console.log('Email login cliqué');
   const email = document.getElementById('loginEmail')?.value.trim();
@@ -310,7 +348,22 @@ document.getElementById('emailLoginBtn')?.addEventListener('click', () => {
   }
   
   auth.signInWithEmailAndPassword(email, password)
-    .then(() => {
+    .then((userCredential) => {
+      const user = userCredential.user;
+
+      // ✅ VÉRIFICATION EMAIL À LA CONNEXION
+      if (!user.emailVerified) {
+        showMessage(t('emailNotVerified'), 'error');
+        showMessage(t('resendEmail'), 'error');
+        
+        // Proposer de renvoyer l'email
+        user.sendEmailVerification().catch(err => console.log('Erreur renvoi:', err));
+        
+        // Déconnecter l'utilisateur
+        auth.signOut();
+        return;
+      }
+
       document.getElementById('loginModal')?.classList.add('hidden');
       showMessage('✅ Byenveni!', 'success');
     })
@@ -343,7 +396,7 @@ document.getElementById('switchToLogin')?.addEventListener('click', (e) => {
   if (loginCard) loginCard.classList.remove('hidden');
 });
 
-// Inscription
+// Inscription avec envoi d'email de vérification
 document.getElementById('registerBtn')?.addEventListener('click', () => {
   console.log('Register cliqué');
   const name = document.getElementById('registerName')?.value.trim();
@@ -361,14 +414,29 @@ document.getElementById('registerBtn')?.addEventListener('click', () => {
   
   auth.createUserWithEmailAndPassword(email, password)
     .then(async (cred) => {
-      await db.collection('users').doc(cred.user.uid).set({
+      const user = cred.user;
+
+      // ✅ ENVOI EMAIL DE VÉRIFICATION
+      await user.sendEmailVerification();
+
+      // Sauvegarder l'utilisateur dans Firestore
+      await db.collection('users').doc(user.uid).set({
         email,
         displayName: name,
         role: 'customer',
+        emailVerified: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
+
+      // Fermer la modale
       document.getElementById('loginModal')?.classList.add('hidden');
-      showMessage('✅ Kont kreye ak siksè!', 'success');
+
+      // Déconnecter l'utilisateur jusqu'à ce qu'il vérifie son email
+      await auth.signOut();
+
+      // Message de succès
+      showMessage(t('emailVerifySent'), 'success');
+      showMessage(t('resendEmail'), 'success');
     })
     .catch(err => showMessage(err.message, 'error'));
 });
@@ -556,6 +624,12 @@ document.getElementById('buyModal')?.addEventListener('click', (e) => {
 document.getElementById('submitOrder')?.addEventListener('click', async () => {
   if (!currentUser) {
     showMessage(t('loginRequired'), 'error');
+    return;
+  }
+  
+  // ✅ Vérification supplémentaire que l'email est vérifié
+  if (!currentUser.emailVerified) {
+    showMessage(t('emailNotVerified'), 'error');
     return;
   }
   
@@ -786,6 +860,10 @@ function renderSettings(app) {
         <div style="margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--gray-200);">
           <p><strong>Email:</strong> ${currentUser.email}</p>
           <p><strong>Non:</strong> ${currentUser.displayName || '---'}</p>
+          <p><strong>Email verifye:</strong> ${currentUser.emailVerified ? '✅ Wi' : '❌ Non'}</p>
+          ${!currentUser.emailVerified ? `
+            <button class="btn btn-gold btn-sm mt-2" id="resendVerifyEmail">📧 Renvwaye email verifikasyon</button>
+          ` : ''}
         </div>
       ` : ''}
     </div>
@@ -796,6 +874,18 @@ function renderSettings(app) {
     const langSwitch = document.getElementById('langSwitch');
     if (langSwitch) langSwitch.value = currentLang;
     applyLanguage();
+  });
+  
+  // Bouton pour renvoyer l'email de vérification
+  document.getElementById('resendVerifyEmail')?.addEventListener('click', async () => {
+    if (currentUser) {
+      try {
+        await currentUser.sendEmailVerification();
+        showMessage(t('emailVerifySent'), 'success');
+      } catch (err) {
+        showMessage('Erreur: ' + err.message, 'error');
+      }
+    }
   });
 }
 
@@ -1030,6 +1120,14 @@ function openBuyModal(productId) {
     showMessage(t('loginRequired'), 'error');
     // Ouvrir la modale de connexion
     document.getElementById('authBtn')?.click();
+    return;
+  }
+  
+  // ✅ Vérification email avant d'acheter
+  if (!currentUser.emailVerified) {
+    showMessage(t('emailNotVerified'), 'error');
+    currentView = 'settings';
+    renderView('settings');
     return;
   }
   
