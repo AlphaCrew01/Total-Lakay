@@ -1,0 +1,879 @@
+/* ============================================
+   TOTAL LAKAY - Design Premium
+   Bleu foncé + Doré + Blanc
+   Logo bien dimensionné
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: 'Segoe UI', 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+  scroll-behavior: smooth;
+}
+
+:root {
+  --blue-deep: #0a1628;
+  --blue-dark: #0f1f38;
+  --blue-medium: #15294d;
+  --blue-light: #1e3a5f;
+  --gold: #c8963e;
+  --gold-light: #d4a853;
+  --gold-pale: #e8d5a3;
+  --gold-bright: #f0c060;
+  --white: #ffffff;
+  --white-soft: #f8f6f0;
+  --gray-100: #f5f5f0;
+  --gray-200: #e8e5dc;
+  --text-dark: #1a1a1a;
+  --text-soft: #5a5a5a;
+  --danger: #c0392b;
+  --success: #1e7e5b;
+  --shadow-sm: 0 2px 8px rgba(10, 22, 40, 0.06);
+  --shadow: 0 8px 30px rgba(10, 22, 40, 0.08);
+  --shadow-lg: 0 20px 50px rgba(10, 22, 40, 0.12);
+  --shadow-gold: 0 8px 25px rgba(200, 150, 62, 0.25);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  background: var(--white-soft);
+  color: var(--text-dark);
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ============================================
+   LOGO - Tailles fixes et contrôlées
+   ============================================ */
+
+/* Logo dans la navbar */
+.logo-area .logo-img {
+  width: 45px !important;
+  height: 45px !important;
+  max-width: 45px !important;
+  max-height: 45px !important;
+  object-fit: contain;
+  border-radius: 10px;
+  border: 2px solid var(--gold);
+  padding: 2px;
+  background: var(--white);
+  box-shadow: 0 0 12px rgba(200, 150, 62, 0.3);
+}
+
+/* Logo dans la modale de connexion */
+.login-logo {
+  width: 70px !important;
+  height: 70px !important;
+  max-width: 70px !important;
+  max-height: 70px !important;
+  object-fit: contain;
+  border-radius: 14px;
+  border: 3px solid var(--gold);
+  padding: 4px;
+  background: var(--white);
+  box-shadow: var(--shadow-gold);
+  margin-bottom: 1rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Logo dans le footer */
+.footer-logo {
+  width: 35px !important;
+  height: 35px !important;
+  max-width: 35px !important;
+  max-height: 35px !important;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 2px solid var(--gold);
+}
+
+/* Fallback si le logo ne charge pas */
+.logo-icon-fallback {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  color: var(--blue-deep);
+  font-weight: 900;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  box-shadow: var(--shadow-gold);
+}
+
+.navbar .logo-icon-fallback {
+  width: 45px;
+  height: 45px;
+  font-size: 1.5rem;
+}
+
+.login-header .logo-icon-fallback {
+  width: 70px;
+  height: 70px;
+  font-size: 2rem;
+  margin: 0 auto 1rem;
+}
+
+/* ============================================
+   NAVBAR PREMIUM
+   ============================================ */
+.navbar {
+  background: linear-gradient(135deg, var(--blue-deep) 0%, var(--blue-dark) 50%, var(--blue-medium) 100%);
+  color: var(--white);
+  padding: 0.8rem 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 25px rgba(10, 22, 40, 0.4);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid var(--gold);
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.logo-text {
+  font-weight: 700;
+  font-size: 1.3rem;
+  line-height: 1.2;
+  color: var(--white);
+  letter-spacing: 0.3px;
+}
+
+.logo-text small {
+  display: block;
+  font-weight: 400;
+  font-size: 0.65rem;
+  opacity: 0.85;
+  color: var(--gold-pale);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.nav-item {
+  color: rgba(255, 255, 255, 0.85) !important;
+  background: transparent;
+  border: none;
+  font-weight: 500;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0.5rem 0.9rem;
+  border-radius: 25px;
+  transition: var(--transition);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  color: var(--white) !important;
+  background: rgba(200, 150, 62, 0.2);
+  border: 1px solid rgba(200, 150, 62, 0.4);
+}
+
+/* ============================================
+   BOUTONS NOTIFICATIONS & MENU
+   ============================================ */
+.notif-btn {
+  position: relative;
+  font-size: 1.2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  cursor: pointer;
+  padding: 0.35rem 0.6rem;
+  border-radius: 50%;
+  transition: var(--transition);
+}
+
+.notif-btn:hover {
+  background: rgba(200, 150, 62, 0.3);
+  border-color: var(--gold);
+}
+
+.notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #e74c3c;
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--white);
+}
+
+.dropdown {
+  position: relative;
+}
+
+.btn-menu {
+  font-size: 1.2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  cursor: pointer;
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  transition: var(--transition);
+}
+
+.btn-menu:hover {
+  background: rgba(200, 150, 62, 0.3);
+  border-color: var(--gold);
+}
+
+.dropdown-content {
+  position: absolute;
+  right: 0;
+  top: 48px;
+  background: var(--white);
+  min-width: 220px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: 150;
+  overflow: hidden;
+  border: 1px solid var(--gold-pale);
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-content a {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 1.2rem;
+  color: var(--blue-deep);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: var(--transition);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.dropdown-content a:hover {
+  background: linear-gradient(90deg, var(--white-soft), var(--gray-100));
+  color: var(--gold);
+  padding-left: 1.5rem;
+}
+
+.lang-select {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  padding: 0.4rem 0.7rem;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  outline: none;
+  transition: var(--transition);
+}
+
+.lang-select:hover {
+  border-color: var(--gold);
+}
+
+.lang-select option {
+  color: var(--text-dark);
+  background: var(--white);
+}
+
+/* ============================================
+   BOUTONS PREMIUM
+   ============================================ */
+.btn {
+  background: var(--blue-light);
+  color: var(--white);
+  border: none;
+  padding: 0.65rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.3px;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  color: var(--blue-deep);
+  border: 2px solid transparent;
+  font-weight: 700;
+  box-shadow: var(--shadow-gold);
+}
+
+.btn-gold:hover {
+  background: linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 100%);
+  box-shadow: 0 12px 30px rgba(200, 150, 62, 0.4);
+  transform: translateY(-3px);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  color: var(--white);
+}
+
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--gold);
+}
+
+.btn-sm {
+  padding: 0.45rem 1.1rem;
+  font-size: 0.8rem;
+}
+
+.btn-danger {
+  background: var(--danger);
+}
+
+.btn-success {
+  background: var(--success);
+}
+
+.btn-google {
+  width: 100%;
+  background: var(--white);
+  color: var(--text-dark);
+  border: 2px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 0.85rem;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-google:hover {
+  background: var(--gray-100);
+  border-color: var(--gold);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================
+   CONTAINER & CARDS
+   ============================================ */
+.container {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 1.8rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 1.8rem;
+  border: 1px solid var(--gray-200);
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.card-premium {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--gold-pale);
+}
+
+/* ============================================
+   MODAL CONNEXION
+   ============================================ */
+.login-card {
+  max-width: 420px;
+  width: 92%;
+  text-align: center;
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+  border: 2px solid var(--gold-pale);
+}
+
+.login-header h2 {
+  color: var(--blue-deep);
+  margin: 0.5rem 0 0.2rem;
+  font-size: 1.5rem;
+  letter-spacing: 0.3px;
+}
+
+.login-header p {
+  color: var(--text-soft);
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.2rem 0;
+  color: #aaa;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gray-200);
+}
+
+.login-switch {
+  margin-top: 1.2rem;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+}
+
+.login-switch a {
+  color: var(--gold);
+  font-weight: 700;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.login-switch a:hover {
+  color: var(--blue-medium);
+  text-decoration: underline;
+}
+
+/* ============================================
+   GRILLE PRODUITS
+   ============================================ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.product-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  border: 1px solid var(--gray-200);
+  position: relative;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--gold-pale);
+}
+
+.product-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  background: var(--gray-100);
+  transition: var(--transition);
+}
+
+.product-card:hover .product-img {
+  transform: scale(1.03);
+}
+
+.product-info {
+  padding: 1.2rem;
+}
+
+.product-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--blue-deep);
+  margin-bottom: 0.3rem;
+}
+
+.product-description {
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  margin-bottom: 0.4rem;
+}
+
+.product-price {
+  color: var(--blue-deep);
+  font-weight: 800;
+  font-size: 1.4rem;
+  margin: 0.4rem 0;
+}
+
+.product-price-large {
+  color: var(--blue-deep);
+  font-weight: 800;
+  font-size: 1.8rem;
+  text-align: center;
+  margin: 0.5rem 0;
+}
+
+.old-price {
+  text-decoration: line-through;
+  color: #bbb;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-left: 0.5rem;
+}
+
+.product-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  padding: 0.3rem 0.9rem;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+  z-index: 5;
+}
+
+/* ============================================
+   FORMULAIRES
+   ============================================ */
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 0.8rem 1.1rem;
+  border: 2px solid var(--gray-200);
+  border-radius: 28px;
+  margin: 0.5rem 0 1rem;
+  font-size: 0.9rem;
+  transition: var(--transition);
+  outline: none;
+  font-family: inherit;
+  background: var(--gray-100);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(200, 150, 62, 0.1);
+  background: var(--white);
+}
+
+label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--blue-deep);
+  margin-top: 0.4rem;
+  display: block;
+}
+
+/* ============================================
+   MODAL GÉNÉRAL
+   ============================================ */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 22, 40, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  max-width: 460px;
+  width: 92%;
+  position: relative;
+  animation: modalIn 0.3s ease;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(-25px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #bbb;
+  transition: var(--transition);
+  background: none;
+  border: none;
+  z-index: 10;
+  width: auto;
+  line-height: 1;
+}
+
+.close-modal:hover {
+  color: var(--danger);
+  transform: rotate(90deg);
+}
+
+/* ============================================
+   OFFRES SPÉCIALES
+   ============================================ */
+.special-offer-card {
+  background: linear-gradient(135deg, #fefaf0 0%, #fffdf7 100%);
+  border: 2px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.special-offer-card::before {
+  content: '🔥 OFÈ';
+  position: absolute;
+  top: 12px;
+  right: -25px;
+  background: var(--danger);
+  color: white;
+  padding: 0.25rem 2.2rem;
+  transform: rotate(45deg);
+  font-weight: 700;
+  font-size: 0.65rem;
+  letter-spacing: 1px;
+}
+
+/* ============================================
+   NOTIFICATIONS
+   ============================================ */
+.notif-item {
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.5rem;
+  transition: var(--transition);
+  border: 1px solid transparent;
+}
+
+.notif-item:hover {
+  background: var(--white-soft);
+}
+
+.notif-item.unread {
+  border-left: 4px solid var(--gold);
+  background: #fefaf0;
+}
+
+.notif-item .notif-title {
+  font-weight: 700;
+  color: var(--blue-deep);
+  font-size: 0.95rem;
+}
+
+.notif-item .notif-date {
+  font-size: 0.7rem;
+  color: #aaa;
+  margin-top: 0.2rem;
+}
+
+/* ============================================
+   FOOTER PREMIUM
+   ============================================ */
+.footer {
+  background: var(--blue-deep);
+  color: var(--white);
+  padding: 1.8rem 2rem;
+  margin-top: 3rem;
+  border-top: 3px solid var(--gold);
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.9rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-links a {
+  color: var(--gold-pale);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.85rem;
+  transition: var(--transition);
+}
+
+.footer-links a:hover {
+  color: var(--gold-bright);
+}
+
+/* ============================================
+   UTILITAIRES
+   ============================================ */
+.hidden {
+  display: none !important;
+}
+
+.badge {
+  background: var(--gold-pale);
+  color: var(--blue-deep);
+  padding: 0.25rem 0.8rem;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  display: inline-block;
+}
+
+.badge-success {
+  background: var(--success);
+  color: white;
+}
+
+.badge-pending {
+  background: #f39c12;
+  color: white;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.7rem 1rem;
+  }
+  
+  .nav-links {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 0.2rem;
+    margin-top: 0.4rem;
+  }
+  
+  .nav-item {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.6rem;
+  }
+  
+  .logo-area .logo-img {
+    width: 38px !important;
+    height: 38px !important;
+    max-width: 38px !important;
+    max-height: 38px !important;
+  }
+  
+  .logo-text {
+    font-size: 1.1rem;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+  
+  .product-img {
+    height: 140px;
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .footer-links {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+  
+  .logo-area .logo-img {
+    width: 35px !important;
+    height: 35px !important;
+    max-width: 35px !important;
+    max-height: 35px !important;
+  }
+  
+  .logo-text {
+    font-size: 1rem;
+  }
+  
+  .logo-text small {
+    font-size: 0.6rem;
+  }
+}
