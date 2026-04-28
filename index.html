@@ -73,6 +73,65 @@
     </nav>
   </header>
   
+  <!-- ========== RECHERCHE & FILTRES ========== -->
+  <div class="search-filter-bar hidden" id="searchFilterBar">
+    <div class="search-container">
+      <input 
+        type="text" 
+        id="searchInput" 
+        class="search-input" 
+        data-i18n-placeholder="searchPlaceholder" 
+        placeholder="🔍 Rechèche yon pwodui..."
+      />
+      <button id="searchBtn" class="btn btn-gold btn-sm">🔍</button>
+    </div>
+    
+    <div class="filter-container">
+      <select id="categoryFilter" class="filter-select">
+        <option value="all" data-i18n="allCategories">Tout kategori</option>
+        <option value="food" data-i18n="categoryFood">🍚 Manje / Alimentation</option>
+        <option value="electronics" data-i18n="categoryElectronics">📱 Elektwonik</option>
+        <option value="clothing" data-i18n="categoryClothing">👕 Vètman</option>
+        <option value="home" data-i18n="categoryHome">🏠 Kay / Maison</option>
+        <option value="beauty" data-i18n="categoryBeauty">💄 Bote / Beauté</option>
+        <option value="other" data-i18n="categoryOther">📦 Lòt / Autres</option>
+      </select>
+      
+      <input 
+        type="number" 
+        id="priceMin" 
+        class="price-input" 
+        data-i18n-placeholder="priceMin" 
+        placeholder="Pri min"
+      />
+      <input 
+        type="number" 
+        id="priceMax" 
+        class="price-input" 
+        data-i18n-placeholder="priceMax" 
+        placeholder="Pri max"
+      />
+      
+      <select id="sortBy" class="filter-select">
+        <option value="date-desc" data-i18n="sortDateDesc">Pi resan</option>
+        <option value="date-asc" data-i18n="sortDateAsc">Pi ansyen</option>
+        <option value="price-asc" data-i18n="sortPriceAsc">Pri: Ba → Wo</option>
+        <option value="price-desc" data-i18n="sortPriceDesc">Pri: Wo → Ba</option>
+        <option value="name-asc" data-i18n="sortNameAsc">Non: A → Z</option>
+        <option value="name-desc" data-i18n="sortNameDesc">Non: Z → A</option>
+      </select>
+      
+      <button id="applyFiltersBtn" class="btn btn-gold btn-sm">
+        <span data-i18n="applyFilters">Filtre</span>
+      </button>
+      <button id="resetFiltersBtn" class="btn btn-outline btn-sm" style="color:#333; border-color:#ccc;">
+        <span data-i18n="resetFilters">Reinisyalize</span>
+      </button>
+    </div>
+    
+    <div id="resultsCount" class="results-count"></div>
+  </div>
+  
   <!-- ========== CONTENU PRINCIPAL ========== -->
   <main class="container" id="appContent">
     <!-- Rendu dynamique par app.js -->
