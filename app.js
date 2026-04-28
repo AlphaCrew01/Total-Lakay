@@ -1,7 +1,7 @@
 /* ============================================
-   TOTAL LAKAY - Application Complète Finale
+   TOTAL LAKAY - Version Finale Ultime
    Firebase configuré - Admin Dashboard + Client
-   Toutes traductions - Tous les boutons OK
+   Recherche & Filtres - Toutes traductions
    ============================================ */
 
 // ---------- CONFIGURATION FIREBASE ----------
@@ -104,6 +104,27 @@ const i18n = {
     roleChanged: "✅ Wòl modifye!",
     madeAdmin: "✅ Fè admin!",
     madeClient: "✅ Fè kliyan!",
+    // Recherche & Filtres
+    searchPlaceholder: "🔍 Rechèche yon pwodui...",
+    allCategories: "Tout kategori",
+    priceMin: "Pri min",
+    priceMax: "Pri max",
+    applyFilters: "Filtre",
+    resetFilters: "Reinisyalize",
+    sortDateDesc: "Pi resan",
+    sortDateAsc: "Pi ansyen",
+    sortPriceAsc: "Pri: Ba → Wo",
+    sortPriceDesc: "Pri: Wo → Ba",
+    sortNameAsc: "Non: A → Z",
+    sortNameDesc: "Non: Z → A",
+    resultsFound: "rezilta jwenn",
+    noResultsFound: "Pa gen rezilta. Eseye ak lòt mo.",
+    categoryFood: "🍚 Manje / Alimentation",
+    categoryElectronics: "📱 Elektwonik",
+    categoryClothing: "👕 Vètman",
+    categoryHome: "🏠 Kay / Maison",
+    categoryBeauty: "💄 Bote / Beauté",
+    categoryOther: "📦 Lòt / Autres",
   },
   fr: {
     home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -176,6 +197,27 @@ const i18n = {
     roleChanged: "✅ Rôle modifié !",
     madeAdmin: "✅ Passé admin !",
     madeClient: "✅ Passé client !",
+    // Recherche & Filtres
+    searchPlaceholder: "🔍 Rechercher un produit...",
+    allCategories: "Toutes catégories",
+    priceMin: "Prix min",
+    priceMax: "Prix max",
+    applyFilters: "Filtrer",
+    resetFilters: "Réinitialiser",
+    sortDateDesc: "Plus récent",
+    sortDateAsc: "Plus ancien",
+    sortPriceAsc: "Prix: Bas → Haut",
+    sortPriceDesc: "Prix: Haut → Bas",
+    sortNameAsc: "Nom: A → Z",
+    sortNameDesc: "Nom: Z → A",
+    resultsFound: "résultats trouvés",
+    noResultsFound: "Aucun résultat. Essayez d'autres mots.",
+    categoryFood: "🍚 Alimentation",
+    categoryElectronics: "📱 Électronique",
+    categoryClothing: "👕 Vêtements",
+    categoryHome: "🏠 Maison",
+    categoryBeauty: "💄 Beauté",
+    categoryOther: "📦 Autres",
   },
   en: {
     home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -247,6 +289,27 @@ const i18n = {
     roleChanged: "✅ Role changed!",
     madeAdmin: "✅ Made admin!",
     madeClient: "✅ Made client!",
+    // Search & Filters
+    searchPlaceholder: "🔍 Search a product...",
+    allCategories: "All categories",
+    priceMin: "Min price",
+    priceMax: "Max price",
+    applyFilters: "Filter",
+    resetFilters: "Reset",
+    sortDateDesc: "Newest",
+    sortDateAsc: "Oldest",
+    sortPriceAsc: "Price: Low → High",
+    sortPriceDesc: "Price: High → Low",
+    sortNameAsc: "Name: A → Z",
+    sortNameDesc: "Name: Z → A",
+    resultsFound: "results found",
+    noResultsFound: "No results. Try other words.",
+    categoryFood: "🍚 Food",
+    categoryElectronics: "📱 Electronics",
+    categoryClothing: "👕 Clothing",
+    categoryHome: "🏠 Home",
+    categoryBeauty: "💄 Beauty",
+    categoryOther: "📦 Other",
   },
   es: {
     home: "Inicio", shop: "Tienda", orders: "Pedidos", admin: "Admin",
@@ -319,6 +382,27 @@ const i18n = {
     roleChanged: "✅ ¡Rol cambiado!",
     madeAdmin: "✅ ¡Hecho admin!",
     madeClient: "✅ ¡Hecho cliente!",
+    // Búsqueda y Filtros
+    searchPlaceholder: "🔍 Buscar un producto...",
+    allCategories: "Todas categorías",
+    priceMin: "Precio mín",
+    priceMax: "Precio máx",
+    applyFilters: "Filtrar",
+    resetFilters: "Restablecer",
+    sortDateDesc: "Más reciente",
+    sortDateAsc: "Más antiguo",
+    sortPriceAsc: "Precio: Bajo → Alto",
+    sortPriceDesc: "Precio: Alto → Bajo",
+    sortNameAsc: "Nombre: A → Z",
+    sortNameDesc: "Nombre: Z → A",
+    resultsFound: "resultados encontrados",
+    noResultsFound: "Sin resultados. Prueba otras palabras.",
+    categoryFood: "🍚 Comida",
+    categoryElectronics: "📱 Electrónica",
+    categoryClothing: "👕 Ropa",
+    categoryHome: "🏠 Hogar",
+    categoryBeauty: "💄 Belleza",
+    categoryOther: "📦 Otros",
   }
 };
 
@@ -334,7 +418,23 @@ function applyLanguage() {
     const key = el.getAttribute('data-i18n-placeholder');
     if (i18n[currentLang]?.[key]) el.placeholder = i18n[currentLang][key];
   });
+  // Mettre à jour les options de catégorie
+  updateCategoryOptions();
   if (currentView) renderView(currentView);
+}
+
+function updateCategoryOptions() {
+  const categorySelect = document.getElementById('categoryFilter');
+  if (!categorySelect) return;
+  const options = categorySelect.querySelectorAll('option');
+  const categoryKeys = ['all', 'food', 'electronics', 'clothing', 'home', 'beauty', 'other'];
+  const translationKeys = ['allCategories', 'categoryFood', 'categoryElectronics', 'categoryClothing', 'categoryHome', 'categoryBeauty', 'categoryOther'];
+  
+  options.forEach((option, index) => {
+    if (translationKeys[index]) {
+      option.textContent = t(translationKeys[index]);
+    }
+  });
 }
 
 function showMessage(message, type = 'success') {
@@ -352,6 +452,14 @@ function showMessage(message, type = 'success') {
   `;
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 5000);
+}
+
+function debounce(func, delay) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), delay);
+  };
 }
 
 // ============================================
@@ -667,12 +775,123 @@ async function loadAllData() {
 }
 
 // ============================================
+// RECHERCHE & FILTRES
+// ============================================
+function getFilteredProducts() {
+  let filtered = [...products];
+  
+  const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase()?.trim() || '';
+  const category = document.getElementById('categoryFilter')?.value || 'all';
+  const priceMin = parseFloat(document.getElementById('priceMin')?.value) || 0;
+  const priceMax = parseFloat(document.getElementById('priceMax')?.value) || Infinity;
+  const sortBy = document.getElementById('sortBy')?.value || 'date-desc';
+  
+  if (searchTerm) {
+    filtered = filtered.filter(p => 
+      p.name?.toLowerCase().includes(searchTerm) || 
+      p.description?.toLowerCase().includes(searchTerm)
+    );
+  }
+  
+  if (category !== 'all') {
+    filtered = filtered.filter(p => p.category === category);
+  }
+  
+  filtered = filtered.filter(p => p.price >= priceMin && p.price <= priceMax);
+  
+  switch (sortBy) {
+    case 'date-asc': filtered.sort((a, b) => (a.createdAt?.toDate?.() || 0) - (b.createdAt?.toDate?.() || 0)); break;
+    case 'price-asc': filtered.sort((a, b) => a.price - b.price); break;
+    case 'price-desc': filtered.sort((a, b) => b.price - a.price); break;
+    case 'name-asc': filtered.sort((a, b) => (a.name || '').localeCompare(b.name || '')); break;
+    case 'name-desc': filtered.sort((a, b) => (b.name || '').localeCompare(a.name || '')); break;
+    default: filtered.sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0)); break;
+  }
+  
+  return filtered;
+}
+
+function displayFilteredProducts() {
+  const filtered = getFilteredProducts();
+  const resultsCount = document.getElementById('resultsCount');
+  
+  if (resultsCount) {
+    if (filtered.length === 0) {
+      resultsCount.innerHTML = `🔍 ${t('noResultsFound')}`;
+    } else {
+      resultsCount.innerHTML = `<span>${filtered.length}</span> ${t('resultsFound')}`;
+    }
+  }
+  
+  if (filtered.length === 0) {
+    return `<p class="text-center" style="grid-column:1/-1; padding:3rem;">📭 ${t('noResultsFound')}</p>`;
+  }
+  
+  return filtered.map(p => productCardHTML(p)).join('');
+}
+
+function setupSearchAndFilters() {
+  const searchBar = document.getElementById('searchFilterBar');
+  if (searchBar) searchBar.classList.remove('hidden');
+  
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', debounce(() => refreshProductGrid(), 300));
+  }
+  
+  document.getElementById('searchBtn')?.addEventListener('click', () => refreshProductGrid());
+  
+  searchInput?.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') refreshProductGrid();
+  });
+  
+  document.getElementById('applyFiltersBtn')?.addEventListener('click', () => refreshProductGrid());
+  
+  document.getElementById('resetFiltersBtn')?.addEventListener('click', () => {
+    const si = document.getElementById('searchInput');
+    const cf = document.getElementById('categoryFilter');
+    const pmin = document.getElementById('priceMin');
+    const pmax = document.getElementById('priceMax');
+    const sb = document.getElementById('sortBy');
+    if (si) si.value = '';
+    if (cf) cf.value = 'all';
+    if (pmin) pmin.value = '';
+    if (pmax) pmax.value = '';
+    if (sb) sb.value = 'date-desc';
+    refreshProductGrid();
+  });
+  
+  document.getElementById('categoryFilter')?.addEventListener('change', () => refreshProductGrid());
+  document.getElementById('sortBy')?.addEventListener('change', () => refreshProductGrid());
+  document.getElementById('priceMin')?.addEventListener('input', debounce(() => refreshProductGrid(), 500));
+  document.getElementById('priceMax')?.addEventListener('input', debounce(() => refreshProductGrid(), 500));
+}
+
+function refreshProductGrid() {
+  const grid = document.getElementById('allProducts') || document.getElementById('featuredProducts');
+  if (grid) {
+    grid.innerHTML = displayFilteredProducts();
+    attachBuyButtons();
+  }
+}
+
+// ============================================
 // RENDU VUES
 // ============================================
 async function renderView(view) {
   currentView = view;
   const app = document.getElementById('appContent');
   if (!app) return;
+  
+  // Afficher/cacher la barre de recherche
+  const searchBar = document.getElementById('searchFilterBar');
+  if (searchBar) {
+    if (view === 'shop' || view === 'specialOffers') {
+      searchBar.classList.remove('hidden');
+    } else {
+      searchBar.classList.add('hidden');
+    }
+  }
   
   if (isAdmin && (view === 'home' || view === 'admin')) {
     await renderAdminDashboard(app);
@@ -705,7 +924,7 @@ function productCardHTML(product) {
 }
 
 // ============================================
-// DASHBOARD ADMIN
+// DASHBOARD ADMIN (inchangé - déjà complet)
 // ============================================
 async function renderAdminDashboard(app) {
   if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
@@ -720,111 +939,22 @@ async function renderAdminDashboard(app) {
   
   app.innerHTML = `
     <h2>📊 ${t('dashboard')} - ${t('welcomeAdmin')}</h2>
-    
     <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:1rem; margin:1.5rem 0;">
-      <div class="card text-center" style="padding:1.2rem; border-left:4px solid #c8963e;">
-        <div style="font-size:2rem; font-weight:800; color:#c8963e;">${totalProducts}</div>
-        <div>📦 ${t('totalProducts')}</div>
-      </div>
-      <div class="card text-center" style="padding:1.2rem; border-left:4px solid #1e7e5b;">
-        <div style="font-size:2rem; font-weight:800; color:#1e7e5b;">${totalOrders}</div>
-        <div>📋 ${t('totalOrders')}</div>
-      </div>
-      <div class="card text-center" style="padding:1.2rem; border-left:4px solid #1e6b8a;">
-        <div style="font-size:2rem; font-weight:800; color:#1e6b8a;">${totalClients}</div>
-        <div>👥 ${t('totalClients')}</div>
-      </div>
-      <div class="card text-center" style="padding:1.2rem; border-left:4px solid #f39c12;">
-        <div style="font-size:2rem; font-weight:800; color:#f39c12;">$${totalRevenue.toFixed(2)}</div>
-        <div>💰 ${t('revenue')}</div>
-      </div>
+      <div class="card text-center" style="padding:1.2rem; border-left:4px solid #c8963e;"><div style="font-size:2rem; font-weight:800; color:#c8963e;">${totalProducts}</div><div>📦 ${t('totalProducts')}</div></div>
+      <div class="card text-center" style="padding:1.2rem; border-left:4px solid #1e7e5b;"><div style="font-size:2rem; font-weight:800; color:#1e7e5b;">${totalOrders}</div><div>📋 ${t('totalOrders')}</div></div>
+      <div class="card text-center" style="padding:1.2rem; border-left:4px solid #1e6b8a;"><div style="font-size:2rem; font-weight:800; color:#1e6b8a;">${totalClients}</div><div>👥 ${t('totalClients')}</div></div>
+      <div class="card text-center" style="padding:1.2rem; border-left:4px solid #f39c12;"><div style="font-size:2rem; font-weight:800; color:#f39c12;">$${totalRevenue.toFixed(2)}</div><div>💰 ${t('revenue')}</div></div>
     </div>
-    
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
-      <div class="card text-center" style="padding:1rem;">
-        <div style="font-size:1.5rem; font-weight:800; color:#f39c12;">${pendingCount}</div>
-        <div>⏳ ${t('pendingOrders')}</div>
-      </div>
-      <div class="card text-center" style="padding:1rem;">
-        <div style="font-size:1.5rem; font-weight:800; color:#1e7e5b;">${confirmedCount}</div>
-        <div>✅ ${t('confirmedOrders')}</div>
-      </div>
+      <div class="card text-center" style="padding:1rem;"><div style="font-size:1.5rem; font-weight:800; color:#f39c12;">${pendingCount}</div><div>⏳ ${t('pendingOrders')}</div></div>
+      <div class="card text-center" style="padding:1rem;"><div style="font-size:1.5rem; font-weight:800; color:#1e7e5b;">${confirmedCount}</div><div>✅ ${t('confirmedOrders')}</div></div>
     </div>
-    
-    <div class="card">
-      <h3>⚡ ${t('quickActions')}</h3>
-      <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.5rem;">
-        <button class="btn btn-gold btn-sm" id="adminAddProductBtn">➕ ${t('addProduct')}</button>
-        <button class="btn btn-sm" id="adminManageOrdersBtn">📦 ${t('manageOrders')}</button>
-        <button class="btn btn-sm" id="adminManageClientsBtn">👥 ${t('manageClients')}</button>
-        <button class="btn btn-accent btn-sm" id="adminSendNotifBtn">🔔 ${t('sendNotification')}</button>
-      </div>
-    </div>
-    
-    <div id="adminAddProductForm" class="card hidden">
-      <h3>➕ ${t('addProduct')}</h3>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
-        <div><label>${t('productName')}</label><input id="adminProdName" placeholder="${t('productNamePlaceholder')}"></div>
-        <div><label>${t('productPrice')} ($)</label><input id="adminProdPrice" type="number" placeholder="${t('productPricePlaceholder')}" step="0.01"></div>
-      </div>
-      <label>${t('oldPrice')}</label><input id="adminProdOldPrice" type="number" placeholder="${t('oldPricePlaceholder')}" step="0.01">
-      <label>${t('productImage')}</label><input id="adminProdImage" placeholder="${t('productImagePlaceholder')}">
-      <label>${t('productDesc')}</label><textarea id="adminProdDesc" rows="2" placeholder="${t('productDescPlaceholder')}"></textarea>
-      <button id="saveProductBtn" class="btn btn-gold mt-2">✅ ${t('save')}</button>
-    </div>
-    
-    <div class="card mt-2">
-      <h3>📋 ${t('existingProducts')} (${totalProducts})</h3>
-      <div id="adminProductList">
-        ${products.length === 0 ? `<p>${t('noProductsAdmin')}</p>` : products.map(p => `
-          <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid #eee;">
-            <span>📦 ${p.name} - <strong>$${p.price}</strong></span>
-            <button class="btn btn-danger btn-sm delete-product" data-id="${p.id}">🗑️</button>
-          </div>`).join('')}
-      </div>
-    </div>
-    
-    <div class="card mt-2">
-      <h3>🕐 ${t('recentOrders')} (${totalOrders})</h3>
-      <div id="adminOrderList">
-        ${orders.length === 0 ? `<p>${t('noOrdersAdmin')}</p>` : orders.slice(0, 10).map(o => `
-          <div style="padding:0.6rem 0; border-bottom:1px solid #eee;">
-            <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
-              <strong>${o.productName}</strong>
-              <select class="status-select" data-order-id="${o.id}" style="width:auto; padding:0.3rem;">
-                <option value="pending" ${o.status==='pending'?'selected':''}>⏳ ${t('pending')}</option>
-                <option value="confirmed" ${o.status==='confirmed'?'selected':''}>✅ ${t('confirmed')}</option>
-                <option value="delivered" ${o.status==='delivered'?'selected':''}>🚚 ${t('delivered')}</option>
-                <option value="cancelled" ${o.status==='cancelled'?'selected':''}>❌ ${t('cancelled')}</option>
-              </select>
-            </div>
-            <p style="font-size:0.85rem;">💰 $${o.price} | 👤 ${o.userEmail || t('clientLabel')} | 📍 ${o.address}</p>
-            <input id="delay-${o.id}" placeholder="${t('delayPlaceholder')}" value="${o.deliveryEstimate || ''}" style="width:60%; display:inline;">
-            <button class="btn btn-success btn-sm update-delay" data-id="${o.id}">⏱️</button>
-          </div>`).join('')}
-      </div>
-    </div>
-    
-    <div id="adminClientsList" class="card mt-2 hidden">
-      <h3>👥 ${t('manageClients')} (${allUsers.length})</h3>
-      ${allUsers.map(u => `
-        <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid #eee;">
-          <div>
-            <strong>${u.displayName || u.email}</strong>
-            <span class="badge ${u.role==='admin'?'badge-success':''}" style="margin-left:0.5rem;">${u.role}</span>
-          </div>
-          <button class="btn btn-sm ${u.role==='admin'?'btn-danger':'btn-gold'} toggle-role" data-uid="${u.id}" data-role="${u.role}">
-            ${u.role==='admin' ? t('makeClient') : t('makeAdmin')}
-          </button>
-        </div>`).join('')}
-    </div>
-    
-    <div id="adminSendNotifForm" class="card mt-2 hidden">
-      <h3>🔔 ${t('sendNotification')}</h3>
-      <input id="notifTitle" placeholder="${t('notificationTitle')}">
-      <textarea id="notifMessage" placeholder="${t('notificationMessage')}"></textarea>
-      <button id="sendNotifBtn" class="btn btn-gold mt-2">📤 ${t('sendNotification')}</button>
-    </div>
+    <div class="card"><h3>⚡ ${t('quickActions')}</h3><div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.5rem;"><button class="btn btn-gold btn-sm" id="adminAddProductBtn">➕ ${t('addProduct')}</button><button class="btn btn-sm" id="adminManageOrdersBtn">📦 ${t('manageOrders')}</button><button class="btn btn-sm" id="adminManageClientsBtn">👥 ${t('manageClients')}</button><button class="btn btn-accent btn-sm" id="adminSendNotifBtn">🔔 ${t('sendNotification')}</button></div></div>
+    <div id="adminAddProductForm" class="card hidden"><h3>➕ ${t('addProduct')}</h3><div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;"><div><label>${t('productName')}</label><input id="adminProdName" placeholder="${t('productNamePlaceholder')}"></div><div><label>${t('productPrice')} ($)</label><input id="adminProdPrice" type="number" placeholder="${t('productPricePlaceholder')}" step="0.01"></div></div><label>${t('oldPrice')}</label><input id="adminProdOldPrice" type="number" placeholder="${t('oldPricePlaceholder')}" step="0.01"><label>${t('productImage')}</label><input id="adminProdImage" placeholder="${t('productImagePlaceholder')}"><label>${t('productDesc')}</label><textarea id="adminProdDesc" rows="2" placeholder="${t('productDescPlaceholder')}"></textarea><button id="saveProductBtn" class="btn btn-gold mt-2">✅ ${t('save')}</button></div>
+    <div class="card mt-2"><h3>📋 ${t('existingProducts')} (${totalProducts})</h3><div id="adminProductList">${products.length === 0 ? `<p>${t('noProductsAdmin')}</p>` : products.map(p => `<div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid #eee;"><span>📦 ${p.name} - <strong>$${p.price}</strong></span><button class="btn btn-danger btn-sm delete-product" data-id="${p.id}">🗑️</button></div>`).join('')}</div></div>
+    <div class="card mt-2"><h3>🕐 ${t('recentOrders')} (${totalOrders})</h3><div id="adminOrderList">${orders.length === 0 ? `<p>${t('noOrdersAdmin')}</p>` : orders.slice(0, 10).map(o => `<div style="padding:0.6rem 0; border-bottom:1px solid #eee;"><div style="display:flex; justify-content:space-between; flex-wrap:wrap;"><strong>${o.productName}</strong><select class="status-select" data-order-id="${o.id}" style="width:auto; padding:0.3rem;"><option value="pending" ${o.status==='pending'?'selected':''}>⏳ ${t('pending')}</option><option value="confirmed" ${o.status==='confirmed'?'selected':''}>✅ ${t('confirmed')}</option><option value="delivered" ${o.status==='delivered'?'selected':''}>🚚 ${t('delivered')}</option><option value="cancelled" ${o.status==='cancelled'?'selected':''}>❌ ${t('cancelled')}</option></select></div><p style="font-size:0.85rem;">💰 $${o.price} | 👤 ${o.userEmail || t('clientLabel')} | 📍 ${o.address}</p><input id="delay-${o.id}" placeholder="${t('delayPlaceholder')}" value="${o.deliveryEstimate || ''}" style="width:60%; display:inline;"><button class="btn btn-success btn-sm update-delay" data-id="${o.id}">⏱️</button></div>`).join('')}</div></div>
+    <div id="adminClientsList" class="card mt-2 hidden"><h3>👥 ${t('manageClients')} (${allUsers.length})</h3>${allUsers.map(u => `<div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid #eee;"><div><strong>${u.displayName || u.email}</strong><span class="badge ${u.role==='admin'?'badge-success':''}" style="margin-left:0.5rem;">${u.role}</span></div><button class="btn btn-sm ${u.role==='admin'?'btn-danger':'btn-gold'} toggle-role" data-uid="${u.id}" data-role="${u.role}">${u.role==='admin' ? t('makeClient') : t('makeAdmin')}</button></div>`).join('')}</div>
+    <div id="adminSendNotifForm" class="card mt-2 hidden"><h3>🔔 ${t('sendNotification')}</h3><input id="notifTitle" placeholder="${t('notificationTitle')}"><textarea id="notifMessage" placeholder="${t('notificationMessage')}"></textarea><button id="sendNotifBtn" class="btn btn-gold mt-2">📤 ${t('sendNotification')}</button></div>
   `;
   
   // Events Admin
@@ -929,17 +1059,21 @@ async function renderHome(app) {
   document.getElementById('goShopBtn')?.addEventListener('click', () => { currentView='shop'; renderView('shop'); });
   attachBuyButtons();
 }
+
 async function renderShop(app) {
   await loadProducts();
-  app.innerHTML = `<h2>🛍️ ${t('shop')}</h2><div class="grid">${products.length===0?`<p>📦 ${t('noProducts')}</p>`:products.map(p=>productCardHTML(p)).join('')}</div>`;
+  app.innerHTML = `<h2>🛍️ ${t('shop')}</h2><div class="grid" id="allProducts">${displayFilteredProducts()}</div>`;
   attachBuyButtons();
+  setupSearchAndFilters();
 }
+
 async function renderSpecialOffers(app) {
   await loadProducts();
-  const specials = products.filter(p => p.oldPrice && p.oldPrice > p.price);
-  app.innerHTML = `<h2>🎉 ${t('specialOffers')}</h2>${specials.length===0?`<p>📭 ${t('noSpecialOffers')}</p>`:`<div class="grid">${specials.map(p=>productCardHTML(p)).join('')}</div>`}`;
+  app.innerHTML = `<h2>🎉 ${t('specialOffers')}</h2><div class="grid" id="allProducts">${displayFilteredProducts()}</div>`;
   attachBuyButtons();
+  setupSearchAndFilters();
 }
+
 async function renderClientOrders(app) {
   if (!currentUser) { app.innerHTML = `<div class="card text-center"><p>🔐 ${t('loginRequired')}</p><button class="btn btn-gold" id="loginFromOrders">${t('login')}</button></div>`; document.getElementById('loginFromOrders')?.addEventListener('click', () => document.getElementById('authBtn')?.click()); return; }
   await loadMyOrders();
@@ -950,6 +1084,7 @@ async function renderClientOrders(app) {
       ${o.deliveryEstimate?`<p>🚚 ${t('delivery')}: ${o.deliveryEstimate}</p>`:`<p>⏳ ${t('waiting')}</p>`}
     </div>`).join('')}`;
 }
+
 function renderSettings(app) {
   app.innerHTML = `
     <div class="card-premium">
@@ -984,7 +1119,7 @@ function attachBuyButtons() {
 // DÉMARRAGE
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 Total Lakay - Version Finale Admin+Client');
+  console.log('🚀 Total Lakay - Version Ultime avec Recherche & Filtres');
   applyLanguage();
   renderView('home');
 });
