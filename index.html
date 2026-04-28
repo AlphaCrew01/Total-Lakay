@@ -38,7 +38,7 @@
         📦 <span data-i18n="orders">Kòmand</span>
       </a>
       <a href="#" id="navAdmin" class="nav-item hidden admin-only">
-        ⚙️ <span data-i18n="admin">Admin</span>
+        📊 <span data-i18n="dashboard">Tablodbò</span>
       </a>
       
       <!-- Notifications -->
@@ -75,12 +75,17 @@
   
   <!-- ========== CONTENU PRINCIPAL ========== -->
   <main class="container" id="appContent">
-    <!-- Rendu dynamique -->
+    <!-- Rendu dynamique par app.js -->
+    <!-- 
+      Pour Admin : renderAdminDashboard() 
+      Pour Client : renderHome(), renderShop(), renderClientOrders(), etc.
+    -->
   </main>
   
   <!-- ========== MODAL CONNEXION ========== -->
   <div id="loginModal" class="modal hidden">
-    <div class="modal-content login-card">
+    <!-- Formulaire Connexion -->
+    <div class="modal-content login-card" id="loginFormCard">
       <span class="close-modal" id="closeLoginModal">&times;</span>
       
       <div class="login-header">
@@ -92,13 +97,13 @@
       
       <button id="googleLoginBtn" class="btn btn-google">
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20">
-        Kontinye ak Google
+        <span data-i18n="continueGoogle">Kontinye ak Google</span>
       </button>
       
       <div class="separator"><span data-i18n="or">oubyen</span></div>
       
-      <input type="email" id="loginEmail" placeholder="Email" />
-      <input type="password" id="loginPassword" placeholder="Modpas" />
+      <input type="email" id="loginEmail" data-i18n-placeholder="emailPlaceholder" placeholder="Email" />
+      <input type="password" id="loginPassword" data-i18n-placeholder="passwordPlaceholder" placeholder="Modpas" />
       
       <button id="emailLoginBtn" class="btn btn-gold" style="width:100%;">
         🔐 <span data-i18n="login">Konekte</span>
@@ -110,7 +115,7 @@
       </p>
     </div>
     
-    <!-- Inscription -->
+    <!-- Formulaire Inscription -->
     <div class="modal-content login-card hidden" id="registerForm">
       <span class="close-modal" id="closeRegisterModal">&times;</span>
       
@@ -121,9 +126,11 @@
         <p data-i18n="createAccountTitle">Kreye kont ou</p>
       </div>
       
-      <input type="text" id="registerName" placeholder="Non ou" />
-      <input type="email" id="registerEmail" placeholder="Email" />
-      <input type="password" id="registerPassword" placeholder="Modpas (min 6 karaktè)" />
+      <input type="text" id="registerName" data-i18n-placeholder="namePlaceholder" placeholder="Non ou" />
+      <input type="email" id="registerEmail" data-i18n-placeholder="emailPlaceholder" placeholder="Email" />
+      <input type="password" id="registerPassword" data-i18n-placeholder="passwordMin" placeholder="Modpas (min 6 karaktè)" />
+      
+      <p style="font-size:0.8rem; color:#666; margin:0.3rem 0;" data-i18n="selectRole">Chwazi wòl ou (default: Kliyan)</p>
       
       <button id="registerBtn" class="btn btn-gold" style="width:100%;">
         ✅ <span data-i18n="createAccount">Kreye kont</span>
@@ -153,7 +160,7 @@
       <p class="product-price-large" id="modalProductPrice"></p>
       
       <label for="orderAddress">📍 <span data-i18n="address">Adrès ou</span></label>
-      <input type="text" id="orderAddress" placeholder="Rue, Ville, Code postal" />
+      <input type="text" id="orderAddress" data-i18n-placeholder="addressPlaceholder" placeholder="Rue, Ville, Code postal" />
       
       <label for="orderPayment">💳 <span data-i18n="payment">Mwayen peman</span></label>
       <select id="orderPayment">
@@ -169,17 +176,28 @@
     </div>
   </div>
   
+  <!-- ========== MODAL CONFIRMATION (Admin) ========== -->
+  <div id="confirmModal" class="modal hidden">
+    <div class="modal-content card-premium text-center">
+      <p id="confirmMessage" style="font-size:1.2rem; margin:1rem 0;">Eske w sèten?</p>
+      <div style="display:flex; gap:1rem; justify-content:center;">
+        <button id="confirmYes" class="btn btn-danger">✅ Wi</button>
+        <button id="confirmNo" class="btn btn-outline" style="color:#333; border-color:#ccc;">❌ Non</button>
+      </div>
+    </div>
+  </div>
+  
   <!-- ========== FOOTER PREMIUM ========== -->
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-brand">
         <img src="logo.jpeg" alt="Total Lakay" class="footer-logo" onerror="this.style.display='none';">
-        <p>Total Lakay &copy; 2025</p>
+        <p data-i18n="footerRights">Total Lakay &copy; 2026</p>
       </div>
       <div class="footer-links">
-        <a href="#">Kontakte nou</a>
-        <a href="#">Sèvis</a>
-        <a href="#">Konfidansyalite</a>
+        <a href="#" data-i18n="footerContact">Kontakte nou</a>
+        <a href="#" data-i18n="footerServices">Sèvis</a>
+        <a href="#" data-i18n="footerPrivacy">Konfidansyalite</a>
       </div>
     </div>
   </footer>
