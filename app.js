@@ -31,6 +31,7 @@ let products = [];
 let orders = [];
 let allUsers = [];
 let notifications = [];
+let cart = [];
 let selectedProductId = null;
 
 const exchangeRates = {
@@ -107,6 +108,7 @@ const i18n = {
     errorOccurred: "Erè: ", clientLabel: "Kliyan", date: "Dat",
     footerRights: "Total Lakay © 2025", footerContact: "Kontakte nou",
     footerServices: "Sèvis", footerPrivacy: "Konfidansyalite",
+    footerTerms: "Kondisyon Itilizasyon",
     notifSent: "✅ Notifikasyon voye!",
     roleChanged: "✅ Wòl modifye!",
     madeAdmin: "✅ Fè admin!",
@@ -136,6 +138,10 @@ const i18n = {
     updateProfile: "Mete ajou profil", profileUpdated: "Profil mete ajou ak siksè!",
     phoneNumber: "Nimewo telefòn", saveProfile: "Anrejistre Profil",
     addressRecommend: "Adrès (Rekòmande)", phoneRecommend: "Telefòn (Rekòmande)",
+    cart: "Panyen", addToCart: "Ajoute nan panyen", removeFromCart: "Retire",
+    checkout: "Peye kounye a", total: "Total", emptyCart: "Panyen ou vid",
+    securePayment: "Peman Sekirize", contactUs: "Kontakte nou",
+    securePaymentInfo: "Peman 100% sekirize",
   },
   fr: {
     home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -204,6 +210,7 @@ const i18n = {
     errorOccurred: "Erreur : ", clientLabel: "Client", date: "Date",
     footerRights: "Total Lakay © 2025", footerContact: "Contactez-nous",
     footerServices: "Services", footerPrivacy: "Confidentialité",
+    footerTerms: "Conditions d'Utilisation",
     notifSent: "✅ Notification envoyée !",
     roleChanged: "✅ Rôle modifié !",
     madeAdmin: "✅ Passé admin !",
@@ -233,6 +240,10 @@ const i18n = {
     updateProfile: "Mettre à jour le profil", profileUpdated: "Profil mis à jour avec succès !",
     phoneNumber: "Numéro de téléphone", saveProfile: "Enregistrer le Profil",
     addressRecommend: "Adresse (Recommandé)", phoneRecommend: "Téléphone (Recommandé)",
+    cart: "Panier", addToCart: "Ajouter au panier", removeFromCart: "Retirer",
+    checkout: "Payer maintenant", total: "Total", emptyCart: "Votre panier est vide",
+    securePayment: "Paiement Sécurisé", contactUs: "Contactez-nous",
+    securePaymentInfo: "Paiement 100% sécurisé",
   },
   en: {
     home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -300,6 +311,7 @@ const i18n = {
     errorOccurred: "Error: ", clientLabel: "Client", date: "Date",
     footerRights: "Total Lakay © 2025", footerContact: "Contact us",
     footerServices: "Services", footerPrivacy: "Privacy",
+    footerTerms: "Terms of Use",
     notifSent: "✅ Notification sent!",
     roleChanged: "✅ Role changed!",
     madeAdmin: "✅ Made admin!",
@@ -329,6 +341,10 @@ const i18n = {
     updateProfile: "Update Profile", profileUpdated: "Profile updated successfully!",
     phoneNumber: "Phone Number", saveProfile: "Save Profile",
     addressRecommend: "Address (Recommended)", phoneRecommend: "Phone (Recommended)",
+    cart: "Cart", addToCart: "Add to cart", removeFromCart: "Remove",
+    checkout: "Checkout now", total: "Total", emptyCart: "Your cart is empty",
+    securePayment: "Secure Payment", contactUs: "Contact Us",
+    securePaymentInfo: "100% Secure Payment",
   },
   es: {
     home: "Inicio", shop: "Tienda", orders: "Pedidos", admin: "Admin",
@@ -397,6 +413,7 @@ const i18n = {
     errorOccurred: "Error: ", clientLabel: "Cliente", date: "Fecha",
     footerRights: "Total Lakay © 2025", footerContact: "Contáctanos",
     footerServices: "Servicios", footerPrivacy: "Privacidad",
+    footerTerms: "Condiciones de Uso",
     notifSent: "✅ ¡Notificación enviada!",
     roleChanged: "✅ ¡Rol cambiado!",
     madeAdmin: "✅ ¡Hecho admin!",
@@ -426,8 +443,73 @@ const i18n = {
     updateProfile: "Actualizar perfil", profileUpdated: "¡Perfil actualizado con éxito!",
     phoneNumber: "Número de teléfono", saveProfile: "Guardar Perfil",
     addressRecommend: "Dirección (Recomendado)", phoneRecommend: "Teléfono (Recommandado)",
+    cart: "Carrito", addToCart: "Añadir al carrito", removeFromCart: "Eliminar",
+    checkout: "Pagar ahora", total: "Total", emptyCart: "Tu carrito está vacío",
+    securePayment: "Pago Seguro", contactUs: "Contáctenos",
+    securePaymentInfo: "Pago 100% seguro",
   }
 };
+
+// ---------- CART FUNCTIONS ----------
+function addToCart(productId) {
+  const product = products.find(p => p.id === productId);
+  if (!product) return;
+  cart.push(product);
+  updateCartBadge();
+  showMessage(t('addToCart') + ': ' + product.name);
+}
+
+function updateCartBadge() {
+  const badge = document.getElementById('cartBadge');
+  if (!badge) return;
+  if (cart.length > 0) {
+    badge.textContent = cart.length;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+
+function renderCart() {
+  const list = document.getElementById('cartItemsList');
+  const totalEl = document.getElementById('cartTotalAmount');
+  if (!list || !totalEl) return;
+
+  if (cart.length === 0) {
+    list.innerHTML = `<p class="text-center" style="padding:2rem;">🛒 ${t('emptyCart')}</p>`;
+    totalEl.textContent = formatPrice(0);
+    return;
+  }
+
+  let total = 0;
+  list.innerHTML = cart.map((item, index) => {
+    total += item.price;
+    return `
+      <div class="cart-item" style="display:flex; align-items:center; gap:1rem; padding:0.8rem; border-bottom:1px solid #eee;">
+        <img src="${item.image || 'https://via.placeholder.com/50'}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; border-radius:8px;">
+        <div style="flex:1;">
+          <div style="font-weight:700; color:var(--blue-deep);">${item.name}</div>
+          <div style="color:var(--gold); font-weight:600;">${formatPrice(item.price)}</div>
+        </div>
+        <button class="btn btn-danger btn-sm remove-cart-item" data-index="${index}">🗑️</button>
+      </div>
+    `;
+  }).join('');
+  totalEl.textContent = formatPrice(total);
+
+  document.querySelectorAll('.remove-cart-item').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const index = parseInt(e.currentTarget.dataset.index);
+      removeFromCart(index);
+    });
+  });
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  updateCartBadge();
+  renderCart();
+}
 
 function formatPrice(priceUSD) {
   const rate = exchangeRates[currentCurrency] || 1;
@@ -956,7 +1038,10 @@ function productCardHTML(product) {
         <div class="product-title">${product.name}</div>
         ${product.description ? `<div class="product-description">${product.description.substring(0, 60)}...</div>` : ''}
         <div class="product-price">${formatPrice(product.price)} ${hasPromo ? `<span class="old-price">${formatPrice(product.oldPrice)}</span>` : ''}</div>
-        <button class="btn btn-gold btn-sm buy-btn" data-product-id="${product.id}">🛒 ${t('buy')}</button>
+        <div style="display:flex; gap:0.5rem;">
+          <button class="btn btn-gold btn-sm add-cart-btn" data-product-id="${product.id}" style="flex:1;">🛒 ${t('addToCart')}</button>
+          <button class="btn btn-outline btn-sm buy-now-btn" data-product-id="${product.id}">⚡</button>
+        </div>
       </div>
     </div>`;
 }
@@ -1210,7 +1295,13 @@ function renderSettings(app) {
 // ATTACHER BOUTONS ACHAT
 // ============================================
 function attachBuyButtons() {
-  document.querySelectorAll('.buy-btn').forEach(btn => {
+  document.querySelectorAll('.add-cart-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      addToCart(e.currentTarget.dataset.productId);
+    });
+  });
+
+  document.querySelectorAll('.buy-now-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       if (!currentUser) { showMessage(t('loginRequired'), 'error'); document.getElementById('authBtn')?.click(); return; }
       if (!currentUser.emailVerified) { showMessage(t('emailNotVerified'), 'error'); return; }
@@ -1221,7 +1312,6 @@ function attachBuyButtons() {
       document.getElementById('modalProductPrice').textContent = formatPrice(product.price);
       document.getElementById('buyModal').classList.remove('hidden');
       
-      // Pré-remplir l'adresse si dispo
       try {
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
         if (userDoc.exists && userDoc.data().address) {
@@ -1233,6 +1323,45 @@ function attachBuyButtons() {
     });
   });
 }
+
+// Event Listeners Panier
+document.getElementById('cartBtn')?.addEventListener('click', () => {
+  document.getElementById('cartModal').classList.remove('hidden');
+  renderCart();
+});
+
+document.getElementById('closeCartModal')?.addEventListener('click', () => {
+  document.getElementById('cartModal').classList.add('hidden');
+});
+
+document.getElementById('checkoutBtn')?.addEventListener('click', async () => {
+  if (!currentUser) { 
+    document.getElementById('cartModal').classList.add('hidden');
+    showMessage(t('loginRequired'), 'error'); 
+    document.getElementById('authBtn')?.click(); 
+    return; 
+  }
+  if (cart.length === 0) return;
+
+  // Pour l'instant, on redirige vers le premier produit du panier pour simplification ou on crée une commande groupée
+  // Dans cette version, on va créer une commande pour chaque item ou une commande "panier"
+  try {
+    for (const item of cart) {
+      await db.collection('orders').add({
+        userId: currentUser.uid, userEmail: currentUser.email,
+        productId: item.id, productName: item.name,
+        price: item.price, currency: currentCurrency, image: item.image || '',
+        address: 'Panier - Checkout', status: 'pending',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+    cart = [];
+    updateCartBadge();
+    document.getElementById('cartModal').classList.add('hidden');
+    showMessage(t('orderSuccess'), 'success');
+    renderView('profile');
+  } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
+});
 
 // ============================================
 // DÉMARRAGE
