@@ -142,6 +142,7 @@ const i18n = {
     checkout: "Peye kounye a", total: "Total", emptyCart: "Panyen ou vid",
     securePayment: "Peman Sekirize", contactUs: "Kontakte nou",
     securePaymentInfo: "Peman 100% sekirize",
+    notifications: "Notifikasyon", noNotifications: "Pa gen notifikasyon",
   },
   fr: {
     home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -244,6 +245,7 @@ const i18n = {
     checkout: "Payer maintenant", total: "Total", emptyCart: "Votre panier est vide",
     securePayment: "Paiement Sécurisé", contactUs: "Contactez-nous",
     securePaymentInfo: "Paiement 100% sécurisé",
+    notifications: "Notifications", noNotifications: "Pas de notifications",
   },
   en: {
     home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -345,6 +347,7 @@ const i18n = {
     checkout: "Checkout now", total: "Total", emptyCart: "Your cart is empty",
     securePayment: "Secure Payment", contactUs: "Contact Us",
     securePaymentInfo: "100% Secure Payment",
+    notifications: "Notifications", noNotifications: "No notifications",
   },
   es: {
     home: "Inicio", shop: "Tienda", orders: "Pedidos", admin: "Admin",
@@ -447,6 +450,7 @@ const i18n = {
     checkout: "Pagar ahora", total: "Total", emptyCart: "Tu carrito está vacío",
     securePayment: "Pago Seguro", contactUs: "Contáctenos",
     securePaymentInfo: "Pago 100% seguro",
+    notifications: "Notificaciones", noNotifications: "No hay notificaciones",
   }
 };
 
@@ -511,6 +515,51 @@ function removeFromCart(index) {
   renderCart();
 }
 
+// ---------- NOTIFICATIONS FUNCTIONS ----------
+function listenNotifications() {
+  db.collection('notifications').orderBy('createdAt', 'desc').limit(20).onSnapshot(snap => {
+    notifications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    updateNotifBadge();
+  });
+}
+
+function updateNotifBadge() {
+  const badge = document.getElementById('notifBadge');
+  if (!badge) return;
+  const unreadCount = notifications.filter(n => !n.read).length;
+  if (unreadCount > 0) {
+    badge.textContent = unreadCount;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+
+function renderNotificationsModal() {
+  const app = document.getElementById('appContent');
+  if (!app) return;
+  app.innerHTML = `
+    <div class="card-premium">
+      <h2>🔔 ${t('notifications')}</h2>
+      ${notifications.length === 0 ? `<p class="text-center" style="padding:2rem;">📭 ${t('noNotifications')}</p>` : notifications.map(n => `
+        <div class="card" style="margin-bottom:0.8rem; border-left:4px solid ${n.read ? '#ccc' : 'var(--gold)'}">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong>${n.title}</strong>
+            ${!n.read ? `<button class="btn btn-sm btn-outline mark-read" data-id="${n.id}">👁️</button>` : ''}
+          </div>
+          <p>${n.message}</p>
+        </div>`).join('')}
+    </div>
+  `;
+  document.querySelectorAll('.mark-read').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const id = e.currentTarget.dataset.id;
+      await db.collection('notifications').doc(id).update({ read: true });
+      renderNotificationsModal();
+    });
+  });
+}
+
 function formatPrice(priceUSD) {
   const rate = exchangeRates[currentCurrency] || 1;
   const converted = priceUSD * rate;
@@ -537,500 +586,521 @@ function applyLanguage() {
   if (currentView) renderView(currentView);
 }
 
-function updateCategoryOptions() {
-  const categorySelect = document.getElementById('categoryFilter');
-  if (!categorySelect) return;
-  const options = categorySelect.querySelectorAll('option');
-  const categoryKeys = ['all', 'food', 'electronics', 'clothing', 'home', 'beauty', 'other'];
-  const translationKeys = ['allCategories', 'categoryFood', 'categoryElectronics', 'categoryClothing', 'categoryHome', 'categoryBeauty', 'categoryOther'];
+  function updateCategoryOptions() {
+    const categorySelect = document.getElementById('categoryFilter');
+    if (!categorySelect) return;
+    const options = categorySelect.querySelectorAll('option');
+    const categoryKeys = ['all', 'food', 'electronics', 'clothing', 'home', 'beauty', 'other'];
+    const translationKeys = ['allCategories', 'categoryFood', 'categoryElectronics', 'categoryClothing', 'categoryHome', 'categoryBeauty', 'categoryOther'];
 
-  options.forEach((option, index) => {
-    if (translationKeys[index]) {
-      option.textContent = t(translationKeys[index]);
-    }
-  });
-}
+    options.forEach((option, index) => {
+      if (translationKeys[index]) {
+        option.textContent = t(translationKeys[index]);
+      }
+    });
+  }
 
-function showMessage(message, type = 'success') {
-  const existingToast = document.querySelector('.toast');
-  if (existingToast) existingToast.remove();
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.textContent = message;
-  toast.style.cssText = `
+  function showMessage(message, type = 'success') {
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) existingToast.remove();
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    toast.style.cssText = `
     position:fixed; bottom:20px; right:20px;
     background:${type === 'success' ? '#1e7e5b' : '#c0392b'};
     color:white; padding:1rem 1.5rem; border-radius:30px;
     font-weight:600; z-index:3000;
     box-shadow:0 20px 40px rgba(0,0,0,0.3);
   `;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 5000);
-}
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 5000);
+  }
 
-function debounce(func, delay) {
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), delay);
-  };
-}
+  function debounce(func, delay) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+  }
 
-// ============================================
-// AUTHENTIFICATION AVEC RÔLES
-// ============================================
-auth.onAuthStateChanged(async (user) => {
-  currentUser = user;
-  const authBtn = document.getElementById('authBtn');
-  const logoutBtn = document.getElementById('logoutBtn');
-  const adminElements = document.querySelectorAll('.admin-only');
-  const userElements = document.querySelectorAll('.user-only');
+  // ============================================
+  // AUTHENTIFICATION AVEC RÔLES
+  // ============================================
+  auth.onAuthStateChanged(async (user) => {
+    currentUser = user;
+    const authBtn = document.getElementById('authBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const adminElements = document.querySelectorAll('.admin-only');
+    const userElements = document.querySelectorAll('.user-only');
 
-  if (user) {
-    if (!user.emailVerified) {
-      showMessage(t('emailVerifyWarning'), 'error');
-      setTimeout(() => { if (currentUser && !currentUser.emailVerified) auth.signOut(); }, 5000);
-      return;
-    }
+    if (user) {
+      if (!user.emailVerified) {
+        showMessage(t('emailVerifyWarning'), 'error');
+        setTimeout(() => { if (currentUser && !currentUser.emailVerified) auth.signOut(); }, 5000);
+        return;
+      }
 
-    try {
-      const userDoc = await db.collection('users').doc(user.uid).get();
-      if (userDoc.exists) {
-        userRole = userDoc.data().role || 'client';
-        isAdmin = (userRole === 'admin');
+      try {
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+          userRole = userDoc.data().role || 'client';
+          isAdmin = (userRole === 'admin');
+        } else {
+          userRole = 'client'; isAdmin = false;
+          await db.collection('users').doc(user.uid).set({
+            email: user.email, displayName: user.displayName || '',
+            photoURL: user.photoURL || '', role: 'client',
+            emailVerified: true, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        }
+      } catch (e) { userRole = 'client'; isAdmin = false; }
+
+      if (authBtn) authBtn.classList.add('hidden');
+      if (logoutBtn) logoutBtn.classList.remove('hidden');
+      userElements.forEach(el => el.classList.remove('hidden'));
+
+      if (isAdmin) {
+        adminElements.forEach(el => el.classList.remove('hidden'));
       } else {
-        userRole = 'client'; isAdmin = false;
-        await db.collection('users').doc(user.uid).set({
-          email: user.email, displayName: user.displayName || '',
-          photoURL: user.photoURL || '', role: 'client',
-          emailVerified: true, createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        adminElements.forEach(el => el.classList.add('hidden'));
       }
-    } catch (e) { userRole = 'client'; isAdmin = false; }
 
-    if (authBtn) authBtn.classList.add('hidden');
-    if (logoutBtn) logoutBtn.classList.remove('hidden');
-    userElements.forEach(el => el.classList.remove('hidden'));
-
-    if (isAdmin) {
-      adminElements.forEach(el => el.classList.remove('hidden'));
+      if (logoutBtn) logoutBtn.textContent = '🚪 ' + (isAdmin ? 'Admin: ' : '') + t('logout');
+      listenNotifications();
     } else {
+      if (authBtn) authBtn.classList.remove('hidden');
+      if (logoutBtn) logoutBtn.classList.add('hidden');
       adminElements.forEach(el => el.classList.add('hidden'));
+      userElements.forEach(el => el.classList.add('hidden'));
+      isAdmin = false; userRole = null;
     }
 
-    if (logoutBtn) logoutBtn.textContent = '🚪 ' + (isAdmin ? 'Admin: ' : '') + t('logout');
-  } else {
-    if (authBtn) authBtn.classList.remove('hidden');
-    if (logoutBtn) logoutBtn.classList.add('hidden');
-    adminElements.forEach(el => el.classList.add('hidden'));
-    userElements.forEach(el => el.classList.add('hidden'));
-    isAdmin = false; userRole = null;
-  }
+    if (currentView === 'admin' && !isAdmin) currentView = 'home';
+    renderView(currentView);
+    if (isAdmin) loadAllData();
+    loadNotifications();
+  });
 
-  if (currentView === 'admin' && !isAdmin) currentView = 'home';
-  renderView(currentView);
-  if (isAdmin) loadAllData();
-  loadNotifications();
-});
+  // ============================================
+  // BOUTON CONNEXION
+  // ============================================
+  document.getElementById('authBtn')?.addEventListener('click', () => {
+    const modal = document.getElementById('loginModal');
+    const loginCard = document.getElementById('loginFormCard');
+    const registerForm = document.getElementById('registerForm');
+    if (modal) modal.classList.remove('hidden');
+    if (loginCard) loginCard.classList.remove('hidden');
+    if (registerForm) registerForm.classList.add('hidden');
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+    applyLanguage();
+  });
 
-// ============================================
-// BOUTON CONNEXION
-// ============================================
-document.getElementById('authBtn')?.addEventListener('click', () => {
-  const modal = document.getElementById('loginModal');
-  const loginCard = document.getElementById('loginFormCard');
-  const registerForm = document.getElementById('registerForm');
-  if (modal) modal.classList.remove('hidden');
-  if (loginCard) loginCard.classList.remove('hidden');
-  if (registerForm) registerForm.classList.add('hidden');
-  document.getElementById('loginEmail').value = '';
-  document.getElementById('loginPassword').value = '';
-  applyLanguage();
-});
+  document.getElementById('closeLoginModal')?.addEventListener('click', () => {
+    document.getElementById('loginModal')?.classList.add('hidden');
+  });
+  document.getElementById('closeRegisterModal')?.addEventListener('click', () => {
+    document.getElementById('loginModal')?.classList.add('hidden');
+  });
+  document.getElementById('loginModal')?.addEventListener('click', (e) => {
+    if (e.target === document.getElementById('loginModal')) {
+      document.getElementById('loginModal').classList.add('hidden');
+    }
+  });
 
-document.getElementById('closeLoginModal')?.addEventListener('click', () => {
-  document.getElementById('loginModal')?.classList.add('hidden');
-});
-document.getElementById('closeRegisterModal')?.addEventListener('click', () => {
-  document.getElementById('loginModal')?.classList.add('hidden');
-});
-document.getElementById('loginModal')?.addEventListener('click', (e) => {
-  if (e.target === document.getElementById('loginModal')) {
-    document.getElementById('loginModal').classList.add('hidden');
-  }
-});
+  document.getElementById('googleLoginBtn')?.addEventListener('click', () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then(() => { document.getElementById('loginModal')?.classList.add('hidden'); showMessage(t('welcomeBack'), 'success'); })
+      .catch(err => showMessage(t('errorOccurred') + err.message, 'error'));
+  });
 
-document.getElementById('googleLoginBtn')?.addEventListener('click', () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider)
-    .then(() => { document.getElementById('loginModal')?.classList.add('hidden'); showMessage(t('welcomeBack'), 'success'); })
-    .catch(err => showMessage(t('errorOccurred') + err.message, 'error'));
-});
-
-document.getElementById('emailLoginBtn')?.addEventListener('click', () => {
-  const email = document.getElementById('loginEmail')?.value.trim();
-  const password = document.getElementById('loginPassword')?.value;
-  if (!email || !password) { showMessage(t('fillAllFields'), 'error'); return; }
-  auth.signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      if (!userCredential.user.emailVerified) {
-        showMessage(t('emailNotVerified'), 'error');
-        userCredential.user.sendEmailVerification().catch(() => { });
-        auth.signOut(); return;
-      }
-      document.getElementById('loginModal')?.classList.add('hidden');
-      showMessage(t('welcomeBack'), 'success');
-    })
-    .catch(err => {
-      if (err.code === 'auth/user-not-found') showMessage(t('accountNotFound'), 'error');
-      else showMessage(t('errorOccurred') + err.message, 'error');
-    });
-});
-
-document.getElementById('switchToRegister')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  document.getElementById('loginFormCard').classList.add('hidden');
-  document.getElementById('registerForm').classList.remove('hidden');
-  document.getElementById('registerName').value = '';
-  document.getElementById('registerEmail').value = '';
-  document.getElementById('registerPassword').value = '';
-  applyLanguage();
-});
-
-document.getElementById('switchToLogin')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  document.getElementById('registerForm').classList.add('hidden');
-  document.getElementById('loginFormCard').classList.remove('hidden');
-  applyLanguage();
-});
-
-document.getElementById('registerBtn')?.addEventListener('click', () => {
-  const name = document.getElementById('registerName')?.value.trim();
-  const email = document.getElementById('registerEmail')?.value.trim();
-  const password = document.getElementById('registerPassword')?.value;
-  if (!name || !email || !password) { showMessage(t('fillAllFields'), 'error'); return; }
-  if (password.length < 6) { showMessage(t('passwordError'), 'error'); return; }
-  auth.createUserWithEmailAndPassword(email, password)
-    .then(async (cred) => {
-      await cred.user.sendEmailVerification();
-      await db.collection('users').doc(cred.user.uid).set({
-        email, displayName: name, role: 'client', emailVerified: false,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  document.getElementById('emailLoginBtn')?.addEventListener('click', () => {
+    const email = document.getElementById('loginEmail')?.value.trim();
+    const password = document.getElementById('loginPassword')?.value;
+    if (!email || !password) { showMessage(t('fillAllFields'), 'error'); return; }
+    auth.signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        if (!userCredential.user.emailVerified) {
+          showMessage(t('emailNotVerified'), 'error');
+          userCredential.user.sendEmailVerification().catch(() => { });
+          auth.signOut(); return;
+        }
+        document.getElementById('loginModal')?.classList.add('hidden');
+        showMessage(t('welcomeBack'), 'success');
+      })
+      .catch(err => {
+        if (err.code === 'auth/user-not-found') showMessage(t('accountNotFound'), 'error');
+        else showMessage(t('errorOccurred') + err.message, 'error');
       });
-      document.getElementById('loginModal')?.classList.add('hidden');
-      await auth.signOut();
-      showMessage(t('emailVerifySent'), 'success');
-    })
-    .catch(err => showMessage(t('errorOccurred') + err.message, 'error'));
-});
+  });
 
-document.getElementById('logoutBtn')?.addEventListener('click', () => {
-  auth.signOut();
-  showMessage(t('loggedOut'), 'success');
-});
+  document.getElementById('switchToRegister')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('loginFormCard').classList.add('hidden');
+    document.getElementById('registerForm').classList.remove('hidden');
+    document.getElementById('registerName').value = '';
+    document.getElementById('registerEmail').value = '';
+    document.getElementById('registerPassword').value = '';
+    applyLanguage();
+  });
 
-// ============================================
-// MENU DROPDOWN
-// ============================================
-document.getElementById('menuBtn')?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  document.getElementById('dropdownMenu')?.classList.toggle('hidden');
-});
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('#menuDropdown')) {
-    document.getElementById('dropdownMenu')?.classList.add('hidden');
+  document.getElementById('switchToLogin')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('registerForm').classList.add('hidden');
+    document.getElementById('loginFormCard').classList.remove('hidden');
+    applyLanguage();
+  });
+
+  document.getElementById('registerBtn')?.addEventListener('click', () => {
+    const name = document.getElementById('registerName')?.value.trim();
+    const email = document.getElementById('registerEmail')?.value.trim();
+    const password = document.getElementById('registerPassword')?.value;
+    if (!name || !email || !password) { showMessage(t('fillAllFields'), 'error'); return; }
+    if (password.length < 6) { showMessage(t('passwordError'), 'error'); return; }
+    auth.createUserWithEmailAndPassword(email, password)
+      .then(async (cred) => {
+        await cred.user.sendEmailVerification();
+        await db.collection('users').doc(cred.user.uid).set({
+          email, displayName: name, role: 'client', emailVerified: false,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        document.getElementById('loginModal')?.classList.add('hidden');
+        await auth.signOut();
+        showMessage(t('emailVerifySent'), 'success');
+      })
+      .catch(err => showMessage(t('errorOccurred') + err.message, 'error'));
+  });
+
+  document.getElementById('logoutBtn')?.addEventListener('click', () => {
+    auth.signOut();
+    showMessage(t('loggedOut'), 'success');
+  });
+
+  // ============================================
+  // MENU DROPDOWN
+  // ============================================
+  document.getElementById('menuBtn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('dropdownMenu')?.classList.toggle('hidden');
+  });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#menuDropdown')) {
+      document.getElementById('dropdownMenu')?.classList.add('hidden');
+    }
+  });
+  document.getElementById('menuSpecial')?.addEventListener('click', (e) => {
+    e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
+    currentView = 'specialOffers'; renderView('specialOffers');
+  });
+  document.getElementById('menuSettings')?.addEventListener('click', (e) => {
+    e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
+    currentView = 'settings'; renderView('settings');
+  });
+  document.getElementById('menuHistory')?.addEventListener('click', (e) => {
+    e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
+    currentView = 'history'; renderView('history');
+  });
+
+  // ============================================
+  // NOTIFICATIONS
+  // ============================================
+  async function loadNotifications() {
+    try {
+      const snap = await db.collection('notifications').orderBy('createdAt', 'desc').limit(20).get();
+      notifications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      updateNotifBadge();
+    } catch (e) { notifications = []; updateNotifBadge(); }
   }
-});
-document.getElementById('menuSpecial')?.addEventListener('click', (e) => {
-  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
-  currentView = 'specialOffers'; renderView('specialOffers');
-});
-document.getElementById('menuSettings')?.addEventListener('click', (e) => {
-  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
-  currentView = 'settings'; renderView('settings');
-});
-document.getElementById('menuHistory')?.addEventListener('click', (e) => {
-  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
-  currentView = 'history'; renderView('history');
-});
-
-// ============================================
-// NOTIFICATIONS
-// ============================================
-async function loadNotifications() {
-  try {
-    const snap = await db.collection('notifications').orderBy('createdAt', 'desc').limit(20).get();
-    notifications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    updateNotifBadge();
-  } catch (e) { notifications = []; updateNotifBadge(); }
-}
-function updateNotifBadge() {
-  const badge = document.getElementById('notifBadge');
-  if (!badge) return;
-  const unread = notifications.filter(n => !n.read).length;
-  if (unread > 0) { badge.textContent = unread > 99 ? '99+' : unread; badge.classList.remove('hidden'); }
-  else badge.classList.add('hidden');
-}
-document.getElementById('notifBtn')?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  document.getElementById('notifModal').classList.remove('hidden');
-  renderNotifList();
-});
-document.getElementById('closeNotifModal')?.addEventListener('click', () => {
-  document.getElementById('notifModal')?.classList.add('hidden');
-});
-document.getElementById('notifModal')?.addEventListener('click', (e) => {
-  if (e.target === document.getElementById('notifModal')) document.getElementById('notifModal').classList.add('hidden');
-});
-function renderNotifList() {
-  const list = document.getElementById('notifList');
-  if (!list) return;
-  if (notifications.length === 0) {
-    list.innerHTML = `<p class="text-center" style="padding:2rem;">🔔 ${t('noNotifications')}</p>`; return;
+  function updateNotifBadge() {
+    const badge = document.getElementById('notifBadge');
+    if (!badge) return;
+    const unread = notifications.filter(n => !n.read).length;
+    if (unread > 0) { badge.textContent = unread > 99 ? '99+' : unread; badge.classList.remove('hidden'); }
+    else badge.classList.add('hidden');
   }
-  list.innerHTML = notifications.map(n => `
+  document.getElementById('notifBtn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('notifModal').classList.remove('hidden');
+    renderNotifList();
+  });
+  document.getElementById('closeNotifModal')?.addEventListener('click', () => {
+    document.getElementById('notifModal')?.classList.add('hidden');
+  });
+  document.getElementById('notifModal')?.addEventListener('click', (e) => {
+    if (e.target === document.getElementById('notifModal')) document.getElementById('notifModal').classList.add('hidden');
+  });
+  function renderNotifList() {
+    const list = document.getElementById('notifList');
+    if (!list) return;
+    if (notifications.length === 0) {
+      list.innerHTML = `<p class="text-center" style="padding:2rem;">🔔 ${t('noNotifications')}</p>`; return;
+    }
+    list.innerHTML = notifications.map(n => `
     <div class="notif-item ${n.read ? '' : 'unread'}">
       <div class="notif-title">${n.type === 'promo' ? '🎉' : n.type === 'new' ? '🆕' : '💰'} ${n.title}</div>
       <p>${n.message}</p>
       <div class="notif-date">${n.createdAt?.toDate?.()?.toLocaleDateString?.('fr-FR') || t('today')}</div>
     </div>`).join('');
-}
+  }
 
-// ============================================
-// LANGUE
-// ============================================
-document.getElementById('langSwitch')?.addEventListener('change', (e) => {
-  currentLang = e.target.value;
-  applyLanguage();
-});
+  // ============================================
+  // LANGUE
+  // ============================================
+  document.getElementById('langSwitch')?.addEventListener('change', (e) => {
+    currentLang = e.target.value;
+    applyLanguage();
+  });
 
-document.getElementById('currencySwitch')?.addEventListener('change', (e) => {
-  currentCurrency = e.target.value;
-  renderView(currentView);
-});
+  document.getElementById('currencySwitch')?.addEventListener('change', (e) => {
+    currentCurrency = e.target.value;
+    renderView(currentView);
+  });
 
-// ============================================
-// NAVIGATION
-// ============================================
-document.getElementById('navHome')?.addEventListener('click', (e) => {
-  e.preventDefault(); setActiveNav('navHome');
-  currentView = isAdmin ? 'admin' : 'home'; renderView(currentView);
-});
-document.getElementById('navShop')?.addEventListener('click', (e) => {
-  e.preventDefault(); setActiveNav('navShop');
-  currentView = 'shop'; renderView('shop');
-});
-document.getElementById('navProfile')?.addEventListener('click', (e) => {
-  e.preventDefault(); setActiveNav('navProfile');
-  currentView = 'profile'; renderView('profile');
-});
-document.getElementById('navAdmin')?.addEventListener('click', (e) => {
-  e.preventDefault(); setActiveNav('navAdmin');
-  currentView = 'admin'; renderView('admin');
-});
-function setActiveNav(activeId) {
-  document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-  document.getElementById(activeId)?.classList.add('active');
-}
+  // ============================================
+  // NAVIGATION
+  // ============================================
+  document.getElementById('navHome')?.addEventListener('click', (e) => {
+    e.preventDefault(); setActiveNav('navHome');
+    currentView = isAdmin ? 'admin' : 'home'; renderView(currentView);
+  });
+  document.getElementById('navShop')?.addEventListener('click', (e) => {
+    e.preventDefault(); setActiveNav('navShop');
+    currentView = 'shop'; renderView('shop');
+  });
+  document.getElementById('navProfile')?.addEventListener('click', (e) => {
+    e.preventDefault(); setActiveNav('navProfile');
+    currentView = 'profile'; renderView('profile');
+  });
+  document.getElementById('navAdmin')?.addEventListener('click', (e) => {
+    e.preventDefault(); setActiveNav('navAdmin');
+    currentView = 'admin'; renderView('admin');
+  });
 
-// ============================================
-// MODAL ACHAT
-// ============================================
-document.getElementById('closeBuyModal')?.addEventListener('click', () => {
-  document.getElementById('buyModal')?.classList.add('hidden');
-});
-document.getElementById('submitOrder')?.addEventListener('click', async () => {
-  if (!currentUser) { showMessage(t('loginRequired'), 'error'); return; }
-  if (!currentUser.emailVerified) { showMessage(t('emailNotVerified'), 'error'); return; }
-  const address = document.getElementById('orderAddress')?.value.trim();
-  const payment = document.getElementById('orderPayment')?.value;
-  if (!address) { showMessage(t('fillAllFields'), 'error'); return; }
-  const product = products.find(p => p.id === selectedProductId);
-  if (!product) return;
-  try {
-    await db.collection('orders').add({
-      userId: currentUser.uid, userEmail: currentUser.email,
-      productId: product.id, productName: product.name,
-      price: product.price, currency: currentCurrency, image: product.image || '',
-      address, payment, status: 'pending', deliveryEstimate: '',
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+  // Dropdown Menu & items
+  document.getElementById('menuBtn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('dropdownMenu').classList.toggle('hidden');
+  });
+
+  document.addEventListener('click', () => {
+    document.getElementById('dropdownMenu')?.classList.add('hidden');
+  });
+
+  document.getElementById('menuSpecial')?.addEventListener('click', (e) => {
+    e.preventDefault(); renderView('specialOffers');
+  });
+  document.getElementById('menuSettings')?.addEventListener('click', (e) => {
+    e.preventDefault(); renderView('settings');
+  });
+  document.getElementById('menuHistory')?.addEventListener('click', (e) => {
+    e.preventDefault(); renderView('history');
+  });
+  function setActiveNav(activeId) {
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    document.getElementById(activeId)?.classList.add('active');
+  }
+
+  // ============================================
+  // MODAL ACHAT
+  // ============================================
+  document.getElementById('closeBuyModal')?.addEventListener('click', () => {
     document.getElementById('buyModal')?.classList.add('hidden');
-    document.getElementById('orderAddress').value = '';
-    showMessage(t('orderSuccess'), 'success');
-  } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
-});
+  });
+  document.getElementById('submitOrder')?.addEventListener('click', async () => {
+    if (!currentUser) { showMessage(t('loginRequired'), 'error'); return; }
+    if (!currentUser.emailVerified) { showMessage(t('emailNotVerified'), 'error'); return; }
+    const address = document.getElementById('orderAddress')?.value.trim();
+    const payment = document.getElementById('orderPayment')?.value;
+    if (!address) { showMessage(t('fillAllFields'), 'error'); return; }
+    const product = products.find(p => p.id === selectedProductId);
+    if (!product) return;
+    try {
+      await db.collection('orders').add({
+        userId: currentUser.uid, userEmail: currentUser.email,
+        productId: product.id, productName: product.name,
+        price: product.price, currency: currentCurrency, image: product.image || '',
+        address, payment, status: 'pending', deliveryEstimate: '',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      document.getElementById('buyModal')?.classList.add('hidden');
+      document.getElementById('orderAddress').value = '';
+      showMessage(t('orderSuccess'), 'success');
+    } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
+  });
 
-// ============================================
-// CHARGEMENT DONNÉES
-// ============================================
-async function loadProducts() {
-  try {
-    const snap = await db.collection('products').orderBy('createdAt', 'desc').get();
-    products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch (e) { products = []; }
-}
-async function loadAllOrders() {
-  try {
-    const snap = await db.collection('orders').orderBy('createdAt', 'desc').get();
-    orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch (e) { orders = []; }
-}
-async function loadMyOrders() {
-  if (!currentUser) { orders = []; return; }
-  try {
-    const snap = await db.collection('orders').where('userId', '==', currentUser.uid).orderBy('createdAt', 'desc').get();
-    orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch (e) { orders = []; }
-}
-async function loadAllUsers() {
-  try {
-    const snap = await db.collection('users').get();
-    allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch (e) { allUsers = []; }
-}
-async function loadAllData() {
-  await Promise.all([loadProducts(), loadAllOrders(), loadAllUsers()]);
-}
-
-// ============================================
-// RECHERCHE & FILTRES
-// ============================================
-function getFilteredProducts() {
-  let filtered = [...products];
-
-  const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase()?.trim() || '';
-  const category = document.getElementById('categoryFilter')?.value || 'all';
-  const priceMin = parseFloat(document.getElementById('priceMin')?.value) || 0;
-  const priceMax = parseFloat(document.getElementById('priceMax')?.value) || Infinity;
-  const sortBy = document.getElementById('sortBy')?.value || 'date-desc';
-
-  if (searchTerm) {
-    filtered = filtered.filter(p =>
-      p.name?.toLowerCase().includes(searchTerm) ||
-      p.description?.toLowerCase().includes(searchTerm)
-    );
+  // ============================================
+  // CHARGEMENT DONNÉES
+  // ============================================
+  async function loadProducts() {
+    try {
+      const snap = await db.collection('products').orderBy('createdAt', 'desc').get();
+      products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) { products = []; }
+  }
+  async function loadAllOrders() {
+    try {
+      const snap = await db.collection('orders').orderBy('createdAt', 'desc').get();
+      orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) { orders = []; }
+  }
+  async function loadMyOrders() {
+    if (!currentUser) { orders = []; return; }
+    try {
+      const snap = await db.collection('orders').where('userId', '==', currentUser.uid).orderBy('createdAt', 'desc').get();
+      orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) { orders = []; }
+  }
+  async function loadAllUsers() {
+    try {
+      const snap = await db.collection('users').get();
+      allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) { allUsers = []; }
+  }
+  async function loadAllData() {
+    await Promise.all([loadProducts(), loadAllOrders(), loadAllUsers()]);
   }
 
-  if (category !== 'all') {
-    filtered = filtered.filter(p => p.category === category);
+  // ============================================
+  // RECHERCHE & FILTRES
+  // ============================================
+  function getFilteredProducts() {
+    let filtered = [...products];
+
+    const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase()?.trim() || '';
+    const category = document.getElementById('categoryFilter')?.value || 'all';
+    const priceMin = parseFloat(document.getElementById('priceMin')?.value) || 0;
+    const priceMax = parseFloat(document.getElementById('priceMax')?.value) || Infinity;
+    const sortBy = document.getElementById('sortBy')?.value || 'date-desc';
+
+    if (searchTerm) {
+      filtered = filtered.filter(p =>
+        p.name?.toLowerCase().includes(searchTerm) ||
+        p.description?.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    if (category !== 'all') {
+      filtered = filtered.filter(p => p.category === category);
+    }
+
+    filtered = filtered.filter(p => p.price >= priceMin && p.price <= priceMax);
+
+    switch (sortBy) {
+      case 'date-asc': filtered.sort((a, b) => (a.createdAt?.toDate?.() || 0) - (b.createdAt?.toDate?.() || 0)); break;
+      case 'price-asc': filtered.sort((a, b) => a.price - b.price); break;
+      case 'price-desc': filtered.sort((a, b) => b.price - a.price); break;
+      case 'name-asc': filtered.sort((a, b) => (a.name || '').localeCompare(b.name || '')); break;
+      case 'name-desc': filtered.sort((a, b) => (b.name || '').localeCompare(a.name || '')); break;
+      default: filtered.sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0)); break;
+    }
+
+    return filtered;
   }
 
-  filtered = filtered.filter(p => p.price >= priceMin && p.price <= priceMax);
+  function displayFilteredProducts() {
+    const filtered = getFilteredProducts();
+    const resultsCount = document.getElementById('resultsCount');
 
-  switch (sortBy) {
-    case 'date-asc': filtered.sort((a, b) => (a.createdAt?.toDate?.() || 0) - (b.createdAt?.toDate?.() || 0)); break;
-    case 'price-asc': filtered.sort((a, b) => a.price - b.price); break;
-    case 'price-desc': filtered.sort((a, b) => b.price - a.price); break;
-    case 'name-asc': filtered.sort((a, b) => (a.name || '').localeCompare(b.name || '')); break;
-    case 'name-desc': filtered.sort((a, b) => (b.name || '').localeCompare(a.name || '')); break;
-    default: filtered.sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0)); break;
-  }
+    if (resultsCount) {
+      if (filtered.length === 0) {
+        resultsCount.innerHTML = `🔍 ${t('noResultsFound')}`;
+      } else {
+        resultsCount.innerHTML = `<span>${filtered.length}</span> ${t('resultsFound')}`;
+      }
+    }
 
-  return filtered;
-}
-
-function displayFilteredProducts() {
-  const filtered = getFilteredProducts();
-  const resultsCount = document.getElementById('resultsCount');
-
-  if (resultsCount) {
     if (filtered.length === 0) {
-      resultsCount.innerHTML = `🔍 ${t('noResultsFound')}`;
+      return `<p class="text-center" style="grid-column:1/-1; padding:3rem;">📭 ${t('noResultsFound')}</p>`;
+    }
+
+    return filtered.map(p => productCardHTML(p)).join('');
+  }
+
+  function setupSearchAndFilters() {
+    const searchBar = document.getElementById('searchFilterBar');
+    if (searchBar) searchBar.classList.remove('hidden');
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      searchInput.addEventListener('input', debounce(() => refreshProductGrid(), 300));
+    }
+
+    document.getElementById('searchBtn')?.addEventListener('click', () => refreshProductGrid());
+
+    searchInput?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') refreshProductGrid();
+    });
+
+    document.getElementById('applyFiltersBtn')?.addEventListener('click', () => refreshProductGrid());
+
+    document.getElementById('resetFiltersBtn')?.addEventListener('click', () => {
+      const si = document.getElementById('searchInput');
+      const cf = document.getElementById('categoryFilter');
+      const pmin = document.getElementById('priceMin');
+      const pmax = document.getElementById('priceMax');
+      const sb = document.getElementById('sortBy');
+      if (si) si.value = '';
+      if (cf) cf.value = 'all';
+      if (pmin) pmin.value = '';
+      if (pmax) pmax.value = '';
+      if (sb) sb.value = 'date-desc';
+      refreshProductGrid();
+    });
+
+    document.getElementById('categoryFilter')?.addEventListener('change', () => refreshProductGrid());
+    document.getElementById('sortBy')?.addEventListener('change', () => refreshProductGrid());
+    document.getElementById('priceMin')?.addEventListener('input', debounce(() => refreshProductGrid(), 500));
+    document.getElementById('priceMax')?.addEventListener('input', debounce(() => refreshProductGrid(), 500));
+  }
+
+  function refreshProductGrid() {
+    const grid = document.getElementById('allProducts') || document.getElementById('featuredProducts');
+    if (grid) {
+      grid.innerHTML = displayFilteredProducts();
+      attachBuyButtons();
+    }
+  }
+
+  // ============================================
+  // RENDU VUES
+  // ============================================
+  async function renderView(view) {
+    currentView = view;
+    const app = document.getElementById('appContent');
+    if (!app) return;
+
+    // Afficher/cacher la barre de recherche
+    const searchBar = document.getElementById('searchFilterBar');
+    if (searchBar) {
+      if (view === 'shop' || view === 'specialOffers') {
+        searchBar.classList.remove('hidden');
+      } else {
+        searchBar.classList.add('hidden');
+      }
+    }
+
+    if (isAdmin && (view === 'home' || view === 'admin')) {
+      await renderAdminDashboard(app);
     } else {
-      resultsCount.innerHTML = `<span>${filtered.length}</span> ${t('resultsFound')}`;
+      switch (view) {
+        case 'home': await renderHome(app); break;
+        case 'shop': await renderShop(app); break;
+        case 'orders': await renderProfile(app); break;
+        case 'profile': await renderProfile(app); break;
+        case 'specialOffers': await renderSpecialOffers(app); break;
+        case 'settings': renderSettings(app); break;
+        case 'history': await renderProfile(app); break;
+        default: await renderHome(app);
+      }
     }
   }
 
-  if (filtered.length === 0) {
-    return `<p class="text-center" style="grid-column:1/-1; padding:3rem;">📭 ${t('noResultsFound')}</p>`;
-  }
-
-  return filtered.map(p => productCardHTML(p)).join('');
-}
-
-function setupSearchAndFilters() {
-  const searchBar = document.getElementById('searchFilterBar');
-  if (searchBar) searchBar.classList.remove('hidden');
-
-  const searchInput = document.getElementById('searchInput');
-  if (searchInput) {
-    searchInput.addEventListener('input', debounce(() => refreshProductGrid(), 300));
-  }
-
-  document.getElementById('searchBtn')?.addEventListener('click', () => refreshProductGrid());
-
-  searchInput?.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') refreshProductGrid();
-  });
-
-  document.getElementById('applyFiltersBtn')?.addEventListener('click', () => refreshProductGrid());
-
-  document.getElementById('resetFiltersBtn')?.addEventListener('click', () => {
-    const si = document.getElementById('searchInput');
-    const cf = document.getElementById('categoryFilter');
-    const pmin = document.getElementById('priceMin');
-    const pmax = document.getElementById('priceMax');
-    const sb = document.getElementById('sortBy');
-    if (si) si.value = '';
-    if (cf) cf.value = 'all';
-    if (pmin) pmin.value = '';
-    if (pmax) pmax.value = '';
-    if (sb) sb.value = 'date-desc';
-    refreshProductGrid();
-  });
-
-  document.getElementById('categoryFilter')?.addEventListener('change', () => refreshProductGrid());
-  document.getElementById('sortBy')?.addEventListener('change', () => refreshProductGrid());
-  document.getElementById('priceMin')?.addEventListener('input', debounce(() => refreshProductGrid(), 500));
-  document.getElementById('priceMax')?.addEventListener('input', debounce(() => refreshProductGrid(), 500));
-}
-
-function refreshProductGrid() {
-  const grid = document.getElementById('allProducts') || document.getElementById('featuredProducts');
-  if (grid) {
-    grid.innerHTML = displayFilteredProducts();
-    attachBuyButtons();
-  }
-}
-
-// ============================================
-// RENDU VUES
-// ============================================
-async function renderView(view) {
-  currentView = view;
-  const app = document.getElementById('appContent');
-  if (!app) return;
-
-  // Afficher/cacher la barre de recherche
-  const searchBar = document.getElementById('searchFilterBar');
-  if (searchBar) {
-    if (view === 'shop' || view === 'specialOffers') {
-      searchBar.classList.remove('hidden');
-    } else {
-      searchBar.classList.add('hidden');
-    }
-  }
-
-  if (isAdmin && (view === 'home' || view === 'admin')) {
-    await renderAdminDashboard(app);
-  } else {
-    switch (view) {
-      case 'home': await renderHome(app); break;
-      case 'shop': await renderShop(app); break;
-      case 'orders': await renderProfile(app); break;
-      case 'profile': await renderProfile(app); break;
-      case 'specialOffers': await renderSpecialOffers(app); break;
-      case 'settings': renderSettings(app); break;
-      case 'history': await renderProfile(app); break;
-      default: await renderHome(app);
-    }
-  }
-}
-
-function productCardHTML(product) {
-  const hasPromo = product.oldPrice && product.oldPrice > product.price;
-  return `
+  function productCardHTML(product) {
+    const hasPromo = product.oldPrice && product.oldPrice > product.price;
+    return `
     <div class="product-card" style="position:relative;">
       ${hasPromo ? `<div class="product-badge">🔥 ${t('specialPrice')}</div>` : ''}
       <img src="${product.image || 'https://via.placeholder.com/400x250/0f1f38/c8963e?text=Total+Lakay'}" alt="${product.name}" class="product-img" onerror="this.src='https://via.placeholder.com/400x250/0f1f38/c8963e?text=Total+Lakay'">
@@ -1044,23 +1114,23 @@ function productCardHTML(product) {
         </div>
       </div>
     </div>`;
-}
+  }
 
-// ============================================
-// DASHBOARD ADMIN (inchangé - déjà complet)
-// ============================================
-async function renderAdminDashboard(app) {
-  if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
-  await loadAllData();
+  // ============================================
+  // DASHBOARD ADMIN (inchangé - déjà complet)
+  // ============================================
+  async function renderAdminDashboard(app) {
+    if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
+    await loadAllData();
 
-  const totalProducts = products.length;
-  const totalOrders = orders.length;
-  const totalClients = allUsers.filter(u => u.role === 'client').length;
-  const pendingCount = orders.filter(o => o.status === 'pending').length;
-  const confirmedCount = orders.filter(o => o.status === 'confirmed').length;
-  const totalRevenue = orders.reduce((sum, o) => sum + (o.price || 0), 0);
+    const totalProducts = products.length;
+    const totalOrders = orders.length;
+    const totalClients = allUsers.filter(u => u.role === 'client').length;
+    const pendingCount = orders.filter(o => o.status === 'pending').length;
+    const confirmedCount = orders.filter(o => o.status === 'confirmed').length;
+    const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
 
-  app.innerHTML = `
+    app.innerHTML = `
     <h2>📊 ${t('dashboard')} - ${t('welcomeAdmin')}</h2>
     <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:1rem; margin:1.5rem 0;">
       <div class="card text-center" style="padding:1.2rem; border-left:4px solid #c8963e;"><div style="font-size:2rem; font-weight:800; color:#c8963e;">${totalProducts}</div><div>📦 ${t('totalProducts')}</div></div>
@@ -1080,97 +1150,97 @@ async function renderAdminDashboard(app) {
     <div id="adminSendNotifForm" class="card mt-2 hidden"><h3>🔔 ${t('sendNotification')}</h3><input id="notifTitle" placeholder="${t('notificationTitle')}"><textarea id="notifMessage" placeholder="${t('notificationMessage')}"></textarea><button id="sendNotifBtn" class="btn btn-gold mt-2">📤 ${t('sendNotification')}</button></div>
   `;
 
-  // Events Admin
-  document.getElementById('adminAddProductBtn')?.addEventListener('click', () => {
-    document.getElementById('adminAddProductForm').classList.toggle('hidden');
-    document.getElementById('adminClientsList').classList.add('hidden');
-    document.getElementById('adminSendNotifForm').classList.add('hidden');
-  });
-  document.getElementById('adminManageOrdersBtn')?.addEventListener('click', () => {
-    document.getElementById('adminOrderList').scrollIntoView({ behavior: 'smooth' });
-  });
-  document.getElementById('adminManageClientsBtn')?.addEventListener('click', () => {
-    document.getElementById('adminClientsList').classList.toggle('hidden');
-    document.getElementById('adminAddProductForm').classList.add('hidden');
-    document.getElementById('adminSendNotifForm').classList.add('hidden');
-  });
-  document.getElementById('adminSendNotifBtn')?.addEventListener('click', () => {
-    document.getElementById('adminSendNotifForm').classList.toggle('hidden');
-    document.getElementById('adminAddProductForm').classList.add('hidden');
-    document.getElementById('adminClientsList').classList.add('hidden');
-  });
+    // Events Admin
+    document.getElementById('adminAddProductBtn')?.addEventListener('click', () => {
+      document.getElementById('adminAddProductForm').classList.toggle('hidden');
+      document.getElementById('adminClientsList').classList.add('hidden');
+      document.getElementById('adminSendNotifForm').classList.add('hidden');
+    });
+    document.getElementById('adminManageOrdersBtn')?.addEventListener('click', () => {
+      document.getElementById('adminOrderList').scrollIntoView({ behavior: 'smooth' });
+    });
+    document.getElementById('adminManageClientsBtn')?.addEventListener('click', () => {
+      document.getElementById('adminClientsList').classList.toggle('hidden');
+      document.getElementById('adminAddProductForm').classList.add('hidden');
+      document.getElementById('adminSendNotifForm').classList.add('hidden');
+    });
+    document.getElementById('adminSendNotifBtn')?.addEventListener('click', () => {
+      document.getElementById('adminSendNotifForm').classList.toggle('hidden');
+      document.getElementById('adminAddProductForm').classList.add('hidden');
+      document.getElementById('adminClientsList').classList.add('hidden');
+    });
 
-  document.getElementById('saveProductBtn')?.addEventListener('click', async () => {
-    const name = document.getElementById('adminProdName')?.value.trim();
-    const price = parseFloat(document.getElementById('adminProdPrice')?.value);
-    const oldPrice = parseFloat(document.getElementById('adminProdOldPrice')?.value) || null;
-    const image = document.getElementById('adminProdImage')?.value.trim();
-    const description = document.getElementById('adminProdDesc')?.value.trim();
-    if (!name || !price) { showMessage(t('fillAllFields'), 'error'); return; }
-    try {
-      await db.collection('products').add({ name, price, oldPrice, image: image || '', description, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-      showMessage(t('productAdded'), 'success');
-      await loadAllData(); renderView('admin');
-    } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
-  });
-
-  document.querySelectorAll('.delete-product').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      if (confirm(t('confirmDelete'))) {
-        await db.collection('products').doc(e.currentTarget.dataset.id).delete();
-        showMessage(t('productDeleted'), 'success');
+    document.getElementById('saveProductBtn')?.addEventListener('click', async () => {
+      const name = document.getElementById('adminProdName')?.value.trim();
+      const price = parseFloat(document.getElementById('adminProdPrice')?.value);
+      const oldPrice = parseFloat(document.getElementById('adminProdOldPrice')?.value) || null;
+      const image = document.getElementById('adminProdImage')?.value.trim();
+      const description = document.getElementById('adminProdDesc')?.value.trim();
+      if (!name || !price) { showMessage(t('fillAllFields'), 'error'); return; }
+      try {
+        await db.collection('products').add({ name, price, oldPrice, image: image || '', description, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        showMessage(t('productAdded'), 'success');
         await loadAllData(); renderView('admin');
-      }
+      } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
     });
-  });
 
-  document.querySelectorAll('.status-select').forEach(select => {
-    select.addEventListener('change', async (e) => {
-      await db.collection('orders').doc(e.target.dataset.orderId).update({ status: e.target.value });
-      showMessage(t('statusUpdated'), 'success');
+    document.querySelectorAll('.delete-product').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        if (confirm(t('confirmDelete'))) {
+          await db.collection('products').doc(e.currentTarget.dataset.id).delete();
+          showMessage(t('productDeleted'), 'success');
+          await loadAllData(); renderView('admin');
+        }
+      });
     });
-  });
 
-  document.querySelectorAll('.update-delay').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const orderId = e.currentTarget.dataset.id;
-      const delay = document.getElementById(`delay-${orderId}`).value.trim();
-      if (!delay) { showMessage(t('delayRequired'), 'error'); return; }
-      await db.collection('orders').doc(orderId).update({ deliveryEstimate: delay });
-      showMessage(t('delayUpdated'), 'success');
+    document.querySelectorAll('.status-select').forEach(select => {
+      select.addEventListener('change', async (e) => {
+        await db.collection('orders').doc(e.target.dataset.orderId).update({ status: e.target.value });
+        showMessage(t('statusUpdated'), 'success');
+      });
     });
-  });
 
-  document.querySelectorAll('.toggle-role').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const uid = e.currentTarget.dataset.uid;
-      const currentRole = e.currentTarget.dataset.role;
-      const newRole = currentRole === 'admin' ? 'client' : 'admin';
-      await db.collection('users').doc(uid).update({ role: newRole });
-      showMessage(newRole === 'admin' ? t('madeAdmin') : t('madeClient'), 'success');
-      await loadAllData(); renderView('admin');
+    document.querySelectorAll('.update-delay').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const orderId = e.currentTarget.dataset.id;
+        const delay = document.getElementById(`delay-${orderId}`).value.trim();
+        if (!delay) { showMessage(t('delayRequired'), 'error'); return; }
+        await db.collection('orders').doc(orderId).update({ deliveryEstimate: delay });
+        showMessage(t('delayUpdated'), 'success');
+      });
     });
-  });
 
-  document.getElementById('sendNotifBtn')?.addEventListener('click', async () => {
-    const title = document.getElementById('notifTitle')?.value.trim();
-    const message = document.getElementById('notifMessage')?.value.trim();
-    if (!title || !message) { showMessage(t('fillAllFields'), 'error'); return; }
-    await db.collection('notifications').add({ title, message, type: 'promo', read: false, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-    showMessage(t('notifSent'), 'success');
-    document.getElementById('notifTitle').value = '';
-    document.getElementById('notifMessage').value = '';
-    document.getElementById('adminSendNotifForm').classList.add('hidden');
-  });
-}
+    document.querySelectorAll('.toggle-role').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const uid = e.currentTarget.dataset.uid;
+        const currentRole = e.currentTarget.dataset.role;
+        const newRole = currentRole === 'admin' ? 'client' : 'admin';
+        await db.collection('users').doc(uid).update({ role: newRole });
+        showMessage(newRole === 'admin' ? t('madeAdmin') : t('madeClient'), 'success');
+        await loadAllData(); renderView('admin');
+      });
+    });
 
-// ============================================
-// PAGES CLIENT
-// ============================================
-async function renderHome(app) {
-  await loadProducts();
-  const specials = products.filter(p => p.oldPrice && p.oldPrice > p.price);
-  app.innerHTML = `
+    document.getElementById('sendNotifBtn')?.addEventListener('click', async () => {
+      const title = document.getElementById('notifTitle')?.value.trim();
+      const message = document.getElementById('notifMessage')?.value.trim();
+      if (!title || !message) { showMessage(t('fillAllFields'), 'error'); return; }
+      await db.collection('notifications').add({ title, message, type: 'promo', read: false, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      showMessage(t('notifSent'), 'success');
+      document.getElementById('notifTitle').value = '';
+      document.getElementById('notifMessage').value = '';
+      document.getElementById('adminSendNotifForm').classList.add('hidden');
+    });
+  }
+
+  // ============================================
+  // PAGES CLIENT
+  // ============================================
+  async function renderHome(app) {
+    await loadProducts();
+    const specials = products.filter(p => p.oldPrice && p.oldPrice > p.price);
+    app.innerHTML = `
     <div class="card text-center">
       <h1 style="color:var(--blue-deep);">🏠 ${t('welcome')}</h1>
       <p style="font-size:1.2rem;">${t('slogan')}</p>
@@ -1179,45 +1249,45 @@ async function renderHome(app) {
     </div>
     <h2>🔥 ${t('featured')}</h2>
     <div class="grid">${products.length === 0 ? `<p>📦 ${t('noProducts')}</p>` : products.slice(0, 4).map(p => productCardHTML(p)).join('')}</div>`;
-  document.getElementById('goShopBtn')?.addEventListener('click', () => { currentView = 'shop'; renderView('shop'); });
-  attachBuyButtons();
-}
-
-async function renderShop(app) {
-  await loadProducts();
-  app.innerHTML = `<h2>🛍️ ${t('shop')}</h2><div class="grid" id="allProducts">${displayFilteredProducts()}</div>`;
-  attachBuyButtons();
-  setupSearchAndFilters();
-}
-
-async function renderSpecialOffers(app) {
-  await loadProducts();
-  app.innerHTML = `<h2>🎉 ${t('specialOffers')}</h2><div class="grid" id="allProducts">${displayFilteredProducts()}</div>`;
-  attachBuyButtons();
-  setupSearchAndFilters();
-}
-
-async function renderProfile(app) {
-  if (!currentUser) {
-    app.innerHTML = `<div class="card text-center"><p>🔐 ${t('loginRequired')}</p><button class="btn btn-gold" id="loginFromOrders">${t('login')}</button></div>`;
-    document.getElementById('loginFromOrders')?.addEventListener('click', () => document.getElementById('authBtn')?.click());
-    return;
+    document.getElementById('goShopBtn')?.addEventListener('click', () => { currentView = 'shop'; renderView('shop'); });
+    attachBuyButtons();
   }
 
-  // Charger les données utilisateur (adresse, téléphone)
-  let userAddress = '';
-  let userPhone = '';
-  try {
-    const userDoc = await db.collection('users').doc(currentUser.uid).get();
-    if (userDoc.exists) {
-      userAddress = userDoc.data().address || '';
-      userPhone = userDoc.data().phone || '';
+  async function renderShop(app) {
+    await loadProducts();
+    app.innerHTML = `<h2>🛍️ ${t('shop')}</h2><div class="grid" id="allProducts">${displayFilteredProducts()}</div>`;
+    attachBuyButtons();
+    setupSearchAndFilters();
+  }
+
+  async function renderSpecialOffers(app) {
+    await loadProducts();
+    app.innerHTML = `<h2>🎉 ${t('specialOffers')}</h2><div class="grid" id="allProducts">${displayFilteredProducts()}</div>`;
+    attachBuyButtons();
+    setupSearchAndFilters();
+  }
+
+  async function renderProfile(app) {
+    if (!currentUser) {
+      app.innerHTML = `<div class="card text-center"><p>🔐 ${t('loginRequired')}</p><button class="btn btn-gold" id="loginFromOrders">${t('login')}</button></div>`;
+      document.getElementById('loginFromOrders')?.addEventListener('click', () => document.getElementById('authBtn')?.click());
+      return;
     }
-  } catch (e) { console.error("Erreur profil:", e); }
 
-  await loadMyOrders();
+    // Charger les données utilisateur (adresse, téléphone)
+    let userAddress = '';
+    let userPhone = '';
+    try {
+      const userDoc = await db.collection('users').doc(currentUser.uid).get();
+      if (userDoc.exists) {
+        userAddress = userDoc.data().address || '';
+        userPhone = userDoc.data().phone || '';
+      }
+    } catch (e) { console.error("Erreur profil:", e); }
 
-  app.innerHTML = `
+    await loadMyOrders();
+
+    app.innerHTML = `
     <div class="card-premium">
       <h2>👤 ${t('profile')}</h2>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
@@ -1257,117 +1327,122 @@ async function renderProfile(app) {
       </div>`).join('')}
   `;
 
-  document.getElementById('saveProfileBtn')?.addEventListener('click', async () => {
-    const name = document.getElementById('profName').value.trim();
-    const address = document.getElementById('profAddress').value.trim();
-    const phone = document.getElementById('profPhone').value.trim();
+    document.getElementById('saveProfileBtn')?.addEventListener('click', async () => {
+      const name = document.getElementById('profName').value.trim();
+      const address = document.getElementById('profAddress').value.trim();
+      const phone = document.getElementById('profPhone').value.trim();
 
-    try {
-      await db.collection('users').doc(currentUser.uid).update({
-        displayName: name,
-        address: address,
-        phone: phone
-      });
-      // Mettre à jour le profil Firebase Auth aussi
-      await currentUser.updateProfile({ displayName: name });
-      showMessage(t('profileUpdated'), 'success');
-      renderView('profile');
-    } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
-  });
-}
+      try {
+        await db.collection('users').doc(currentUser.uid).update({
+          displayName: name,
+          address: address,
+          phone: phone
+        });
+        // Mettre à jour le profil Firebase Auth aussi
+        await currentUser.updateProfile({ displayName: name });
+        showMessage(t('profileUpdated'), 'success');
+        renderView('profile');
+      } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
+    });
+  }
 
-async function renderClientOrders(app) {
-  await renderProfile(app);
-}
+  async function renderClientOrders(app) {
+    await renderProfile(app);
+  }
 
-function renderSettings(app) {
-  app.innerHTML = `
+  function renderSettings(app) {
+    app.innerHTML = `
     <div class="card-premium">
       <h2>⚙️ ${t('settings')}</h2>
       <div><label>🌍 ${t('language')}</label><select id="settingsLang" style="width:auto;"><option value="ht" ${currentLang === 'ht' ? 'selected' : ''}>🇭🇹 Kreyòl</option><option value="fr" ${currentLang === 'fr' ? 'selected' : ''}>🇫🇷 Français</option><option value="en" ${currentLang === 'en' ? 'selected' : ''}>🇺🇸 English</option><option value="es" ${currentLang === 'es' ? 'selected' : ''}>🇪🇸 Español</option></select></div>
       ${currentUser ? `<div style="margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid #eee;"><h4>${t('accountInfo')}</h4><p><strong>${t('email')}:</strong> ${currentUser.email}</p><p><strong>${t('name')}:</strong> ${currentUser.displayName || '---'}</p><p><strong>${t('role')}:</strong> ${isAdmin ? 'Admin' : 'Client'}</p><p><strong>${t('emailVerified')}:</strong> ${currentUser.emailVerified ? '✅ ' + t('yes') : '❌ ' + t('no')}</p>${!currentUser.emailVerified ? `<button class="btn btn-gold btn-sm mt-2" id="resendVerifyEmail">📧 ${t('resendVerifyEmail')}</button>` : ''}</div>` : ''}
     </div>`;
-  document.getElementById('settingsLang')?.addEventListener('change', (e) => { currentLang = e.target.value; document.getElementById('langSwitch').value = currentLang; applyLanguage(); });
-  document.getElementById('resendVerifyEmail')?.addEventListener('click', async () => { if (currentUser) { await currentUser.sendEmailVerification(); showMessage(t('emailVerifySent'), 'success'); } });
-}
-
-// ============================================
-// ATTACHER BOUTONS ACHAT
-// ============================================
-function attachBuyButtons() {
-  document.querySelectorAll('.add-cart-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      addToCart(e.currentTarget.dataset.productId);
-    });
-  });
-
-  document.querySelectorAll('.buy-now-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      if (!currentUser) { showMessage(t('loginRequired'), 'error'); document.getElementById('authBtn')?.click(); return; }
-      if (!currentUser.emailVerified) { showMessage(t('emailNotVerified'), 'error'); return; }
-      const product = products.find(p => p.id === e.currentTarget.dataset.productId);
-      if (!product) return;
-      selectedProductId = product.id;
-      document.getElementById('modalProductName').textContent = product.name;
-      document.getElementById('modalProductPrice').textContent = formatPrice(product.price);
-      document.getElementById('buyModal').classList.remove('hidden');
-      
-      try {
-        const userDoc = await db.collection('users').doc(currentUser.uid).get();
-        if (userDoc.exists && userDoc.data().address) {
-          document.getElementById('orderAddress').value = userDoc.data().address;
-        } else {
-          document.getElementById('orderAddress').value = '';
-        }
-      } catch(e) { document.getElementById('orderAddress').value = ''; }
-    });
-  });
-}
-
-// Event Listeners Panier
-document.getElementById('cartBtn')?.addEventListener('click', () => {
-  document.getElementById('cartModal').classList.remove('hidden');
-  renderCart();
-});
-
-document.getElementById('closeCartModal')?.addEventListener('click', () => {
-  document.getElementById('cartModal').classList.add('hidden');
-});
-
-document.getElementById('checkoutBtn')?.addEventListener('click', async () => {
-  if (!currentUser) { 
-    document.getElementById('cartModal').classList.add('hidden');
-    showMessage(t('loginRequired'), 'error'); 
-    document.getElementById('authBtn')?.click(); 
-    return; 
+    document.getElementById('settingsLang')?.addEventListener('change', (e) => { currentLang = e.target.value; document.getElementById('langSwitch').value = currentLang; applyLanguage(); });
+    document.getElementById('resendVerifyEmail')?.addEventListener('click', async () => { if (currentUser) { await currentUser.sendEmailVerification(); showMessage(t('emailVerifySent'), 'success'); } });
   }
-  if (cart.length === 0) return;
 
-  // Pour l'instant, on redirige vers le premier produit du panier pour simplification ou on crée une commande groupée
-  // Dans cette version, on va créer une commande pour chaque item ou une commande "panier"
-  try {
-    for (const item of cart) {
-      await db.collection('orders').add({
-        userId: currentUser.uid, userEmail: currentUser.email,
-        productId: item.id, productName: item.name,
-        price: item.price, currency: currentCurrency, image: item.image || '',
-        address: 'Panier - Checkout', status: 'pending',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  // ============================================
+  // ATTACHER BOUTONS ACHAT
+  // ============================================
+  function attachBuyButtons() {
+    document.querySelectorAll('.add-cart-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        addToCart(e.currentTarget.dataset.productId);
       });
-    }
-    cart = [];
-    updateCartBadge();
-    document.getElementById('cartModal').classList.add('hidden');
-    showMessage(t('orderSuccess'), 'success');
-    renderView('profile');
-  } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
-});
+    });
 
-// ============================================
-// DÉMARRAGE
-// ============================================
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 Total Lakay - Version Ultime avec Recherche & Filtres');
-  applyLanguage();
-  renderView('home');
-});
+    document.querySelectorAll('.buy-now-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        if (!currentUser) { showMessage(t('loginRequired'), 'error'); document.getElementById('authBtn')?.click(); return; }
+        if (!currentUser.emailVerified) { showMessage(t('emailNotVerified'), 'error'); return; }
+        const product = products.find(p => p.id === e.currentTarget.dataset.productId);
+        if (!product) return;
+        selectedProductId = product.id;
+        document.getElementById('modalProductName').textContent = product.name;
+        document.getElementById('modalProductPrice').textContent = formatPrice(product.price);
+        document.getElementById('buyModal').classList.remove('hidden');
+
+        try {
+          const userDoc = await db.collection('users').doc(currentUser.uid).get();
+          if (userDoc.exists && userDoc.data().address) {
+            document.getElementById('orderAddress').value = userDoc.data().address;
+          } else {
+            document.getElementById('orderAddress').value = '';
+          }
+        } catch (e) { document.getElementById('orderAddress').value = ''; }
+      });
+    });
+  }
+
+  // Event Listeners Panier
+  document.getElementById('cartBtn')?.addEventListener('click', () => {
+    document.getElementById('cartModal').classList.remove('hidden');
+    renderCart();
+  });
+
+  document.getElementById('notifBtn')?.addEventListener('click', () => {
+    currentView = 'notifications';
+    renderNotificationsModal();
+  });
+
+  document.getElementById('closeCartModal')?.addEventListener('click', () => {
+    document.getElementById('cartModal').classList.add('hidden');
+  });
+
+  document.getElementById('checkoutBtn')?.addEventListener('click', async () => {
+    if (!currentUser) {
+      document.getElementById('cartModal').classList.add('hidden');
+      showMessage(t('loginRequired'), 'error');
+      document.getElementById('authBtn')?.click();
+      return;
+    }
+    if (cart.length === 0) return;
+
+    // Pour l'instant, on redirige vers le premier produit du panier pour simplification ou on crée une commande groupée
+    // Dans cette version, on va créer une commande pour chaque item ou une commande "panier"
+    try {
+      for (const item of cart) {
+        await db.collection('orders').add({
+          userId: currentUser.uid, userEmail: currentUser.email,
+          productId: item.id, productName: item.name,
+          price: item.price, currency: currentCurrency, image: item.image || '',
+          address: 'Panier - Checkout', status: 'pending',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+      cart = [];
+      updateCartBadge();
+      document.getElementById('cartModal').classList.add('hidden');
+      showMessage(t('orderSuccess'), 'success');
+      renderView('profile');
+    } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
+  });
+
+  // ============================================
+  // DÉMARRAGE
+  // ============================================
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Total Lakay - Version Ultime avec Recherche & Filtres');
+    applyLanguage();
+    renderView('home');
+  });
