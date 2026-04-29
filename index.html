@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>Total Lakay | Tout bagay lakay ou</title>
 
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
   <!-- CSS -->
   <link rel="stylesheet" href="style.css">
 
@@ -43,6 +46,12 @@
       <a href="#" id="navAdmin" class="nav-item hidden admin-only">
         📊 <span data-i18n="dashboard">Tablodbò</span>
       </a>
+
+      <!-- Panier -->
+      <button id="cartBtn" class="notif-btn" title="Panier">
+        🛒
+        <span id="cartBadge" class="notif-badge hidden">0</span>
+      </button>
 
       <!-- Notifications -->
       <button id="notifBtn" class="notif-btn" title="Notifikasyon">
@@ -247,20 +256,64 @@
     </div>
   </div>
 
+  <!-- ========== BOUTON WHATSAPP FLOTTANT ========== -->
+  <a href="https://wa.me/50937373737" class="whatsapp-float" target="_blank" title="WhatsApp Support">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+  </a>
+
   <!-- ========== FOOTER PREMIUM ========== -->
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-brand">
         <img src="logo.jpeg" alt="Total Lakay" class="footer-logo" onerror="this.style.display='none';">
+        <p><strong>Total Lakay</strong><br>Tout bagay lakay ou</p>
         <p data-i18n="footerRights">Total Lakay &copy; 2026</p>
       </div>
+
+      <div class="footer-section">
+        <h4 data-i18n="contactUs">Kontakte nou</h4>
+        <p>📍 Port-au-Prince, Haïti</p>
+        <p>📞 +509 37 37 37 37</p>
+        <p>📧 support@totallakay.com</p>
+      </div>
+
+      <div class="footer-section">
+        <h4 data-i18n="securePayment">Peman Sekirize</h4>
+        <div class="trust-badges">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" height="20">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" height="20">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" height="20">
+          <div class="moncash-badge">MonCash</div>
+        </div>
+      </div>
+
       <div class="footer-links">
-        <a href="#" data-i18n="footerContact">Kontakte nou</a>
         <a href="#" data-i18n="footerServices">Sèvis</a>
         <a href="#" data-i18n="footerPrivacy">Konfidansyalite</a>
+        <a href="#" data-i18n="footerTerms">Kondisyon</a>
       </div>
     </div>
   </footer>
+
+  <!-- ========== MODAL PANIER ========== -->
+  <div id="cartModal" class="modal hidden">
+    <div class="modal-content card-premium" style="max-width: 600px;">
+      <span class="close-modal" id="closeCartModal">&times;</span>
+      <h2>🛒 <span data-i18n="cart">Panier</span></h2>
+      <div id="cartItemsList" class="cart-items-list">
+        <!-- Rempli par JS -->
+      </div>
+      <div class="cart-summary">
+        <div class="cart-total">
+          <span data-i18n="total">Total</span>: <span id="cartTotalAmount">0.00</span>
+        </div>
+        <button id="checkoutBtn" class="btn btn-gold" style="width:100%; margin-top:1rem;">
+          💳 <span data-i18n="checkout">Payer maintenant</span>
+        </button>
+        <p class="secure-text">🔒 <span data-i18n="securePaymentInfo">Paiement 100% sécurisé</span></p>
+      </div>
+    </div>
+  </div>
 
   <!-- ========== JavaScript ========== -->
   <script src="app.js"></script>
