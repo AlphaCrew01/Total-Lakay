@@ -1,32 +1,35 @@
 <!DOCTYPE html>
 <html lang="ht">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>Total Lakay | Tout bagay lakay ou</title>
-  
+
   <!-- CSS -->
   <link rel="stylesheet" href="style.css">
-  
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 </head>
+
 <body>
-  
+
   <!-- ========== NAVBAR PREMIUM ========== -->
   <header class="navbar">
     <div class="logo-area">
-      <img src="logo.jpeg" alt="Total Lakay Logo" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <img src="logo.jpeg" alt="Total Lakay Logo" class="logo-img"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
       <div class="logo-icon-fallback" style="display:none;">TL</div>
       <div class="logo-text">
         Total Lakay
         <small>Tout bagay lakay ou</small>
       </div>
     </div>
-    
+
     <nav class="nav-links" id="navLinks">
       <a href="#" id="navHome" class="nav-item active">
         🏠 <span data-i18n="home">Akèy</span>
@@ -34,19 +37,19 @@
       <a href="#" id="navShop" class="nav-item">
         🛍️ <span data-i18n="shop">Boutik</span>
       </a>
-      <a href="#" id="navOrders" class="nav-item hidden user-only">
-        📦 <span data-i18n="orders">Kòmand</span>
+      <a href="#" id="navProfile" class="nav-item hidden user-only">
+        👤 <span data-i18n="profile">Profil</span>
       </a>
       <a href="#" id="navAdmin" class="nav-item hidden admin-only">
         📊 <span data-i18n="dashboard">Tablodbò</span>
       </a>
-      
+
       <!-- Notifications -->
       <button id="notifBtn" class="notif-btn" title="Notifikasyon">
         🔔
         <span id="notifBadge" class="notif-badge hidden">0</span>
       </button>
-      
+
       <!-- Menu -->
       <div class="dropdown" id="menuDropdown">
         <button id="menuBtn" class="btn-menu" title="Menu">☰</button>
@@ -56,14 +59,22 @@
           <a href="#" id="menuHistory">🕐 <span data-i18n="history">Istwa</span></a>
         </div>
       </div>
-      
-      <select id="langSwitch" class="lang-select">
-        <option value="ht">🇭🇹 Kreyòl</option>
-        <option value="fr">🇫🇷 Français</option>
-        <option value="en">🇺🇸 English</option>
-        <option value="es">🇪🇸 Español</option>
-      </select>
-      
+
+      <div style="display: flex; gap: 5px;">
+        <select id="langSwitch" class="lang-select">
+          <option value="ht">🇭🇹 Kreyòl</option>
+          <option value="fr">🇫🇷 Français</option>
+          <option value="en">🇺🇸 English</option>
+          <option value="es">🇪🇸 Español</option>
+        </select>
+
+        <select id="currencySwitch" class="lang-select">
+          <option value="USD">🇺🇸 USD</option>
+          <option value="HTG">🇭🇹 HTG</option>
+          <option value="EUR">🇪🇺 EUR</option>
+        </select>
+      </div>
+
       <button id="authBtn" class="btn btn-gold">
         🔐 <span data-i18n="login">Konekte</span>
       </button>
@@ -72,20 +83,15 @@
       </button>
     </nav>
   </header>
-  
+
   <!-- ========== RECHERCHE & FILTRES ========== -->
   <div class="search-filter-bar hidden" id="searchFilterBar">
     <div class="search-container">
-      <input 
-        type="text" 
-        id="searchInput" 
-        class="search-input" 
-        data-i18n-placeholder="searchPlaceholder" 
-        placeholder="🔍 Rechèche yon pwodui..."
-      />
+      <input type="text" id="searchInput" class="search-input" data-i18n-placeholder="searchPlaceholder"
+        placeholder="🔍 Rechèche yon pwodui..." />
       <button id="searchBtn" class="btn btn-gold btn-sm">🔍</button>
     </div>
-    
+
     <div class="filter-container">
       <select id="categoryFilter" class="filter-select">
         <option value="all" data-i18n="allCategories">Tout kategori</option>
@@ -96,22 +102,10 @@
         <option value="beauty" data-i18n="categoryBeauty">💄 Bote / Beauté</option>
         <option value="other" data-i18n="categoryOther">📦 Lòt / Autres</option>
       </select>
-      
-      <input 
-        type="number" 
-        id="priceMin" 
-        class="price-input" 
-        data-i18n-placeholder="priceMin" 
-        placeholder="Pri min"
-      />
-      <input 
-        type="number" 
-        id="priceMax" 
-        class="price-input" 
-        data-i18n-placeholder="priceMax" 
-        placeholder="Pri max"
-      />
-      
+
+      <input type="number" id="priceMin" class="price-input" data-i18n-placeholder="priceMin" placeholder="Pri min" />
+      <input type="number" id="priceMax" class="price-input" data-i18n-placeholder="priceMax" placeholder="Pri max" />
+
       <select id="sortBy" class="filter-select">
         <option value="date-desc" data-i18n="sortDateDesc">Pi resan</option>
         <option value="date-asc" data-i18n="sortDateAsc">Pi ansyen</option>
@@ -120,7 +114,7 @@
         <option value="name-asc" data-i18n="sortNameAsc">Non: A → Z</option>
         <option value="name-desc" data-i18n="sortNameDesc">Non: Z → A</option>
       </select>
-      
+
       <button id="applyFiltersBtn" class="btn btn-gold btn-sm">
         <span data-i18n="applyFilters">Filtre</span>
       </button>
@@ -128,10 +122,10 @@
         <span data-i18n="resetFilters">Reinisyalize</span>
       </button>
     </div>
-    
+
     <div id="resultsCount" class="results-count"></div>
   </div>
-  
+
   <!-- ========== CONTENU PRINCIPAL ========== -->
   <main class="container" id="appContent">
     <!-- Rendu dynamique par app.js -->
@@ -140,87 +134,94 @@
       Pour Client : renderHome(), renderShop(), renderClientOrders(), etc.
     -->
   </main>
-  
+
   <!-- ========== MODAL CONNEXION ========== -->
   <div id="loginModal" class="modal hidden">
     <!-- Formulaire Connexion -->
     <div class="modal-content login-card" id="loginFormCard">
       <span class="close-modal" id="closeLoginModal">&times;</span>
-      
+
       <div class="login-header">
-        <img src="logo.jpeg" alt="Logo" class="login-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <img src="logo.jpeg" alt="Logo" class="login-logo"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
         <div class="logo-icon-fallback" style="display:none; margin:0 auto;">TL</div>
         <h2>Total Lakay</h2>
         <p data-i18n="loginTitle">Konekte pou achte</p>
       </div>
-      
+
       <button id="googleLoginBtn" class="btn btn-google">
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20">
         <span data-i18n="continueGoogle">Kontinye ak Google</span>
       </button>
-      
+
       <div class="separator"><span data-i18n="or">oubyen</span></div>
-      
+
       <input type="email" id="loginEmail" data-i18n-placeholder="emailPlaceholder" placeholder="Email" />
       <input type="password" id="loginPassword" data-i18n-placeholder="passwordPlaceholder" placeholder="Modpas" />
-      
+
       <button id="emailLoginBtn" class="btn btn-gold" style="width:100%;">
         🔐 <span data-i18n="login">Konekte</span>
       </button>
-      
+
       <p class="login-switch">
-        <span data-i18n="noAccount">Pa gen kont?</span> 
+        <span data-i18n="noAccount">Pa gen kont?</span>
         <a href="#" id="switchToRegister" data-i18n="createAccount">Kreye yon kont</a>
       </p>
     </div>
-    
+
     <!-- Formulaire Inscription -->
     <div class="modal-content login-card hidden" id="registerForm">
       <span class="close-modal" id="closeRegisterModal">&times;</span>
-      
+
       <div class="login-header">
-        <img src="logo.jpeg" alt="Logo" class="login-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <img src="logo.jpeg" alt="Logo" class="login-logo"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
         <div class="logo-icon-fallback" style="display:none; margin:0 auto;">TL</div>
         <h2>Total Lakay</h2>
         <p data-i18n="createAccountTitle">Kreye kont ou</p>
       </div>
-      
+
       <input type="text" id="registerName" data-i18n-placeholder="namePlaceholder" placeholder="Non ou" />
       <input type="email" id="registerEmail" data-i18n-placeholder="emailPlaceholder" placeholder="Email" />
-      <input type="password" id="registerPassword" data-i18n-placeholder="passwordMin" placeholder="Modpas (min 6 karaktè)" />
-      
-      <p style="font-size:0.8rem; color:#666; margin:0.3rem 0;" data-i18n="selectRole">Chwazi wòl ou (default: Kliyan)</p>
-      
+      <input type="password" id="registerPassword" data-i18n-placeholder="passwordMin"
+        placeholder="Modpas (min 6 karaktè)" />
+
+      <p style="font-size:0.8rem; color:#666; margin:0.3rem 0;" data-i18n="selectRole">Chwazi wòl ou (default: Kliyan)
+      </p>
+
       <button id="registerBtn" class="btn btn-gold" style="width:100%;">
         ✅ <span data-i18n="createAccount">Kreye kont</span>
       </button>
-      
+
       <p class="login-switch">
-        <span data-i18n="alreadyAccount">Deja gen yon kont?</span> 
+        <span data-i18n="alreadyAccount">Deja gen yon kont?</span>
         <a href="#" id="switchToLogin" data-i18n="login">Konekte</a>
       </p>
     </div>
   </div>
-  
+
   <!-- ========== MODAL NOTIFICATIONS ========== -->
   <div id="notifModal" class="modal hidden">
     <div class="modal-content card-premium">
       <span class="close-modal" id="closeNotifModal">&times;</span>
       <h2>🔔 <span data-i18n="notifications">Notifikasyon</span></h2>
-      <div id="notifList"><p class="text-center">Chajman...</p></div>
+      <div id="notifList">
+        <p class="text-center">Chajman...</p>
+      </div>
     </div>
   </div>
-  
+
   <!-- ========== MODAL ACHAT ========== -->
   <div id="buyModal" class="modal hidden">
     <div class="modal-content card-premium">
       <span class="close-modal" id="closeBuyModal">&times;</span>
       <h2 id="modalProductName"></h2>
       <p class="product-price-large" id="modalProductPrice"></p>
-      
+
       <label for="orderAddress">📍 <span data-i18n="address">Adrès ou</span></label>
-      <input type="text" id="orderAddress" data-i18n-placeholder="addressPlaceholder" placeholder="Rue, Ville, Code postal" />
-      
+      <input type="text" id="orderAddress" data-i18n-placeholder="addressPlaceholder"
+        placeholder="Rue, Ville, Code postal" />
+
       <label for="orderPayment">💳 <span data-i18n="payment">Mwayen peman</span></label>
       <select id="orderPayment">
         <option value="moncash">MonCash</option>
@@ -228,13 +229,13 @@
         <option value="credit">Kredi / Crédit</option>
         <option value="cash">Lajan kach / Cash</option>
       </select>
-      
+
       <button id="submitOrder" class="btn btn-gold" style="width:100%; margin-top:1rem;">
         ✅ <span data-i18n="orderNow">Kòmande</span>
       </button>
     </div>
   </div>
-  
+
   <!-- ========== MODAL CONFIRMATION (Admin) ========== -->
   <div id="confirmModal" class="modal hidden">
     <div class="modal-content card-premium text-center">
@@ -245,7 +246,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- ========== FOOTER PREMIUM ========== -->
   <footer class="footer">
     <div class="footer-content">
@@ -260,8 +261,9 @@
       </div>
     </div>
   </footer>
-  
+
   <!-- ========== JavaScript ========== -->
   <script src="app.js"></script>
 </body>
+
 </html>
