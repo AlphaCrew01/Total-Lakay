@@ -53,10 +53,11 @@ Créer un projet Firebase et remplacer :
 
 ```js
 const firebaseConfig = {
-  apiKey: "...",
-  authDomain: "...",
-  projectId: "...",
-  storageBucket: "...",
-  messagingSenderId: "...",
-  appId: "..."
+  apiKey: "AIzaSyBA_cEX_pHmlUZ4xv10GIOLVOv9g_-iolQ",
+  authDomain: "total-lakay.firebaseapp.com",
+  projectId: "total-lakay",
+  storageBucket: "total-lakay.firebasestorage.app",
+  messagingSenderId: "37969355540",
+  appId: "1:37969355540:web:514e3869a9422e3681d801",
+  measurementId: "G-HC09M5HTVZ"
 };
