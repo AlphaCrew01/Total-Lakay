@@ -11,7 +11,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   font-family: 'Segoe UI', 'Poppins', 'Helvetica Neue', Arial, sans-serif;
   scroll-behavior: smooth;
 }
@@ -262,8 +263,15 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .dropdown-content a {
@@ -742,8 +750,15 @@ label {
 }
 
 @keyframes modalIn {
-  from { opacity: 0; transform: translateY(-25px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(-25px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .close-modal {
@@ -901,9 +916,17 @@ label {
   text-align: center;
 }
 
-.mt-1 { margin-top: 0.5rem; }
-.mt-2 { margin-top: 1rem; }
-.mt-3 { margin-top: 1.5rem; }
+.mt-1 {
+  margin-top: 0.5rem;
+}
+
+.mt-2 {
+  margin-top: 1rem;
+}
+
+.mt-3 {
+  margin-top: 1.5rem;
+}
 
 /* ============================================
    RESPONSIVE
@@ -912,64 +935,64 @@ label {
   .navbar {
     padding: 0.7rem 1rem;
   }
-  
+
   .nav-links {
     width: 100%;
     justify-content: flex-start;
     gap: 0.2rem;
     margin-top: 0.4rem;
   }
-  
+
   .nav-item {
     font-size: 0.75rem;
     padding: 0.4rem 0.6rem;
   }
-  
+
   .logo-area .logo-img {
     width: 38px !important;
     height: 38px !important;
     max-width: 38px !important;
     max-height: 38px !important;
   }
-  
+
   .logo-text {
     font-size: 1.1rem;
   }
-  
+
   .grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 1rem;
   }
-  
+
   .product-img {
     height: 140px;
   }
-  
+
   .footer-content {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .footer-links {
     gap: 1rem;
   }
-  
+
   /* Recherche responsive */
   .filter-container {
     gap: 0.4rem;
   }
-  
+
   .filter-select {
     font-size: 0.75rem;
     padding: 0.45rem 0.7rem;
     min-width: 100px;
   }
-  
+
   .price-input {
     width: 75px !important;
     font-size: 0.75rem !important;
   }
-  
+
   .search-input {
     font-size: 0.9rem !important;
   }
@@ -980,38 +1003,67 @@ label {
     grid-template-columns: 1fr 1fr;
     gap: 0.8rem;
   }
-  
+
   .logo-area .logo-img {
     width: 35px !important;
     height: 35px !important;
     max-width: 35px !important;
     max-height: 35px !important;
   }
-  
+
   .logo-text {
     font-size: 1rem;
   }
-  
+
   .logo-text small {
     font-size: 0.6rem;
   }
-  
+
   /* Recherche responsive mobile */
   .filter-container {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .price-input {
     width: 100% !important;
   }
-  
+
   .filter-select {
     width: 100% !important;
   }
-  
+
   .search-container .btn {
     height: 44px;
     width: 44px;
   }
 }
+
+/* ============================================
+   PROFIL & BADGES
+   ============================================ */
+.badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+}
+
+.badge-success {
+  background: rgba(30, 126, 91, 0.15);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.badge-pending {
+  background: rgba(243, 156, 18, 0.15);
+  color: #d35400;
+  border: 1px solid #e67e22;
+}
+
+.hidden { display: none !important; }
+.mt-2 { margin-top: 2rem !important; }
+.text-center { text-align: center; }
