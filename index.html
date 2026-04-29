@@ -64,6 +64,7 @@
         <button id="menuBtn" class="btn-menu" title="Menu">☰</button>
         <div class="dropdown-content hidden" id="dropdownMenu">
           <a href="#" id="menuSpecial">🎉 <span data-i18n="specialOffers">Òf espesyal</span></a>
+          <a href="#" id="menuFavorites">❤️ <span data-i18n="favorites">Favori</span></a>
           <a href="#" id="menuSettings">⚙️ <span data-i18n="settings">Paramèt</span></a>
           <a href="#" id="menuHistory">🕐 <span data-i18n="history">Istwa</span></a>
         </div>
@@ -226,11 +227,14 @@
       <span class="close-modal" id="closeBuyModal">&times;</span>
       <h2 id="modalProductName"></h2>
       <p class="product-price-large" id="modalProductPrice"></p>
-
+      
+      <div id="productDetailsContent">
+        <!-- Contenu dynamique (description, avis) -->
+      </div>
+      
       <label for="orderAddress">📍 <span data-i18n="address">Adrès ou</span></label>
-      <input type="text" id="orderAddress" data-i18n-placeholder="addressPlaceholder"
-        placeholder="Rue, Ville, Code postal" />
-
+      <input type="text" id="orderAddress" placeholder="Rue, Ville, Code postal" />
+      
       <label for="orderPayment">💳 <span data-i18n="payment">Mwayen peman</span></label>
       <select id="orderPayment">
         <option value="moncash">MonCash</option>
@@ -238,10 +242,23 @@
         <option value="credit">Kredi / Crédit</option>
         <option value="cash">Lajan kach / Cash</option>
       </select>
-
+      
       <button id="submitOrder" class="btn btn-gold" style="width:100%; margin-top:1rem;">
         ✅ <span data-i18n="orderNow">Kòmande</span>
       </button>
+
+      <div class="reviews-section mt-3">
+        <h3>⭐ <span data-i18n="reviews">Avi kliyan</span></h3>
+        <div id="productReviewsList"></div>
+        <div class="add-review-form mt-2">
+          <h4 data-i18n="addReview">Ajoute yon avi</h4>
+          <div class="star-rating" id="starRating">
+            <span data-rating="1">⭐</span><span data-rating="2">⭐</span><span data-rating="3">⭐</span><span data-rating="4">⭐</span><span data-rating="5">⭐</span>
+          </div>
+          <textarea id="reviewComment" placeholder="Kòmantè..."></textarea>
+          <button id="submitReviewBtn" class="btn btn-sm btn-gold" data-i18n="submit">Voye</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -281,7 +298,8 @@
         <h4 data-i18n="securePayment">Peman Sekirize</h4>
         <div class="trust-badges">
           <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" height="20">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" height="20">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard"
+            height="20">
           <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" height="20">
           <div class="moncash-badge">MonCash</div>
         </div>
