@@ -31,7 +31,8 @@ let products = [];
 let orders = [];
 let allUsers = [];
 let notifications = [];
-let cart = [];
+let cart = JSON.parse(localStorage.getItem('totalLakayCart') || '[]');
+let favorites = JSON.parse(localStorage.getItem('totalLakayFavorites') || '[]');
 let selectedProductId = null;
 
 const exchangeRates = {
@@ -143,6 +144,9 @@ const i18n = {
     securePayment: "Peman Sekirize", contactUs: "Kontakte nou",
     securePaymentInfo: "Peman 100% sekirize",
     notifications: "Notifikasyon", noNotifications: "Pa gen notifikasyon",
+    favorites: "Favori", noFavorites: "Pa gen favori ankò",
+    reviews: "Avi", leaveReview: "Kite yon avi", addReview: "Ajoute yon avi", noReviews: "Pa gen avi ankò",
+    rating: "Nòt", comment: "Kòmantè", submit: "Voye",
   },
   fr: {
     home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -246,6 +250,9 @@ const i18n = {
     securePayment: "Paiement Sécurisé", contactUs: "Contactez-nous",
     securePaymentInfo: "Paiement 100% sécurisé",
     notifications: "Notifications", noNotifications: "Pas de notifications",
+    favorites: "Favoris", noFavorites: "Pas encore de favoris",
+    reviews: "Avis", leaveReview: "Laisser un avis", addReview: "Ajouter un avis", noReviews: "Pas encore d'avis",
+    rating: "Note", comment: "Commentaire", submit: "Envoyer",
   },
   en: {
     home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -348,6 +355,9 @@ const i18n = {
     securePayment: "Secure Payment", contactUs: "Contact Us",
     securePaymentInfo: "100% Secure Payment",
     notifications: "Notifications", noNotifications: "No notifications",
+    favorites: "Favorites", noFavorites: "No favorites yet",
+    reviews: "Reviews", leaveReview: "Leave a review", addReview: "Add a review", noReviews: "No reviews yet",
+    rating: "Rating", comment: "Comment", submit: "Submit",
   },
   es: {
     home: "Inicio", shop: "Tienda", orders: "Pedidos", admin: "Admin",
@@ -451,6 +461,9 @@ const i18n = {
     securePayment: "Pago Seguro", contactUs: "Contáctenos",
     securePaymentInfo: "Pago 100% seguro",
     notifications: "Notificaciones", noNotifications: "No hay notificaciones",
+    favorites: "Favoritos", noFavorites: "Aún no hay favoritos",
+    reviews: "Reseñas", leaveReview: "Dejar una reseña", addReview: "Agregar una reseña", noReviews: "Aún no hay reseñas",
+    rating: "Calificación", comment: "Comentario", submit: "Enviar",
   }
 };
 
@@ -459,6 +472,7 @@ function addToCart(productId) {
   const product = products.find(p => p.id === productId);
   if (!product) return;
   cart.push(product);
+  localStorage.setItem('totalLakayCart', JSON.stringify(cart));
   updateCartBadge();
   showMessage(t('addToCart') + ': ' + product.name);
 }
@@ -511,8 +525,22 @@ function renderCart() {
 
 function removeFromCart(index) {
   cart.splice(index, 1);
+  localStorage.setItem('totalLakayCart', JSON.stringify(cart));
   updateCartBadge();
   renderCart();
+}
+
+function toggleFavorite(productId) {
+  const index = favorites.indexOf(productId);
+  if (index > -1) {
+    favorites.splice(index, 1);
+    showMessage('Retire nan favori');
+  } else {
+    favorites.push(productId);
+    showMessage('Ajoute nan favori');
+  }
+  localStorage.setItem('totalLakayFavorites', JSON.stringify(favorites));
+  if (currentView === 'shop' || currentView === 'home') renderView(currentView);
 }
 
 // ---------- NOTIFICATIONS FUNCTIONS ----------
@@ -803,6 +831,20 @@ document.getElementById('menuHistory')?.addEventListener('click', (e) => {
   e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
   currentView = 'history'; renderView('history');
 });
+document.getElementById('menuFavorites')?.addEventListener('click', (e) => {
+  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
+  currentView = 'favorites'; renderView('favorites');
+});
+
+function renderFavorites(app) {
+  const favProducts = products.filter(p => favorites.includes(p.id));
+  app.innerHTML = `
+    <h2>❤️ ${t('favorites') || 'Favori'}</h2>
+    <div class="grid">
+      ${favProducts.length === 0 ? `<p class="text-center" style="grid-column:1/-1;">Kè kontan pwal plen lè ou ajoute favori!</p>` : favProducts.map(p => productCardHTML(p)).join('')}
+    </div>`;
+  attachBuyButtons();
+}
 
 // ============================================
 // NOTIFICATIONS
@@ -1091,18 +1133,18 @@ async function renderView(view) {
       case 'orders': await renderProfile(app); break;
       case 'profile': await renderProfile(app); break;
       case 'specialOffers': await renderSpecialOffers(app); break;
+      case 'favorites': renderFavorites(app); break;
       case 'settings': renderSettings(app); break;
       case 'history': await renderProfile(app); break;
       default: await renderHome(app);
     }
   }
 }
-
 function productCardHTML(product) {
   const hasPromo = product.oldPrice && product.oldPrice > product.price;
   return `
-    <div class="product-card" style="position:relative;">
       ${hasPromo ? `<div class="product-badge">🔥 ${t('specialPrice')}</div>` : ''}
+      <button class="wishlist-btn ${favorites.includes(product.id) ? 'active' : ''}" onclick="toggleFavorite('${product.id}')">❤️</button>
       <img src="${product.image || 'https://via.placeholder.com/400x250/0f1f38/c8963e?text=Total+Lakay'}" alt="${product.name}" class="product-img" onerror="this.src='https://via.placeholder.com/400x250/0f1f38/c8963e?text=Total+Lakay'">
       <div class="product-info">
         <div class="product-title">${product.name}</div>
@@ -1119,33 +1161,117 @@ function productCardHTML(product) {
 // ============================================
 // DASHBOARD ADMIN (inchangé - déjà complet)
 // ============================================
-async function renderAdminDashboard(app) {
-  if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
-  await loadAllData();
+  async function renderAdminDashboard(app) {
+    if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
+    await loadAllData();
 
-  const totalProducts = products.length;
-  const totalOrders = orders.length;
-  const totalClients = allUsers.filter(u => u.role === 'client').length;
-  const pendingCount = orders.filter(o => o.status === 'pending').length;
-  const confirmedCount = orders.filter(o => o.status === 'confirmed').length;
-  const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
+    const totalProducts = products.length;
+    const totalOrders = orders.length;
+    const totalClients = allUsers.filter(u => u.role === 'client').length;
+    const pendingCount = orders.filter(o => o.status === 'pending').length;
+    const confirmedCount = orders.filter(o => o.status === 'confirmed').length;
+    const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
 
-  app.innerHTML = `
-    <h2>📊 ${t('dashboard')} - ${t('welcomeAdmin')}</h2>
-    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:1rem; margin:1.5rem 0;">
-      <div class="card text-center" style="padding:1.2rem; border-left:4px solid #c8963e;"><div style="font-size:2rem; font-weight:800; color:#c8963e;">${totalProducts}</div><div>📦 ${t('totalProducts')}</div></div>
-      <div class="card text-center" style="padding:1.2rem; border-left:4px solid #1e7e5b;"><div style="font-size:2rem; font-weight:800; color:#1e7e5b;">${totalOrders}</div><div>📋 ${t('totalOrders')}</div></div>
-      <div class="card text-center" style="padding:1.2rem; border-left:4px solid #1e6b8a;"><div style="font-size:2rem; font-weight:800; color:#1e6b8a;">${totalClients}</div><div>👥 ${t('totalClients')}</div></div>
-      <div class="card text-center" style="padding:1.2rem; border-left:4px solid #f39c12;"><div style="font-size:2rem; font-weight:800; color:#f39c12;">${formatPrice(totalRevenue)}</div><div>💰 ${t('revenue')}</div></div>
+    app.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+      <h2 style="margin:0;">📊 ${t('dashboard')}</h2>
+      <div class="badge badge-success">${t('welcomeAdmin')}</div>
     </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
-      <div class="card text-center" style="padding:1rem;"><div style="font-size:1.5rem; font-weight:800; color:#f39c12;">${pendingCount}</div><div>⏳ ${t('pendingOrders')}</div></div>
-      <div class="card text-center" style="padding:1rem;"><div style="font-size:1.5rem; font-weight:800; color:#1e7e5b;">${confirmedCount}</div><div>✅ ${t('confirmedOrders')}</div></div>
+
+    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:1.5rem; margin-bottom:2rem;">
+      <div class="admin-stat-card" style="border-left-color: var(--gold);">
+        <div class="admin-stat-val">${totalProducts}</div>
+        <div class="admin-stat-label">📦 ${t('totalProducts')}</div>
+      </div>
+      <div class="admin-stat-card" style="border-left-color: var(--success);">
+        <div class="admin-stat-val">${totalOrders}</div>
+        <div class="admin-stat-label">📋 ${t('totalOrders')}</div>
+      </div>
+      <div class="admin-stat-card" style="border-left-color: #1e6b8a;">
+        <div class="admin-stat-val">${totalClients}</div>
+        <div class="admin-stat-label">👥 ${t('totalClients')}</div>
+      </div>
+      <div class="admin-stat-card" style="border-left-color: #f39c12;">
+        <div class="admin-stat-val">${formatPrice(totalRevenue)}</div>
+        <div class="admin-stat-label">💰 ${t('revenue')}</div>
+      </div>
     </div>
-    <div class="card"><h3>⚡ ${t('quickActions')}</h3><div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.5rem;"><button class="btn btn-gold btn-sm" id="adminAddProductBtn">➕ ${t('addProduct')}</button><button class="btn btn-sm" id="adminManageOrdersBtn">📦 ${t('manageOrders')}</button><button class="btn btn-sm" id="adminManageClientsBtn">👥 ${t('manageClients')}</button><button class="btn btn-accent btn-sm" id="adminSendNotifBtn">🔔 ${t('sendNotification')}</button></div></div>
-    <div id="adminAddProductForm" class="card hidden"><h3>➕ ${t('addProduct')}</h3><div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;"><div><label>${t('productName')}</label><input id="adminProdName" placeholder="${t('productNamePlaceholder')}"></div><div><label>${t('productPrice')} ($)</label><input id="adminProdPrice" type="number" placeholder="${t('productPricePlaceholder')}" step="0.01"></div></div><label>${t('oldPrice')}</label><input id="adminProdOldPrice" type="number" placeholder="${t('oldPricePlaceholder')}" step="0.01"><label>${t('productImage')}</label><input id="adminProdImage" placeholder="${t('productImagePlaceholder')}"><label>${t('productDesc')}</label><textarea id="adminProdDesc" rows="2" placeholder="${t('productDescPlaceholder')}"></textarea><button id="saveProductBtn" class="btn btn-gold mt-2">✅ ${t('save')}</button></div>
-    <div class="card mt-2"><h3>📋 ${t('existingProducts')} (${totalProducts})</h3><div id="adminProductList">${products.length === 0 ? `<p>${t('noProductsAdmin')}</p>` : products.map(p => `<div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid #eee;"><span>📦 ${p.name} - <strong>${formatPrice(p.price)}</strong></span><button class="btn btn-danger btn-sm delete-product" data-id="${p.id}">🗑️</button></div>`).join('')}</div></div>
-    <div class="card mt-2"><h3>🕐 ${t('recentOrders')} (${totalOrders})</h3><div id="adminOrderList">${orders.length === 0 ? `<p>${t('noOrdersAdmin')}</p>` : orders.slice(0, 10).map(o => `<div style="padding:0.6rem 0; border-bottom:1px solid #eee;"><div style="display:flex; justify-content:space-between; flex-wrap:wrap;"><strong>${o.productName}</strong><select class="status-select" data-order-id="${o.id}" style="width:auto; padding:0.3rem;"><option value="pending" ${o.status === 'pending' ? 'selected' : ''}>⏳ ${t('pending')}</option><option value="confirmed" ${o.status === 'confirmed' ? 'selected' : ''}>✅ ${t('confirmed')}</option><option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>🚚 ${t('delivered')}</option><option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>❌ ${t('cancelled')}</option></select></div><p style="font-size:0.85rem;">💰 ${formatPrice(o.price)} | 👤 ${o.userEmail || t('clientLabel')} | 📍 ${o.address}</p><input id="delay-${o.id}" placeholder="${t('delayPlaceholder')}" value="${o.deliveryEstimate || ''}" style="width:60%; display:inline;"><button class="btn btn-success btn-sm update-delay" data-id="${o.id}">⏱️</button></div>`).join('')}</div></div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2rem;">
+      <div class="card text-center" style="padding:1.5rem; background:rgba(243, 156, 18, 0.05);">
+        <div style="font-size:1.8rem; font-weight:800; color:#f39c12;">${pendingCount}</div>
+        <div class="admin-stat-label">⏳ ${t('pendingOrders')}</div>
+      </div>
+      <div class="card text-center" style="padding:1.5rem; background:rgba(30, 126, 91, 0.05);">
+        <div style="font-size:1.8rem; font-weight:800; color:#1e7e5b;">${confirmedCount}</div>
+        <div class="admin-stat-label">✅ ${t('confirmedOrders')}</div>
+      </div>
+    </div>
+
+    <div class="card-premium">
+      <h3 style="margin-bottom:1rem;">⚡ ${t('quickActions')}</h3>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+        <button class="btn btn-gold" id="adminAddProductBtn">➕ ${t('addProduct')}</button>
+        <button class="btn btn-outline" style="color:var(--blue-deep); border-color:var(--blue-deep);" id="adminManageOrdersBtn">📦 ${t('manageOrders')}</button>
+        <button class="btn btn-outline" style="color:var(--blue-deep); border-color:var(--blue-deep);" id="adminManageClientsBtn">👥 ${t('manageClients')}</button>
+        <button class="btn btn-outline" style="color:var(--blue-deep); border-color:var(--blue-deep);" id="adminSendNotifBtn">🔔 ${t('sendNotification')}</button>
+      </div>
+    </div>
+
+    <div id="adminAddProductForm" class="card hidden mt-2">
+      <h3>➕ ${t('addProduct')}</h3>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+        <div><label>${t('productName')}</label><input id="adminProdName" placeholder="${t('productNamePlaceholder')}"></div>
+        <div><label>${t('productPrice')} ($)</label><input id="adminProdPrice" type="number" placeholder="${t('productPricePlaceholder')}" step="0.01"></div>
+      </div>
+      <label>${t('oldPrice')}</label><input id="adminProdOldPrice" type="number" placeholder="${t('oldPricePlaceholder')}" step="0.01">
+      <label>${t('productImage')}</label><input id="adminProdImage" placeholder="${t('productImagePlaceholder')}">
+      <label>${t('productDesc')}</label><textarea id="adminProdDesc" rows="2" placeholder="${t('productDescPlaceholder')}"></textarea>
+      <button id="saveProductBtn" class="btn btn-gold mt-2" style="width:100%;">✅ ${t('save')}</button>
+    </div>
+
+    <div class="card mt-2">
+      <h3>📋 ${t('existingProducts')} (${totalProducts})</h3>
+      <div id="adminProductList">
+        ${products.length === 0 ? `<p>${t('noProductsAdmin')}</p>` : products.map(p => `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:1rem 0; border-bottom:1px solid #eee;">
+            <div style="display:flex; align-items:center; gap:1rem;">
+              <img src="${p.image || 'https://via.placeholder.com/50'}" style="width:40px; height:40px; object-fit:cover; border-radius:8px;">
+              <span><strong>${p.name}</strong> - ${formatPrice(p.price)}</span>
+            </div>
+            <button class="btn btn-danger btn-sm delete-product" data-id="${p.id}">🗑️</button>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="card mt-2">
+      <h3>🕐 ${t('recentOrders')} (${totalOrders})</h3>
+      <div id="adminOrderList">
+        ${orders.length === 0 ? `<p>${t('noOrdersAdmin')}</p>` : orders.slice(0, 10).map(o => `
+          <div style="padding:1.2rem; border:1px solid #eee; border-radius:12px; margin-bottom:1rem; background:#fcfcfc;">
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; margin-bottom:0.5rem;">
+              <strong style="font-size:1.1rem; color:var(--blue-deep);">${o.productName}</strong>
+              <select class="status-select" data-order-id="${o.id}" style="width:auto; padding:0.4rem; border-radius:8px; background:white;">
+                <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>⏳ ${t('pending')}</option>
+                <option value="confirmed" ${o.status === 'confirmed' ? 'selected' : ''}>✅ ${t('confirmed')}</option>
+                <option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>🚚 ${t('delivered')}</option>
+                <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>❌ ${t('cancelled')}</option>
+              </select>
+            </div>
+            <div style="font-size:0.9rem; color:var(--text-soft); margin-bottom:0.5rem;">
+              <div>💰 <strong>${formatPrice(o.price)}</strong> | 👤 ${o.userName || o.userEmail || t('clientLabel')}</div>
+              <div>📍 ${o.address} | 📞 ${o.phone || '---'}</div>
+            </div>
+            ${o.items ? `<div style="font-size:0.8rem; background:#fff; padding:0.5rem; border-radius:8px; margin-bottom:0.5rem; border:1px dashed #ccc;">
+              <strong>Articles:</strong> ${o.items.map(it => it.name).join(', ')}
+            </div>` : ''}
+            <div style="display:flex; gap:0.5rem;">
+              <input id="delay-${o.id}" placeholder="${t('delayPlaceholder')}" value="${o.deliveryEstimate || ''}" style="margin:0; padding:0.4rem 0.8rem; flex:1;">
+              <button class="btn btn-success btn-sm update-delay" data-id="${o.id}" style="border-radius:25px;">⏱️</button>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
     <div id="adminClientsList" class="card mt-2 hidden"><h3>👥 ${t('manageClients')} (${allUsers.length})</h3>${allUsers.map(u => `<div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid #eee;"><div><strong>${u.displayName || u.email}</strong><span class="badge ${u.role === 'admin' ? 'badge-success' : ''}" style="margin-left:0.5rem;">${u.role}</span></div><button class="btn btn-sm ${u.role === 'admin' ? 'btn-danger' : 'btn-gold'} toggle-role" data-uid="${u.id}" data-role="${u.role}">${u.role === 'admin' ? t('makeClient') : t('makeAdmin')}</button></div>`).join('')}</div>
     <div id="adminSendNotifForm" class="card mt-2 hidden"><h3>🔔 ${t('sendNotification')}</h3><input id="notifTitle" placeholder="${t('notificationTitle')}"><textarea id="notifMessage" placeholder="${t('notificationMessage')}"></textarea><button id="sendNotifBtn" class="btn btn-gold mt-2">📤 ${t('sendNotification')}</button></div>
   `;
@@ -1238,24 +1364,60 @@ async function renderAdminDashboard(app) {
 // PAGES CLIENT
 // ============================================
 async function renderHome(app) {
-  await loadProducts();
-  const specials = products.filter(p => p.oldPrice && p.oldPrice > p.price);
   app.innerHTML = `
     <div class="card text-center">
       <h1 style="color:var(--blue-deep);">🏠 ${t('welcome')}</h1>
       <p style="font-size:1.2rem;">${t('slogan')}</p>
-      ${specials.length > 0 ? `<div class="special-offer-card mt-2" style="text-align:left;"><h3>🎉 ${t('specialPrice')}!</h3><p><strong>${specials[0].name}</strong> - $${specials[0].price} <span style="text-decoration:line-through;">$${specials[0].oldPrice}</span></p></div>` : ''}
+      <div id="homePromo"></div>
       <button class="btn btn-gold mt-2" id="goShopBtn">🛒 ${t('goShop')}</button>
     </div>
     <h2>🔥 ${t('featured')}</h2>
-    <div class="grid">${products.length === 0 ? `<p>📦 ${t('noProducts')}</p>` : products.slice(0, 4).map(p => productCardHTML(p)).join('')}</div>`;
+    <div class="grid" id="featuredProducts">
+      ${Array(4).fill(0).map(() => `
+        <div class="product-card skeleton">
+          <div class="skeleton-img"></div>
+          <div class="product-info">
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text" style="width:60%;"></div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+
+  await loadProducts();
+  const specials = products.filter(p => p.oldPrice && p.oldPrice > p.price);
+  const promoEl = document.getElementById('homePromo');
+  if (promoEl && specials.length > 0) {
+    promoEl.innerHTML = `<div class="special-offer-card mt-2" style="text-align:left;"><h3>🎉 ${t('specialPrice')}!</h3><p><strong>${specials[0].name}</strong> - $${specials[0].price} <span style="text-decoration:line-through;">$${specials[0].oldPrice}</span></p></div>`;
+  }
+
+  const grid = document.getElementById('featuredProducts');
+  if (grid) {
+    grid.innerHTML = products.length === 0 ? `<p>📦 ${t('noProducts')}</p>` : products.slice(0, 4).map(p => productCardHTML(p)).join('');
+  }
+
   document.getElementById('goShopBtn')?.addEventListener('click', () => { currentView = 'shop'; renderView('shop'); });
   attachBuyButtons();
 }
 
 async function renderShop(app) {
+  app.innerHTML = `
+    <h2>🛍️ ${t('shop')}</h2>
+    <div class="grid" id="allProducts">
+      ${Array(8).fill(0).map(() => `
+        <div class="product-card skeleton">
+          <div class="skeleton-img"></div>
+          <div class="product-info">
+            <div class="skeleton-text"></div>
+            <div class="skeleton-text" style="width:60%;"></div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+
   await loadProducts();
-  app.innerHTML = `<h2>🛍️ ${t('shop')}</h2><div class="grid" id="allProducts">${displayFilteredProducts()}</div>`;
+  const grid = document.getElementById('allProducts');
+  if (grid) {
+    grid.innerHTML = displayFilteredProducts();
+  }
   attachBuyButtons();
   setupSearchAndFilters();
 }
@@ -1380,6 +1542,7 @@ function attachBuyButtons() {
       selectedProductId = product.id;
       document.getElementById('modalProductName').textContent = product.name;
       document.getElementById('modalProductPrice').textContent = formatPrice(product.price);
+      document.getElementById('productDetailsContent').innerHTML = `<p style="margin:1rem 0; color:var(--text-soft);">${product.description || ''}</p>`;
       document.getElementById('buyModal').classList.remove('hidden');
 
       try {
@@ -1389,6 +1552,7 @@ function attachBuyButtons() {
         } else {
           document.getElementById('orderAddress').value = '';
         }
+        renderReviews(product.id);
       } catch (e) { document.getElementById('orderAddress').value = ''; }
     });
   });
@@ -1418,25 +1582,90 @@ document.getElementById('checkoutBtn')?.addEventListener('click', async () => {
   }
   if (cart.length === 0) return;
 
-  // Pour l'instant, on redirige vers le premier produit du panier pour simplification ou on crée une commande groupée
-  // Dans cette version, on va créer une commande pour chaque item ou une commande "panier"
+  // Vérifier profil
+  let userDoc;
   try {
-    for (const item of cart) {
-      await db.collection('orders').add({
-        userId: currentUser.uid, userEmail: currentUser.email,
-        productId: item.id, productName: item.name,
-        price: item.price, currency: currentCurrency, image: item.image || '',
-        address: 'Panier - Checkout', status: 'pending',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
+    userDoc = await db.collection('users').doc(currentUser.uid).get();
+    if (!userDoc.exists || !userDoc.data().address || !userDoc.data().phone) {
+      document.getElementById('cartModal').classList.add('hidden');
+      showMessage(t('fillAllFields') + " (Profil)", 'error');
+      currentView = 'profile'; renderView('profile');
+      return;
     }
+  } catch (e) { return; }
+
+  const userData = userDoc.data();
+  const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+
+  try {
+    await db.collection('orders').add({
+      userId: currentUser.uid, userEmail: currentUser.email,
+      userName: userData.displayName || currentUser.displayName || 'Client',
+      address: userData.address, phone: userData.phone,
+      items: cart.map(item => ({ id: item.id, name: item.name, price: item.price })),
+      productName: cart.length > 1 ? `${cart[0].name} + ${cart.length - 1}` : cart[0].name,
+      price: totalPrice, currency: currentCurrency, status: 'pending',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
     cart = [];
+    localStorage.removeItem('totalLakayCart');
     updateCartBadge();
     document.getElementById('cartModal').classList.add('hidden');
     showMessage(t('orderSuccess'), 'success');
     renderView('profile');
   } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
 });
+
+// Reviews Logic
+let currentRating = 0;
+document.querySelectorAll('#starRating span').forEach(star => {
+  star.addEventListener('click', (e) => {
+    currentRating = parseInt(e.target.dataset.rating);
+    document.querySelectorAll('#starRating span').forEach(s => {
+      s.classList.toggle('active', parseInt(s.dataset.rating) <= currentRating);
+    });
+  });
+});
+
+document.getElementById('submitReviewBtn')?.addEventListener('click', async () => {
+  if (!currentUser) { showMessage(t('loginRequired'), 'error'); return; }
+  if (currentRating === 0) { showMessage('Chwazi yon nòt (zetwal)', 'error'); return; }
+  const comment = document.getElementById('reviewComment').value.trim();
+  if (!comment) { showMessage('Ekri yon kòmantè', 'error'); return; }
+
+  try {
+    await db.collection('reviews').add({
+      productId: selectedProductId,
+      userId: currentUser.uid,
+      userName: currentUser.displayName || 'Kliyan',
+      rating: currentRating,
+      comment,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    showMessage('Mèsi pou avi ou!');
+    document.getElementById('reviewComment').value = '';
+    currentRating = 0;
+    document.querySelectorAll('#starRating span').forEach(s => s.classList.remove('active'));
+    renderReviews(selectedProductId);
+  } catch (e) { showMessage('Erè voye avi', 'error'); }
+});
+
+async function renderReviews(productId) {
+  const list = document.getElementById('productReviewsList');
+  if (!list) return;
+  list.innerHTML = t('loading');
+  try {
+    const snap = await db.collection('reviews').where('productId', '==', productId).orderBy('createdAt', 'desc').get();
+    const revs = snap.docs.map(d => d.data());
+    if (revs.length === 0) { list.innerHTML = '<p>Pa gen avi ankò.</p>'; return; }
+    list.innerHTML = revs.map(r => `
+      <div class="review-item">
+        <div class="review-user">${r.userName}</div>
+        <div class="review-stars">${'⭐'.repeat(r.rating)}</div>
+        <p>${r.comment}</p>
+      </div>`).join('');
+  } catch (e) { list.innerHTML = ''; }
+}
 
 // ============================================
 // DÉMARRAGE
