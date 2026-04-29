@@ -25,12 +25,19 @@ let currentUser = null;
 let userRole = null;
 let isAdmin = false;
 let currentLang = 'ht';
+let currentCurrency = 'USD';
 let currentView = 'home';
 let products = [];
 let orders = [];
 let allUsers = [];
 let notifications = [];
 let selectedProductId = null;
+
+const exchangeRates = {
+  USD: 1,
+  HTG: 135,
+  EUR: 0.95
+};
 
 // ---------- TRADUCTIONS COMPLÈTES ----------
 const i18n = {
@@ -125,6 +132,10 @@ const i18n = {
     categoryHome: "🏠 Kay / Maison",
     categoryBeauty: "💄 Bote / Beauté",
     categoryOther: "📦 Lòt / Autres",
+    profile: "Profil", phone: "Telefòn", phonePlaceholder: "Ex: +509 1234 5678",
+    updateProfile: "Mete ajou profil", profileUpdated: "Profil mete ajou ak siksè!",
+    phoneNumber: "Nimewo telefòn", saveProfile: "Anrejistre Profil",
+    addressRecommend: "Adrès (Rekòmande)", phoneRecommend: "Telefòn (Rekòmande)",
   },
   fr: {
     home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -218,6 +229,10 @@ const i18n = {
     categoryHome: "🏠 Maison",
     categoryBeauty: "💄 Beauté",
     categoryOther: "📦 Autres",
+    profile: "Profil", phone: "Téléphone", phonePlaceholder: "Ex: +509 1234 5678",
+    updateProfile: "Mettre à jour le profil", profileUpdated: "Profil mis à jour avec succès !",
+    phoneNumber: "Numéro de téléphone", saveProfile: "Enregistrer le Profil",
+    addressRecommend: "Adresse (Recommandé)", phoneRecommend: "Téléphone (Recommandé)",
   },
   en: {
     home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -310,6 +325,10 @@ const i18n = {
     categoryHome: "🏠 Home",
     categoryBeauty: "💄 Beauty",
     categoryOther: "📦 Other",
+    profile: "Profile", phone: "Phone", phonePlaceholder: "Ex: +509 1234 5678",
+    updateProfile: "Update Profile", profileUpdated: "Profile updated successfully!",
+    phoneNumber: "Phone Number", saveProfile: "Save Profile",
+    addressRecommend: "Address (Recommended)", phoneRecommend: "Phone (Recommended)",
   },
   es: {
     home: "Inicio", shop: "Tienda", orders: "Pedidos", admin: "Admin",
@@ -403,8 +422,21 @@ const i18n = {
     categoryHome: "🏠 Hogar",
     categoryBeauty: "💄 Belleza",
     categoryOther: "📦 Otros",
+    profile: "Perfil", phone: "Teléfono", phonePlaceholder: "Ej: +509 1234 5678",
+    updateProfile: "Actualizar perfil", profileUpdated: "¡Perfil actualizado con éxito!",
+    phoneNumber: "Número de teléfono", saveProfile: "Guardar Perfil",
+    addressRecommend: "Dirección (Recomendado)", phoneRecommend: "Teléfono (Recommandado)",
   }
 };
+
+function formatPrice(priceUSD) {
+  const rate = exchangeRates[currentCurrency] || 1;
+  const converted = priceUSD * rate;
+  if (currentCurrency === 'USD') return `$${converted.toFixed(2)}`;
+  if (currentCurrency === 'HTG') return `${Math.round(converted).toLocaleString()} G`;
+  if (currentCurrency === 'EUR') return `${converted.toFixed(2)} €`;
+  return `${converted.toFixed(2)} ${currentCurrency}`;
+}
 
 // ---------- FONCTIONS UTILITAIRES ----------
 function t(key) { return i18n[currentLang]?.[key] || key; }
@@ -429,7 +461,7 @@ function updateCategoryOptions() {
   const options = categorySelect.querySelectorAll('option');
   const categoryKeys = ['all', 'food', 'electronics', 'clothing', 'home', 'beauty', 'other'];
   const translationKeys = ['allCategories', 'categoryFood', 'categoryElectronics', 'categoryClothing', 'categoryHome', 'categoryBeauty', 'categoryOther'];
-  
+
   options.forEach((option, index) => {
     if (translationKeys[index]) {
       option.textContent = t(translationKeys[index]);
@@ -445,7 +477,7 @@ function showMessage(message, type = 'success') {
   toast.textContent = message;
   toast.style.cssText = `
     position:fixed; bottom:20px; right:20px;
-    background:${type==='success'?'#1e7e5b':'#c0392b'};
+    background:${type === 'success' ? '#1e7e5b' : '#c0392b'};
     color:white; padding:1rem 1.5rem; border-radius:30px;
     font-weight:600; z-index:3000;
     box-shadow:0 20px 40px rgba(0,0,0,0.3);
@@ -456,7 +488,7 @@ function showMessage(message, type = 'success') {
 
 function debounce(func, delay) {
   let timeout;
-  return function(...args) {
+  return function (...args) {
     clearTimeout(timeout);
     timeout = setTimeout(() => func.apply(this, args), delay);
   };
@@ -471,14 +503,14 @@ auth.onAuthStateChanged(async (user) => {
   const logoutBtn = document.getElementById('logoutBtn');
   const adminElements = document.querySelectorAll('.admin-only');
   const userElements = document.querySelectorAll('.user-only');
-  
+
   if (user) {
     if (!user.emailVerified) {
       showMessage(t('emailVerifyWarning'), 'error');
       setTimeout(() => { if (currentUser && !currentUser.emailVerified) auth.signOut(); }, 5000);
       return;
     }
-    
+
     try {
       const userDoc = await db.collection('users').doc(user.uid).get();
       if (userDoc.exists) {
@@ -493,17 +525,17 @@ auth.onAuthStateChanged(async (user) => {
         });
       }
     } catch (e) { userRole = 'client'; isAdmin = false; }
-    
+
     if (authBtn) authBtn.classList.add('hidden');
     if (logoutBtn) logoutBtn.classList.remove('hidden');
     userElements.forEach(el => el.classList.remove('hidden'));
-    
+
     if (isAdmin) {
       adminElements.forEach(el => el.classList.remove('hidden'));
     } else {
       adminElements.forEach(el => el.classList.add('hidden'));
     }
-    
+
     if (logoutBtn) logoutBtn.textContent = '🚪 ' + (isAdmin ? 'Admin: ' : '') + t('logout');
   } else {
     if (authBtn) authBtn.classList.remove('hidden');
@@ -512,7 +544,7 @@ auth.onAuthStateChanged(async (user) => {
     userElements.forEach(el => el.classList.add('hidden'));
     isAdmin = false; userRole = null;
   }
-  
+
   if (currentView === 'admin' && !isAdmin) currentView = 'home';
   renderView(currentView);
   if (isAdmin) loadAllData();
@@ -561,7 +593,7 @@ document.getElementById('emailLoginBtn')?.addEventListener('click', () => {
     .then((userCredential) => {
       if (!userCredential.user.emailVerified) {
         showMessage(t('emailNotVerified'), 'error');
-        userCredential.user.sendEmailVerification().catch(() => {});
+        userCredential.user.sendEmailVerification().catch(() => { });
         auth.signOut(); return;
       }
       document.getElementById('loginModal')?.classList.add('hidden');
@@ -676,7 +708,7 @@ function renderNotifList() {
   }
   list.innerHTML = notifications.map(n => `
     <div class="notif-item ${n.read ? '' : 'unread'}">
-      <div class="notif-title">${n.type==='promo'?'🎉':n.type==='new'?'🆕':'💰'} ${n.title}</div>
+      <div class="notif-title">${n.type === 'promo' ? '🎉' : n.type === 'new' ? '🆕' : '💰'} ${n.title}</div>
       <p>${n.message}</p>
       <div class="notif-date">${n.createdAt?.toDate?.()?.toLocaleDateString?.('fr-FR') || t('today')}</div>
     </div>`).join('');
@@ -690,6 +722,11 @@ document.getElementById('langSwitch')?.addEventListener('change', (e) => {
   applyLanguage();
 });
 
+document.getElementById('currencySwitch')?.addEventListener('change', (e) => {
+  currentCurrency = e.target.value;
+  renderView(currentView);
+});
+
 // ============================================
 // NAVIGATION
 // ============================================
@@ -701,9 +738,9 @@ document.getElementById('navShop')?.addEventListener('click', (e) => {
   e.preventDefault(); setActiveNav('navShop');
   currentView = 'shop'; renderView('shop');
 });
-document.getElementById('navOrders')?.addEventListener('click', (e) => {
-  e.preventDefault(); setActiveNav('navOrders');
-  currentView = 'orders'; renderView('orders');
+document.getElementById('navProfile')?.addEventListener('click', (e) => {
+  e.preventDefault(); setActiveNav('navProfile');
+  currentView = 'profile'; renderView('profile');
 });
 document.getElementById('navAdmin')?.addEventListener('click', (e) => {
   e.preventDefault(); setActiveNav('navAdmin');
@@ -732,7 +769,7 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
     await db.collection('orders').add({
       userId: currentUser.uid, userEmail: currentUser.email,
       productId: product.id, productName: product.name,
-      price: product.price, image: product.image || '',
+      price: product.price, currency: currentCurrency, image: product.image || '',
       address, payment, status: 'pending', deliveryEstimate: '',
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -779,26 +816,26 @@ async function loadAllData() {
 // ============================================
 function getFilteredProducts() {
   let filtered = [...products];
-  
+
   const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase()?.trim() || '';
   const category = document.getElementById('categoryFilter')?.value || 'all';
   const priceMin = parseFloat(document.getElementById('priceMin')?.value) || 0;
   const priceMax = parseFloat(document.getElementById('priceMax')?.value) || Infinity;
   const sortBy = document.getElementById('sortBy')?.value || 'date-desc';
-  
+
   if (searchTerm) {
-    filtered = filtered.filter(p => 
-      p.name?.toLowerCase().includes(searchTerm) || 
+    filtered = filtered.filter(p =>
+      p.name?.toLowerCase().includes(searchTerm) ||
       p.description?.toLowerCase().includes(searchTerm)
     );
   }
-  
+
   if (category !== 'all') {
     filtered = filtered.filter(p => p.category === category);
   }
-  
+
   filtered = filtered.filter(p => p.price >= priceMin && p.price <= priceMax);
-  
+
   switch (sortBy) {
     case 'date-asc': filtered.sort((a, b) => (a.createdAt?.toDate?.() || 0) - (b.createdAt?.toDate?.() || 0)); break;
     case 'price-asc': filtered.sort((a, b) => a.price - b.price); break;
@@ -807,14 +844,14 @@ function getFilteredProducts() {
     case 'name-desc': filtered.sort((a, b) => (b.name || '').localeCompare(a.name || '')); break;
     default: filtered.sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0)); break;
   }
-  
+
   return filtered;
 }
 
 function displayFilteredProducts() {
   const filtered = getFilteredProducts();
   const resultsCount = document.getElementById('resultsCount');
-  
+
   if (resultsCount) {
     if (filtered.length === 0) {
       resultsCount.innerHTML = `🔍 ${t('noResultsFound')}`;
@@ -822,31 +859,31 @@ function displayFilteredProducts() {
       resultsCount.innerHTML = `<span>${filtered.length}</span> ${t('resultsFound')}`;
     }
   }
-  
+
   if (filtered.length === 0) {
     return `<p class="text-center" style="grid-column:1/-1; padding:3rem;">📭 ${t('noResultsFound')}</p>`;
   }
-  
+
   return filtered.map(p => productCardHTML(p)).join('');
 }
 
 function setupSearchAndFilters() {
   const searchBar = document.getElementById('searchFilterBar');
   if (searchBar) searchBar.classList.remove('hidden');
-  
+
   const searchInput = document.getElementById('searchInput');
   if (searchInput) {
     searchInput.addEventListener('input', debounce(() => refreshProductGrid(), 300));
   }
-  
+
   document.getElementById('searchBtn')?.addEventListener('click', () => refreshProductGrid());
-  
+
   searchInput?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') refreshProductGrid();
   });
-  
+
   document.getElementById('applyFiltersBtn')?.addEventListener('click', () => refreshProductGrid());
-  
+
   document.getElementById('resetFiltersBtn')?.addEventListener('click', () => {
     const si = document.getElementById('searchInput');
     const cf = document.getElementById('categoryFilter');
@@ -860,7 +897,7 @@ function setupSearchAndFilters() {
     if (sb) sb.value = 'date-desc';
     refreshProductGrid();
   });
-  
+
   document.getElementById('categoryFilter')?.addEventListener('change', () => refreshProductGrid());
   document.getElementById('sortBy')?.addEventListener('change', () => refreshProductGrid());
   document.getElementById('priceMin')?.addEventListener('input', debounce(() => refreshProductGrid(), 500));
@@ -882,7 +919,7 @@ async function renderView(view) {
   currentView = view;
   const app = document.getElementById('appContent');
   if (!app) return;
-  
+
   // Afficher/cacher la barre de recherche
   const searchBar = document.getElementById('searchFilterBar');
   if (searchBar) {
@@ -892,17 +929,18 @@ async function renderView(view) {
       searchBar.classList.add('hidden');
     }
   }
-  
+
   if (isAdmin && (view === 'home' || view === 'admin')) {
     await renderAdminDashboard(app);
   } else {
     switch (view) {
       case 'home': await renderHome(app); break;
       case 'shop': await renderShop(app); break;
-      case 'orders': await renderClientOrders(app); break;
+      case 'orders': await renderProfile(app); break;
+      case 'profile': await renderProfile(app); break;
       case 'specialOffers': await renderSpecialOffers(app); break;
       case 'settings': renderSettings(app); break;
-      case 'history': await renderClientOrders(app); break;
+      case 'history': await renderProfile(app); break;
       default: await renderHome(app);
     }
   }
@@ -917,7 +955,7 @@ function productCardHTML(product) {
       <div class="product-info">
         <div class="product-title">${product.name}</div>
         ${product.description ? `<div class="product-description">${product.description.substring(0, 60)}...</div>` : ''}
-        <div class="product-price">$${product.price} ${hasPromo ? `<span class="old-price">$${product.oldPrice}</span>` : ''}</div>
+        <div class="product-price">${formatPrice(product.price)} ${hasPromo ? `<span class="old-price">${formatPrice(product.oldPrice)}</span>` : ''}</div>
         <button class="btn btn-gold btn-sm buy-btn" data-product-id="${product.id}">🛒 ${t('buy')}</button>
       </div>
     </div>`;
@@ -929,21 +967,21 @@ function productCardHTML(product) {
 async function renderAdminDashboard(app) {
   if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
   await loadAllData();
-  
+
   const totalProducts = products.length;
   const totalOrders = orders.length;
   const totalClients = allUsers.filter(u => u.role === 'client').length;
   const pendingCount = orders.filter(o => o.status === 'pending').length;
   const confirmedCount = orders.filter(o => o.status === 'confirmed').length;
   const totalRevenue = orders.reduce((sum, o) => sum + (o.price || 0), 0);
-  
+
   app.innerHTML = `
     <h2>📊 ${t('dashboard')} - ${t('welcomeAdmin')}</h2>
     <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap:1rem; margin:1.5rem 0;">
       <div class="card text-center" style="padding:1.2rem; border-left:4px solid #c8963e;"><div style="font-size:2rem; font-weight:800; color:#c8963e;">${totalProducts}</div><div>📦 ${t('totalProducts')}</div></div>
       <div class="card text-center" style="padding:1.2rem; border-left:4px solid #1e7e5b;"><div style="font-size:2rem; font-weight:800; color:#1e7e5b;">${totalOrders}</div><div>📋 ${t('totalOrders')}</div></div>
       <div class="card text-center" style="padding:1.2rem; border-left:4px solid #1e6b8a;"><div style="font-size:2rem; font-weight:800; color:#1e6b8a;">${totalClients}</div><div>👥 ${t('totalClients')}</div></div>
-      <div class="card text-center" style="padding:1.2rem; border-left:4px solid #f39c12;"><div style="font-size:2rem; font-weight:800; color:#f39c12;">$${totalRevenue.toFixed(2)}</div><div>💰 ${t('revenue')}</div></div>
+      <div class="card text-center" style="padding:1.2rem; border-left:4px solid #f39c12;"><div style="font-size:2rem; font-weight:800; color:#f39c12;">${formatPrice(totalRevenue)}</div><div>💰 ${t('revenue')}</div></div>
     </div>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
       <div class="card text-center" style="padding:1rem;"><div style="font-size:1.5rem; font-weight:800; color:#f39c12;">${pendingCount}</div><div>⏳ ${t('pendingOrders')}</div></div>
@@ -951,12 +989,12 @@ async function renderAdminDashboard(app) {
     </div>
     <div class="card"><h3>⚡ ${t('quickActions')}</h3><div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.5rem;"><button class="btn btn-gold btn-sm" id="adminAddProductBtn">➕ ${t('addProduct')}</button><button class="btn btn-sm" id="adminManageOrdersBtn">📦 ${t('manageOrders')}</button><button class="btn btn-sm" id="adminManageClientsBtn">👥 ${t('manageClients')}</button><button class="btn btn-accent btn-sm" id="adminSendNotifBtn">🔔 ${t('sendNotification')}</button></div></div>
     <div id="adminAddProductForm" class="card hidden"><h3>➕ ${t('addProduct')}</h3><div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;"><div><label>${t('productName')}</label><input id="adminProdName" placeholder="${t('productNamePlaceholder')}"></div><div><label>${t('productPrice')} ($)</label><input id="adminProdPrice" type="number" placeholder="${t('productPricePlaceholder')}" step="0.01"></div></div><label>${t('oldPrice')}</label><input id="adminProdOldPrice" type="number" placeholder="${t('oldPricePlaceholder')}" step="0.01"><label>${t('productImage')}</label><input id="adminProdImage" placeholder="${t('productImagePlaceholder')}"><label>${t('productDesc')}</label><textarea id="adminProdDesc" rows="2" placeholder="${t('productDescPlaceholder')}"></textarea><button id="saveProductBtn" class="btn btn-gold mt-2">✅ ${t('save')}</button></div>
-    <div class="card mt-2"><h3>📋 ${t('existingProducts')} (${totalProducts})</h3><div id="adminProductList">${products.length === 0 ? `<p>${t('noProductsAdmin')}</p>` : products.map(p => `<div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid #eee;"><span>📦 ${p.name} - <strong>$${p.price}</strong></span><button class="btn btn-danger btn-sm delete-product" data-id="${p.id}">🗑️</button></div>`).join('')}</div></div>
-    <div class="card mt-2"><h3>🕐 ${t('recentOrders')} (${totalOrders})</h3><div id="adminOrderList">${orders.length === 0 ? `<p>${t('noOrdersAdmin')}</p>` : orders.slice(0, 10).map(o => `<div style="padding:0.6rem 0; border-bottom:1px solid #eee;"><div style="display:flex; justify-content:space-between; flex-wrap:wrap;"><strong>${o.productName}</strong><select class="status-select" data-order-id="${o.id}" style="width:auto; padding:0.3rem;"><option value="pending" ${o.status==='pending'?'selected':''}>⏳ ${t('pending')}</option><option value="confirmed" ${o.status==='confirmed'?'selected':''}>✅ ${t('confirmed')}</option><option value="delivered" ${o.status==='delivered'?'selected':''}>🚚 ${t('delivered')}</option><option value="cancelled" ${o.status==='cancelled'?'selected':''}>❌ ${t('cancelled')}</option></select></div><p style="font-size:0.85rem;">💰 $${o.price} | 👤 ${o.userEmail || t('clientLabel')} | 📍 ${o.address}</p><input id="delay-${o.id}" placeholder="${t('delayPlaceholder')}" value="${o.deliveryEstimate || ''}" style="width:60%; display:inline;"><button class="btn btn-success btn-sm update-delay" data-id="${o.id}">⏱️</button></div>`).join('')}</div></div>
-    <div id="adminClientsList" class="card mt-2 hidden"><h3>👥 ${t('manageClients')} (${allUsers.length})</h3>${allUsers.map(u => `<div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid #eee;"><div><strong>${u.displayName || u.email}</strong><span class="badge ${u.role==='admin'?'badge-success':''}" style="margin-left:0.5rem;">${u.role}</span></div><button class="btn btn-sm ${u.role==='admin'?'btn-danger':'btn-gold'} toggle-role" data-uid="${u.id}" data-role="${u.role}">${u.role==='admin' ? t('makeClient') : t('makeAdmin')}</button></div>`).join('')}</div>
+    <div class="card mt-2"><h3>📋 ${t('existingProducts')} (${totalProducts})</h3><div id="adminProductList">${products.length === 0 ? `<p>${t('noProductsAdmin')}</p>` : products.map(p => `<div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid #eee;"><span>📦 ${p.name} - <strong>${formatPrice(p.price)}</strong></span><button class="btn btn-danger btn-sm delete-product" data-id="${p.id}">🗑️</button></div>`).join('')}</div></div>
+    <div class="card mt-2"><h3>🕐 ${t('recentOrders')} (${totalOrders})</h3><div id="adminOrderList">${orders.length === 0 ? `<p>${t('noOrdersAdmin')}</p>` : orders.slice(0, 10).map(o => `<div style="padding:0.6rem 0; border-bottom:1px solid #eee;"><div style="display:flex; justify-content:space-between; flex-wrap:wrap;"><strong>${o.productName}</strong><select class="status-select" data-order-id="${o.id}" style="width:auto; padding:0.3rem;"><option value="pending" ${o.status === 'pending' ? 'selected' : ''}>⏳ ${t('pending')}</option><option value="confirmed" ${o.status === 'confirmed' ? 'selected' : ''}>✅ ${t('confirmed')}</option><option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>🚚 ${t('delivered')}</option><option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>❌ ${t('cancelled')}</option></select></div><p style="font-size:0.85rem;">💰 ${formatPrice(o.price)} | 👤 ${o.userEmail || t('clientLabel')} | 📍 ${o.address}</p><input id="delay-${o.id}" placeholder="${t('delayPlaceholder')}" value="${o.deliveryEstimate || ''}" style="width:60%; display:inline;"><button class="btn btn-success btn-sm update-delay" data-id="${o.id}">⏱️</button></div>`).join('')}</div></div>
+    <div id="adminClientsList" class="card mt-2 hidden"><h3>👥 ${t('manageClients')} (${allUsers.length})</h3>${allUsers.map(u => `<div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid #eee;"><div><strong>${u.displayName || u.email}</strong><span class="badge ${u.role === 'admin' ? 'badge-success' : ''}" style="margin-left:0.5rem;">${u.role}</span></div><button class="btn btn-sm ${u.role === 'admin' ? 'btn-danger' : 'btn-gold'} toggle-role" data-uid="${u.id}" data-role="${u.role}">${u.role === 'admin' ? t('makeClient') : t('makeAdmin')}</button></div>`).join('')}</div>
     <div id="adminSendNotifForm" class="card mt-2 hidden"><h3>🔔 ${t('sendNotification')}</h3><input id="notifTitle" placeholder="${t('notificationTitle')}"><textarea id="notifMessage" placeholder="${t('notificationMessage')}"></textarea><button id="sendNotifBtn" class="btn btn-gold mt-2">📤 ${t('sendNotification')}</button></div>
   `;
-  
+
   // Events Admin
   document.getElementById('adminAddProductBtn')?.addEventListener('click', () => {
     document.getElementById('adminAddProductForm').classList.toggle('hidden');
@@ -976,7 +1014,7 @@ async function renderAdminDashboard(app) {
     document.getElementById('adminAddProductForm').classList.add('hidden');
     document.getElementById('adminClientsList').classList.add('hidden');
   });
-  
+
   document.getElementById('saveProductBtn')?.addEventListener('click', async () => {
     const name = document.getElementById('adminProdName')?.value.trim();
     const price = parseFloat(document.getElementById('adminProdPrice')?.value);
@@ -990,7 +1028,7 @@ async function renderAdminDashboard(app) {
       await loadAllData(); renderView('admin');
     } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
   });
-  
+
   document.querySelectorAll('.delete-product').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       if (confirm(t('confirmDelete'))) {
@@ -1000,14 +1038,14 @@ async function renderAdminDashboard(app) {
       }
     });
   });
-  
+
   document.querySelectorAll('.status-select').forEach(select => {
     select.addEventListener('change', async (e) => {
       await db.collection('orders').doc(e.target.dataset.orderId).update({ status: e.target.value });
       showMessage(t('statusUpdated'), 'success');
     });
   });
-  
+
   document.querySelectorAll('.update-delay').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       const orderId = e.currentTarget.dataset.id;
@@ -1017,7 +1055,7 @@ async function renderAdminDashboard(app) {
       showMessage(t('delayUpdated'), 'success');
     });
   });
-  
+
   document.querySelectorAll('.toggle-role').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       const uid = e.currentTarget.dataset.uid;
@@ -1028,7 +1066,7 @@ async function renderAdminDashboard(app) {
       await loadAllData(); renderView('admin');
     });
   });
-  
+
   document.getElementById('sendNotifBtn')?.addEventListener('click', async () => {
     const title = document.getElementById('notifTitle')?.value.trim();
     const message = document.getElementById('notifMessage')?.value.trim();
@@ -1055,8 +1093,8 @@ async function renderHome(app) {
       <button class="btn btn-gold mt-2" id="goShopBtn">🛒 ${t('goShop')}</button>
     </div>
     <h2>🔥 ${t('featured')}</h2>
-    <div class="grid">${products.length===0?`<p>📦 ${t('noProducts')}</p>`:products.slice(0,4).map(p=>productCardHTML(p)).join('')}</div>`;
-  document.getElementById('goShopBtn')?.addEventListener('click', () => { currentView='shop'; renderView('shop'); });
+    <div class="grid">${products.length === 0 ? `<p>📦 ${t('noProducts')}</p>` : products.slice(0, 4).map(p => productCardHTML(p)).join('')}</div>`;
+  document.getElementById('goShopBtn')?.addEventListener('click', () => { currentView = 'shop'; renderView('shop'); });
   attachBuyButtons();
 }
 
@@ -1074,26 +1112,98 @@ async function renderSpecialOffers(app) {
   setupSearchAndFilters();
 }
 
-async function renderClientOrders(app) {
-  if (!currentUser) { app.innerHTML = `<div class="card text-center"><p>🔐 ${t('loginRequired')}</p><button class="btn btn-gold" id="loginFromOrders">${t('login')}</button></div>`; document.getElementById('loginFromOrders')?.addEventListener('click', () => document.getElementById('authBtn')?.click()); return; }
+async function renderProfile(app) {
+  if (!currentUser) {
+    app.innerHTML = `<div class="card text-center"><p>🔐 ${t('loginRequired')}</p><button class="btn btn-gold" id="loginFromOrders">${t('login')}</button></div>`;
+    document.getElementById('loginFromOrders')?.addEventListener('click', () => document.getElementById('authBtn')?.click());
+    return;
+  }
+
+  // Charger les données utilisateur (adresse, téléphone)
+  let userAddress = '';
+  let userPhone = '';
+  try {
+    const userDoc = await db.collection('users').doc(currentUser.uid).get();
+    if (userDoc.exists) {
+      userAddress = userDoc.data().address || '';
+      userPhone = userDoc.data().phone || '';
+    }
+  } catch (e) { console.error("Erreur profil:", e); }
+
   await loadMyOrders();
-  app.innerHTML = `<h2>📦 ${t('myOrders')}</h2>${orders.length===0?`<p>📭 ${t('noOrders')}</p>`:orders.map(o=>`
-    <div class="card" style="margin-bottom:0.8rem;">
-      <div style="display:flex; justify-content:space-between; flex-wrap:wrap;"><strong>${o.productName}</strong><span class="badge ${o.status==='confirmed'?'badge-success':'badge-pending'}">${t(o.status)}</span></div>
-      <p>💰 $${o.price} | 💳 ${o.payment} | 📍 ${o.address}</p>
-      ${o.deliveryEstimate?`<p>🚚 ${t('delivery')}: ${o.deliveryEstimate}</p>`:`<p>⏳ ${t('waiting')}</p>`}
-    </div>`).join('')}`;
+
+  app.innerHTML = `
+    <div class="card-premium">
+      <h2>👤 ${t('profile')}</h2>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+        <div>
+          <label>👤 ${t('name')}</label>
+          <input type="text" id="profName" value="${currentUser.displayName || ''}" placeholder="${t('namePlaceholder')}">
+        </div>
+        <div>
+          <label>📧 ${t('email')}</label>
+          <input type="text" value="${currentUser.email}" disabled style="background:#eee;">
+        </div>
+      </div>
+      
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+        <div>
+          <label>📍 ${t('addressRecommend')}</label>
+          <input type="text" id="profAddress" value="${userAddress}" placeholder="${t('addressPlaceholder')}">
+        </div>
+        <div>
+          <label>📞 ${t('phoneRecommend')}</label>
+          <input type="text" id="profPhone" value="${userPhone}" placeholder="${t('phonePlaceholder')}">
+        </div>
+      </div>
+      
+      <button id="saveProfileBtn" class="btn btn-gold" style="width:100%;">💾 ${t('saveProfile')}</button>
+    </div>
+
+    <h2 style="margin-top:2rem;">📦 ${t('myOrders')}</h2>
+    ${orders.length === 0 ? `<p>📭 ${t('noOrders')}</p>` : orders.map(o => `
+      <div class="card" style="margin-bottom:0.8rem;">
+        <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+          <strong>${o.productName}</strong>
+          <span class="badge ${o.status === 'confirmed' || o.status === 'delivered' ? 'badge-success' : 'badge-pending'}">${t(o.status)}</span>
+        </div>
+        <p>💰 ${formatPrice(o.price)} | 💳 ${o.payment} | 📍 ${o.address}</p>
+        ${o.deliveryEstimate ? `<p>🚚 ${t('delivery')}: ${o.deliveryEstimate}</p>` : `<p>⏳ ${t('waiting')}</p>`}
+      </div>`).join('')}
+  `;
+
+  document.getElementById('saveProfileBtn')?.addEventListener('click', async () => {
+    const name = document.getElementById('profName').value.trim();
+    const address = document.getElementById('profAddress').value.trim();
+    const phone = document.getElementById('profPhone').value.trim();
+
+    try {
+      await db.collection('users').doc(currentUser.uid).update({
+        displayName: name,
+        address: address,
+        phone: phone
+      });
+      // Mettre à jour le profil Firebase Auth aussi
+      await currentUser.updateProfile({ displayName: name });
+      showMessage(t('profileUpdated'), 'success');
+      renderView('profile');
+    } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
+  });
+}
+
+async function renderClientOrders(app) {
+  await renderProfile(app);
 }
 
 function renderSettings(app) {
   app.innerHTML = `
     <div class="card-premium">
       <h2>⚙️ ${t('settings')}</h2>
-      <div><label>🌍 ${t('language')}</label><select id="settingsLang" style="width:auto;"><option value="ht" ${currentLang==='ht'?'selected':''}>🇭🇹 Kreyòl</option><option value="fr" ${currentLang==='fr'?'selected':''}>🇫🇷 Français</option><option value="en" ${currentLang==='en'?'selected':''}>🇺🇸 English</option><option value="es" ${currentLang==='es'?'selected':''}>🇪🇸 Español</option></select></div>
-      ${currentUser?`<div style="margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid #eee;"><h4>${t('accountInfo')}</h4><p><strong>${t('email')}:</strong> ${currentUser.email}</p><p><strong>${t('name')}:</strong> ${currentUser.displayName||'---'}</p><p><strong>${t('role')}:</strong> ${isAdmin?'Admin':'Client'}</p><p><strong>${t('emailVerified')}:</strong> ${currentUser.emailVerified?'✅ '+t('yes'):'❌ '+t('no')}</p>${!currentUser.emailVerified?`<button class="btn btn-gold btn-sm mt-2" id="resendVerifyEmail">📧 ${t('resendVerifyEmail')}</button>`:''}</div>`:''}
+      <div><label>🌍 ${t('language')}</label><select id="settingsLang" style="width:auto;"><option value="ht" ${currentLang === 'ht' ? 'selected' : ''}>🇭🇹 Kreyòl</option><option value="fr" ${currentLang === 'fr' ? 'selected' : ''}>🇫🇷 Français</option><option value="en" ${currentLang === 'en' ? 'selected' : ''}>🇺🇸 English</option><option value="es" ${currentLang === 'es' ? 'selected' : ''}>🇪🇸 Español</option></select></div>
+      ${currentUser ? `<div style="margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid #eee;"><h4>${t('accountInfo')}</h4><p><strong>${t('email')}:</strong> ${currentUser.email}</p><p><strong>${t('name')}:</strong> ${currentUser.displayName || '---'}</p><p><strong>${t('role')}:</strong> ${isAdmin ? 'Admin' : 'Client'}</p><p><strong>${t('emailVerified')}:</strong> ${currentUser.emailVerified ? '✅ ' + t('yes') : '❌ ' + t('no')}</p>${!currentUser.emailVerified ? `<button class="btn btn-gold btn-sm mt-2" id="resendVerifyEmail">📧 ${t('resendVerifyEmail')}</button>` : ''}</div>` : ''}
     </div>`;
-  document.getElementById('settingsLang')?.addEventListener('change', (e) => { currentLang=e.target.value; document.getElementById('langSwitch').value=currentLang; applyLanguage(); });
-  document.getElementById('resendVerifyEmail')?.addEventListener('click', async () => { if(currentUser){ await currentUser.sendEmailVerification(); showMessage(t('emailVerifySent'),'success'); } });
+  document.getElementById('settingsLang')?.addEventListener('change', (e) => { currentLang = e.target.value; document.getElementById('langSwitch').value = currentLang; applyLanguage(); });
+  document.getElementById('resendVerifyEmail')?.addEventListener('click', async () => { if (currentUser) { await currentUser.sendEmailVerification(); showMessage(t('emailVerifySent'), 'success'); } });
 }
 
 // ============================================
@@ -1101,16 +1211,25 @@ function renderSettings(app) {
 // ============================================
 function attachBuyButtons() {
   document.querySelectorAll('.buy-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      if (!currentUser) { showMessage(t('loginRequired'),'error'); document.getElementById('authBtn')?.click(); return; }
-      if (!currentUser.emailVerified) { showMessage(t('emailNotVerified'),'error'); return; }
+    btn.addEventListener('click', async (e) => {
+      if (!currentUser) { showMessage(t('loginRequired'), 'error'); document.getElementById('authBtn')?.click(); return; }
+      if (!currentUser.emailVerified) { showMessage(t('emailNotVerified'), 'error'); return; }
       const product = products.find(p => p.id === e.currentTarget.dataset.productId);
       if (!product) return;
       selectedProductId = product.id;
       document.getElementById('modalProductName').textContent = product.name;
-      document.getElementById('modalProductPrice').textContent = `$${product.price}`;
+      document.getElementById('modalProductPrice').textContent = formatPrice(product.price);
       document.getElementById('buyModal').classList.remove('hidden');
-      document.getElementById('orderAddress').value = '';
+      
+      // Pré-remplir l'adresse si dispo
+      try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        if (userDoc.exists && userDoc.data().address) {
+          document.getElementById('orderAddress').value = userDoc.data().address;
+        } else {
+          document.getElementById('orderAddress').value = '';
+        }
+      } catch(e) { document.getElementById('orderAddress').value = ''; }
     });
   });
 }
