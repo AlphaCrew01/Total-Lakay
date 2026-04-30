@@ -1161,18 +1161,18 @@ function productCardHTML(product) {
 // ============================================
 // DASHBOARD ADMIN (inchangé - déjà complet)
 // ============================================
-  async function renderAdminDashboard(app) {
-    if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
-    await loadAllData();
+async function renderAdminDashboard(app) {
+  if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
+  await loadAllData();
 
-    const totalProducts = products.length;
-    const totalOrders = orders.length;
-    const totalClients = allUsers.filter(u => u.role === 'client').length;
-    const pendingCount = orders.filter(o => o.status === 'pending').length;
-    const confirmedCount = orders.filter(o => o.status === 'confirmed').length;
-    const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
+  const totalProducts = products.length;
+  const totalOrders = orders.length;
+  const totalClients = allUsers.filter(u => u.role === 'client').length;
+  const pendingCount = orders.filter(o => o.status === 'pending').length;
+  const confirmedCount = orders.filter(o => o.status === 'confirmed').length;
+  const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
 
-    app.innerHTML = `
+  app.innerHTML = `
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
       <h2 style="margin:0;">📊 ${t('dashboard')}</h2>
       <div class="badge badge-success">${t('welcomeAdmin')}</div>
