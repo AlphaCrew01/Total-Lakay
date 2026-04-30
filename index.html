@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ht">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
@@ -17,6 +18,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
 </head>
+
 <body>
 
   <!-- ========== NAVBAR PREMIUM ========== -->
@@ -177,8 +179,10 @@
       </div>
       <input type="text" id="registerName" data-i18n-placeholder="namePlaceholder" placeholder="Non ou" />
       <input type="email" id="registerEmail" data-i18n-placeholder="emailPlaceholder" placeholder="Email" />
-      <input type="password" id="registerPassword" data-i18n-placeholder="passwordMin" placeholder="Modpas (min 6 karaktè)" />
-      <p style="font-size:0.8rem; color:#666; margin:0.3rem 0;" data-i18n="selectRole">Chwazi wòl ou (default: Kliyan)</p>
+      <input type="password" id="registerPassword" data-i18n-placeholder="passwordMin"
+        placeholder="Modpas (min 6 karaktè)" />
+      <p style="font-size:0.8rem; color:#666; margin:0.3rem 0;" data-i18n="selectRole">Chwazi wòl ou (default: Kliyan)
+      </p>
       <button id="registerBtn" class="btn btn-gold" style="width:100%;">
         ✅ <span data-i18n="createAccount">Kreye kont</span>
       </button>
@@ -194,7 +198,9 @@
     <div class="modal-content card-premium">
       <span class="close-modal" id="closeNotifModal">&times;</span>
       <h2>🔔 <span data-i18n="notifications">Notifikasyon</span></h2>
-      <div id="notifList"><p class="text-center">Chajman...</p></div>
+      <div id="notifList">
+        <p class="text-center">Chajman...</p>
+      </div>
     </div>
   </div>
 
@@ -204,12 +210,13 @@
       <span class="close-modal" id="closeBuyModal">&times;</span>
       <h2 id="modalProductName"></h2>
       <p class="product-price-large" id="modalProductPrice"></p>
-      
+
       <div id="productDetailsContent"></div>
-      
+
       <label for="orderAddress">📍 <span data-i18n="address">Adrès ou</span></label>
-      <input type="text" id="orderAddress" data-i18n-placeholder="addressPlaceholder" placeholder="Rue, Ville, Code postal" />
-      
+      <input type="text" id="orderAddress" data-i18n-placeholder="addressPlaceholder"
+        placeholder="Rue, Ville, Code postal" />
+
       <label for="orderPayment">💳 <span data-i18n="payment">Mwayen peman</span></label>
       <select id="orderPayment">
         <option value="moncash">MonCash</option>
@@ -217,7 +224,7 @@
         <option value="credit">Kredi / Crédit</option>
         <option value="cash">Lajan kach / Cash</option>
       </select>
-      
+
       <button id="submitOrder" class="btn btn-gold" style="width:100%; margin-top:1rem;">
         ✅ <span data-i18n="orderNow">Kòmande</span>
       </button>
@@ -228,7 +235,8 @@
         <div class="add-review-form mt-2">
           <h4 data-i18n="addReview">Ajoute yon avi</h4>
           <div class="star-rating" id="starRating">
-            <span data-rating="1">⭐</span><span data-rating="2">⭐</span><span data-rating="3">⭐</span><span data-rating="4">⭐</span><span data-rating="5">⭐</span>
+            <span data-rating="1">⭐</span><span data-rating="2">⭐</span><span data-rating="3">⭐</span><span
+              data-rating="4">⭐</span><span data-rating="5">⭐</span>
           </div>
           <textarea id="reviewComment" placeholder="Kòmantè..."></textarea>
           <button id="submitReviewBtn" class="btn btn-sm btn-gold" data-i18n="submit">Voye</button>
@@ -271,7 +279,8 @@
         <h4 data-i18n="securePayment">Peman Sekirize</h4>
         <div class="trust-badges">
           <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" height="20">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" height="20">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard"
+            height="20">
           <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" height="20">
           <div class="moncash-badge">MonCash</div>
         </div>
@@ -305,4 +314,5 @@
   <!-- ========== JavaScript ========== -->
   <script src="app.js"></script>
 </body>
+
 </html>
