@@ -211,7 +211,8 @@ body {
   transition: var(--transition);
 }
 
-.category-btn:hover, .category-btn.active {
+.category-btn:hover,
+.category-btn.active {
   background: var(--gold);
   color: var(--blue-deep);
   border-color: var(--gold);
