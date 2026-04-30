@@ -105,12 +105,12 @@
     <div class="filter-container">
       <select id="categoryFilter" class="filter-select">
         <option value="all" data-i18n="allCategories">Tout kategori</option>
-        <option value="food" data-i18n="categoryFood">🍚 Manje</option>
+        <option value="food" data-i18n="categoryFood">🍚 Manje / Alimentation</option>
         <option value="electronics" data-i18n="categoryElectronics">📱 Elektwonik</option>
         <option value="clothing" data-i18n="categoryClothing">👕 Vètman</option>
-        <option value="home" data-i18n="categoryHome">🏠 Kay</option>
-        <option value="beauty" data-i18n="categoryBeauty">💄 Bote</option>
-        <option value="other" data-i18n="categoryOther">📦 Lòt</option>
+        <option value="home" data-i18n="categoryHome">🏠 Kay / Maison</option>
+        <option value="beauty" data-i18n="categoryBeauty">💄 Bote / Beauté</option>
+        <option value="other" data-i18n="categoryOther">📦 Lòt / Autres</option>
       </select>
 
       <input type="number" id="priceMin" class="price-input" data-i18n-placeholder="priceMin" placeholder="Pri min" />
@@ -139,12 +139,18 @@
   <!-- ========== CONTENU PRINCIPAL ========== -->
   <main class="container" id="appContent">
     <!-- Rendu dynamique par app.js -->
+    <!-- 
+      Pour Admin : renderAdminDashboard() 
+      Pour Client : renderHome(), renderShop(), renderClientOrders(), etc.
+    -->
   </main>
 
   <!-- ========== MODAL CONNEXION ========== -->
   <div id="loginModal" class="modal hidden">
+    <!-- Formulaire Connexion -->
     <div class="modal-content login-card" id="loginFormCard">
       <span class="close-modal" id="closeLoginModal">&times;</span>
+
       <div class="login-header">
         <img src="logo.jpeg" alt="Logo" class="login-logo"
           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -152,24 +158,31 @@
         <h2>Total Lakay</h2>
         <p data-i18n="loginTitle">Konekte pou achte</p>
       </div>
+
       <button id="googleLoginBtn" class="btn btn-google">
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20">
         <span data-i18n="continueGoogle">Kontinye ak Google</span>
       </button>
+
       <div class="separator"><span data-i18n="or">oubyen</span></div>
+
       <input type="email" id="loginEmail" data-i18n-placeholder="emailPlaceholder" placeholder="Email" />
       <input type="password" id="loginPassword" data-i18n-placeholder="passwordPlaceholder" placeholder="Modpas" />
+
       <button id="emailLoginBtn" class="btn btn-gold" style="width:100%;">
         🔐 <span data-i18n="login">Konekte</span>
       </button>
+
       <p class="login-switch">
         <span data-i18n="noAccount">Pa gen kont?</span>
         <a href="#" id="switchToRegister" data-i18n="createAccount">Kreye yon kont</a>
       </p>
     </div>
 
+    <!-- Formulaire Inscription -->
     <div class="modal-content login-card hidden" id="registerForm">
       <span class="close-modal" id="closeRegisterModal">&times;</span>
+
       <div class="login-header">
         <img src="logo.jpeg" alt="Logo" class="login-logo"
           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -177,15 +190,18 @@
         <h2>Total Lakay</h2>
         <p data-i18n="createAccountTitle">Kreye kont ou</p>
       </div>
+
       <input type="text" id="registerName" data-i18n-placeholder="namePlaceholder" placeholder="Non ou" />
       <input type="email" id="registerEmail" data-i18n-placeholder="emailPlaceholder" placeholder="Email" />
       <input type="password" id="registerPassword" data-i18n-placeholder="passwordMin"
         placeholder="Modpas (min 6 karaktè)" />
-      <p style="font-size:0.8rem; color:#666; margin:0.3rem 0;" data-i18n="selectRole">Chwazi wòl ou (default: Kliyan)
-      </p>
+
+
+
       <button id="registerBtn" class="btn btn-gold" style="width:100%;">
         ✅ <span data-i18n="createAccount">Kreye kont</span>
       </button>
+
       <p class="login-switch">
         <span data-i18n="alreadyAccount">Deja gen yon kont?</span>
         <a href="#" id="switchToLogin" data-i18n="login">Konekte</a>
@@ -211,11 +227,12 @@
       <h2 id="modalProductName"></h2>
       <p class="product-price-large" id="modalProductPrice"></p>
 
-      <div id="productDetailsContent"></div>
+      <div id="productDetailsContent">
+        <!-- Contenu dynamique (description, avis) -->
+      </div>
 
       <label for="orderAddress">📍 <span data-i18n="address">Adrès ou</span></label>
-      <input type="text" id="orderAddress" data-i18n-placeholder="addressPlaceholder"
-        placeholder="Rue, Ville, Code postal" />
+      <input type="text" id="orderAddress" placeholder="Rue, Ville, Code postal" />
 
       <label for="orderPayment">💳 <span data-i18n="payment">Mwayen peman</span></label>
       <select id="orderPayment">
@@ -245,7 +262,7 @@
     </div>
   </div>
 
-  <!-- ========== MODAL CONFIRMATION ========== -->
+  <!-- ========== MODAL CONFIRMATION (Admin) ========== -->
   <div id="confirmModal" class="modal hidden">
     <div class="modal-content card-premium text-center">
       <p id="confirmMessage" style="font-size:1.2rem; margin:1rem 0;">Eske w sèten?</p>
@@ -269,12 +286,14 @@
         <p><strong>Total Lakay</strong><br>Tout bagay lakay ou</p>
         <p data-i18n="footerRights">Total Lakay &copy; 2026</p>
       </div>
+
       <div class="footer-section">
         <h4 data-i18n="contactUs">Kontakte nou</h4>
         <p>📍 Port-au-Prince, Haïti</p>
         <p>📞 +509 37 37 37 37</p>
-        <p>📧 support@totallakay.com</p>
+        <p>📧 totallakaystore@gmail.com</p>
       </div>
+
       <div class="footer-section">
         <h4 data-i18n="securePayment">Peman Sekirize</h4>
         <div class="trust-badges">
@@ -285,10 +304,11 @@
           <div class="moncash-badge">MonCash</div>
         </div>
       </div>
+
       <div class="footer-links">
-        <a href="#" data-i18n="footerServices">Sèvis</a>
-        <a href="#" data-i18n="footerPrivacy">Konfidansyalite</a>
-        <a href="#" data-i18n="footerTerms">Kondisyon</a>
+        <a href="#" id="linkServices" data-i18n="footerServices">Sèvis</a>
+        <a href="#" id="linkPrivacy" data-i18n="footerPrivacy">Konfidansyalite</a>
+        <a href="#" id="linkTerms" data-i18n="footerTerms">Kondisyon</a>
       </div>
     </div>
   </footer>
@@ -298,7 +318,9 @@
     <div class="modal-content card-premium" style="max-width: 600px;">
       <span class="close-modal" id="closeCartModal">&times;</span>
       <h2>🛒 <span data-i18n="cart">Panier</span></h2>
-      <div id="cartItemsList" class="cart-items-list"></div>
+      <div id="cartItemsList" class="cart-items-list">
+        <!-- Rempli par JS -->
+      </div>
       <div class="cart-summary">
         <div class="cart-total">
           <span data-i18n="total">Total</span>: <span id="cartTotalAmount">0.00</span>
