@@ -2,6 +2,7 @@
    TOTAL LAKAY - Version Finale Ultime
    Firebase configuré - Admin Dashboard + Client
    Recherche & Filtres - Toutes traductions
+   TOUS LES BOUTONS CORRIGÉS
    ============================================ */
 
 // ---------- CONFIGURATION FIREBASE ----------
@@ -114,6 +115,12 @@ const i18n = {
     roleChanged: "✅ Wòl modifye!",
     madeAdmin: "✅ Fè admin!",
     madeClient: "✅ Fè kliyan!",
+    servicesTitle: "Sèvis Total Lakay",
+    servicesDesc: "Nou ofri livrezon rapid atravè Ayiti. Peman sekirize ak MonCash, Natcash, Kredi. Sèvis kliyan 24/7. Tout pwodui gen garanti. Retou aksepte nan 7 jou apre acha.",
+    privacyTitle: "Konfidansyalite",
+    privacyDesc: "Done ou yo sekirize ak ankrepte. Nou pa janm pataje enfòmasyon ou ak lòt moun san otorizasyon ou. Ou gen dwa mande efase tout done ou yo nenpòt lè.",
+    termsTitle: "Kondisyon Itilizasyon",
+    termsDesc: "Lè w achte sou Total Lakay, ou aksepte kondisyon nou yo. Tout pwodui gen garanti. Retou aksepte nan 7 jou. Peman dwe fèt avan livrezon. Pri yo ka chanje san avètisman.",
     // Recherche & Filtres
     searchPlaceholder: "🔍 Rechèche yon pwodui...",
     allCategories: "Tout kategori",
@@ -147,6 +154,7 @@ const i18n = {
     favorites: "Favori", noFavorites: "Pa gen favori ankò",
     reviews: "Avi", leaveReview: "Kite yon avi", addReview: "Ajoute yon avi", noReviews: "Pa gen avi ankò",
     rating: "Nòt", comment: "Kòmantè", submit: "Voye",
+    backToHome: "← Retounen akèy",
   },
   fr: {
     home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -220,6 +228,12 @@ const i18n = {
     roleChanged: "✅ Rôle modifié !",
     madeAdmin: "✅ Passé admin !",
     madeClient: "✅ Passé client !",
+    servicesTitle: "Services Total Lakay",
+    servicesDesc: "Nous offrons une livraison rapide partout en Haïti. Paiement sécurisé avec MonCash, Natcash, Crédit. Service client 24/7. Tous les produits sont garantis. Retours acceptés sous 7 jours.",
+    privacyTitle: "Confidentialité",
+    privacyDesc: "Vos données sont sécurisées et cryptées. Nous ne partageons jamais vos informations sans votre autorisation. Vous pouvez demander la suppression de toutes vos données à tout moment.",
+    termsTitle: "Conditions d'Utilisation",
+    termsDesc: "En achetant sur Total Lakay, vous acceptez nos conditions. Tous les produits sont garantis. Retours acceptés sous 7 jours. Le paiement doit être effectué avant la livraison. Les prix peuvent changer sans préavis.",
     // Recherche & Filtres
     searchPlaceholder: "🔍 Rechercher un produit...",
     allCategories: "Toutes catégories",
@@ -253,6 +267,7 @@ const i18n = {
     favorites: "Favoris", noFavorites: "Pas encore de favoris",
     reviews: "Avis", leaveReview: "Laisser un avis", addReview: "Ajouter un avis", noReviews: "Pas encore d'avis",
     rating: "Note", comment: "Commentaire", submit: "Envoyer",
+    backToHome: "← Retour à l'accueil",
   },
   en: {
     home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -325,6 +340,12 @@ const i18n = {
     roleChanged: "✅ Role changed!",
     madeAdmin: "✅ Made admin!",
     madeClient: "✅ Made client!",
+    servicesTitle: "Total Lakay Services",
+    servicesDesc: "We offer fast delivery across Haiti. Secure payment with MonCash, Natcash, Credit. 24/7 customer service. All products are guaranteed. Returns accepted within 7 days.",
+    privacyTitle: "Privacy",
+    privacyDesc: "Your data is secure and encrypted. We never share your information without your permission. You can request deletion of all your data at any time.",
+    termsTitle: "Terms of Use",
+    termsDesc: "By purchasing on Total Lakay, you agree to our terms. All products are guaranteed. Returns accepted within 7 days. Payment must be made before delivery. Prices may change without notice.",
     // Search & Filters
     searchPlaceholder: "🔍 Search a product...",
     allCategories: "All categories",
@@ -358,6 +379,7 @@ const i18n = {
     favorites: "Favorites", noFavorites: "No favorites yet",
     reviews: "Reviews", leaveReview: "Leave a review", addReview: "Add a review", noReviews: "No reviews yet",
     rating: "Rating", comment: "Comment", submit: "Submit",
+    backToHome: "← Back to home",
   },
   es: {
     home: "Inicio", shop: "Tienda", orders: "Pedidos", admin: "Admin",
@@ -431,6 +453,12 @@ const i18n = {
     roleChanged: "✅ ¡Rol cambiado!",
     madeAdmin: "✅ ¡Hecho admin!",
     madeClient: "✅ ¡Hecho cliente!",
+    servicesTitle: "Servicios Total Lakay",
+    servicesDesc: "Ofrecemos entrega rápida en todo Haití. Pago seguro con MonCash, Natcash, Crédito. Servicio al cliente 24/7. Todos los productos están garantizados. Devoluciones aceptadas en 7 días.",
+    privacyTitle: "Privacidad",
+    privacyDesc: "Sus datos están seguros y encriptados. Nunca compartimos su información sin su permiso. Puede solicitar la eliminación de todos sus datos en cualquier momento.",
+    termsTitle: "Condiciones de Uso",
+    termsDesc: "Al comprar en Total Lakay, acepta nuestros términos. Todos los productos están garantizados. Devoluciones aceptadas en 7 días. El pago debe realizarse antes de la entrega. Los precios pueden cambiar sin previo aviso.",
     // Búsqueda y Filtros
     searchPlaceholder: "🔍 Buscar un producto...",
     allCategories: "Todas categorías",
@@ -464,6 +492,7 @@ const i18n = {
     favorites: "Favoritos", noFavorites: "Aún no hay favoritos",
     reviews: "Reseñas", leaveReview: "Dejar una reseña", addReview: "Agregar una reseña", noReviews: "Aún no hay reseñas",
     rating: "Calificación", comment: "Comentario", submit: "Enviar",
+    backToHome: "← Volver al inicio",
   }
 };
 
@@ -545,10 +574,12 @@ function toggleFavorite(productId) {
 
 // ---------- NOTIFICATIONS FUNCTIONS ----------
 function listenNotifications() {
-  db.collection('notifications').orderBy('createdAt', 'desc').limit(20).onSnapshot(snap => {
-    notifications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    updateNotifBadge();
-  });
+  try {
+    db.collection('notifications').orderBy('createdAt', 'desc').limit(20).onSnapshot(snap => {
+      notifications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      updateNotifBadge();
+    });
+  } catch(e) {}
 }
 
 function updateNotifBadge() {
@@ -577,6 +608,7 @@ function renderNotificationsModal() {
           </div>
           <p>${n.message}</p>
         </div>`).join('')}
+      <button class="btn btn-gold mt-2" id="backFromNotif">${t('backToHome')}</button>
     </div>
   `;
   document.querySelectorAll('.mark-read').forEach(btn => {
@@ -586,6 +618,7 @@ function renderNotificationsModal() {
       renderNotificationsModal();
     });
   });
+  document.getElementById('backFromNotif')?.addEventListener('click', () => renderView('home'));
 }
 
 function formatPrice(priceUSD) {
@@ -609,7 +642,6 @@ function applyLanguage() {
     const key = el.getAttribute('data-i18n-placeholder');
     if (i18n[currentLang]?.[key]) el.placeholder = i18n[currentLang][key];
   });
-  // Mettre à jour les options de catégorie
   updateCategoryOptions();
   if (currentView) renderView(currentView);
 }
@@ -620,7 +652,6 @@ function updateCategoryOptions() {
   const options = categorySelect.querySelectorAll('option');
   const categoryKeys = ['all', 'food', 'electronics', 'clothing', 'home', 'beauty', 'other'];
   const translationKeys = ['allCategories', 'categoryFood', 'categoryElectronics', 'categoryClothing', 'categoryHome', 'categoryBeauty', 'categoryOther'];
-
   options.forEach((option, index) => {
     if (translationKeys[index]) {
       option.textContent = t(translationKeys[index]);
@@ -808,43 +839,90 @@ document.getElementById('logoutBtn')?.addEventListener('click', () => {
 });
 
 // ============================================
-// MENU DROPDOWN
+// MENU DROPDOWN (CORRIGÉ)
 // ============================================
 document.getElementById('menuBtn')?.addEventListener('click', (e) => {
   e.stopPropagation();
-  document.getElementById('dropdownMenu')?.classList.toggle('hidden');
+  const menu = document.getElementById('dropdownMenu');
+  if (menu) menu.classList.toggle('hidden');
 });
+
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('#menuDropdown')) {
+  const dropdown = document.getElementById('menuDropdown');
+  if (dropdown && !dropdown.contains(e.target)) {
     document.getElementById('dropdownMenu')?.classList.add('hidden');
   }
 });
+
 document.getElementById('menuSpecial')?.addEventListener('click', (e) => {
-  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
-  currentView = 'specialOffers'; renderView('specialOffers');
-});
-document.getElementById('menuSettings')?.addEventListener('click', (e) => {
-  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
-  currentView = 'settings'; renderView('settings');
-});
-document.getElementById('menuHistory')?.addEventListener('click', (e) => {
-  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
-  currentView = 'history'; renderView('history');
-});
-document.getElementById('menuFavorites')?.addEventListener('click', (e) => {
-  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
-  currentView = 'favorites'; renderView('favorites');
+  e.preventDefault();
+  document.getElementById('dropdownMenu')?.classList.add('hidden');
+  currentView = 'specialOffers';
+  renderView('specialOffers');
 });
 
-function renderFavorites(app) {
-  const favProducts = products.filter(p => favorites.includes(p.id));
+document.getElementById('menuFavorites')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  document.getElementById('dropdownMenu')?.classList.add('hidden');
+  currentView = 'favorites';
+  renderView('favorites');
+});
+
+document.getElementById('menuSettings')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  document.getElementById('dropdownMenu')?.classList.add('hidden');
+  currentView = 'settings';
+  renderView('settings');
+});
+
+document.getElementById('menuHistory')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  document.getElementById('dropdownMenu')?.classList.add('hidden');
+  currentView = 'history';
+  renderView('history');
+});
+
+// ============================================
+// FOOTER LIENS (CORRIGÉS)
+// ============================================
+document.getElementById('linkServices')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  const app = document.getElementById('appContent');
+  if (!app) return;
   app.innerHTML = `
-    <h2>❤️ ${t('favorites') || 'Favori'}</h2>
-    <div class="grid">
-      ${favProducts.length === 0 ? `<p class="text-center" style="grid-column:1/-1;">Kè kontan pwal plen lè ou ajoute favori!</p>` : favProducts.map(p => productCardHTML(p)).join('')}
+    <div class="card-premium">
+      <h2>📦 ${t('servicesTitle')}</h2>
+      <p style="font-size:1.1rem; line-height:2;">${t('servicesDesc')}</p>
+      <button class="btn btn-gold mt-2" id="backFromServices">${t('backToHome')}</button>
     </div>`;
-  attachBuyButtons();
-}
+  document.getElementById('backFromServices')?.addEventListener('click', () => renderView('home'));
+});
+
+document.getElementById('linkPrivacy')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  const app = document.getElementById('appContent');
+  if (!app) return;
+  app.innerHTML = `
+    <div class="card-premium">
+      <h2>🔒 ${t('privacyTitle')}</h2>
+      <p style="font-size:1.1rem; line-height:2;">${t('privacyDesc')}</p>
+      <button class="btn btn-gold mt-2" id="backFromPrivacy">${t('backToHome')}</button>
+    </div>`;
+  document.getElementById('backFromPrivacy')?.addEventListener('click', () => renderView('home'));
+});
+
+document.getElementById('linkTerms')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  const app = document.getElementById('appContent');
+  if (!app) return;
+  app.innerHTML = `
+    <div class="card-premium">
+      <h2>📋 ${t('termsTitle')}</h2>
+      <p style="font-size:1.1rem; line-height:2;">${t('termsDesc')}</p>
+      <button class="btn btn-gold mt-2" id="backFromTerms">${t('backToHome')}</button>
+    </div>`;
+  document.getElementById('backFromTerms')?.addEventListener('click', () => renderView('home'));
+});
 
 // ============================================
 // NOTIFICATIONS
@@ -856,24 +934,21 @@ async function loadNotifications() {
     updateNotifBadge();
   } catch (e) { notifications = []; updateNotifBadge(); }
 }
-function updateNotifBadge() {
-  const badge = document.getElementById('notifBadge');
-  if (!badge) return;
-  const unread = notifications.filter(n => !n.read).length;
-  if (unread > 0) { badge.textContent = unread > 99 ? '99+' : unread; badge.classList.remove('hidden'); }
-  else badge.classList.add('hidden');
-}
+
 document.getElementById('notifBtn')?.addEventListener('click', (e) => {
   e.stopPropagation();
   document.getElementById('notifModal').classList.remove('hidden');
   renderNotifList();
 });
+
 document.getElementById('closeNotifModal')?.addEventListener('click', () => {
   document.getElementById('notifModal')?.classList.add('hidden');
 });
+
 document.getElementById('notifModal')?.addEventListener('click', (e) => {
   if (e.target === document.getElementById('notifModal')) document.getElementById('notifModal').classList.add('hidden');
 });
+
 function renderNotifList() {
   const list = document.getElementById('notifList');
   if (!list) return;
@@ -889,7 +964,7 @@ function renderNotifList() {
 }
 
 // ============================================
-// LANGUE
+// LANGUE & DEVISE
 // ============================================
 document.getElementById('langSwitch')?.addEventListener('change', (e) => {
   currentLang = e.target.value;
@@ -921,25 +996,6 @@ document.getElementById('navAdmin')?.addEventListener('click', (e) => {
   currentView = 'admin'; renderView('admin');
 });
 
-// Dropdown Menu & items
-document.getElementById('menuBtn')?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  document.getElementById('dropdownMenu').classList.toggle('hidden');
-});
-
-document.addEventListener('click', () => {
-  document.getElementById('dropdownMenu')?.classList.add('hidden');
-});
-
-document.getElementById('menuSpecial')?.addEventListener('click', (e) => {
-  e.preventDefault(); renderView('specialOffers');
-});
-document.getElementById('menuSettings')?.addEventListener('click', (e) => {
-  e.preventDefault(); renderView('settings');
-});
-document.getElementById('menuHistory')?.addEventListener('click', (e) => {
-  e.preventDefault(); renderView('history');
-});
 function setActiveNav(activeId) {
   document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
   document.getElementById(activeId)?.classList.add('active');
@@ -951,6 +1007,13 @@ function setActiveNav(activeId) {
 document.getElementById('closeBuyModal')?.addEventListener('click', () => {
   document.getElementById('buyModal')?.classList.add('hidden');
 });
+
+document.getElementById('buyModal')?.addEventListener('click', (e) => {
+  if (e.target === document.getElementById('buyModal')) {
+    document.getElementById('buyModal').classList.add('hidden');
+  }
+});
+
 document.getElementById('submitOrder')?.addEventListener('click', async () => {
   if (!currentUser) { showMessage(t('loginRequired'), 'error'); return; }
   if (!currentUser.emailVerified) { showMessage(t('emailNotVerified'), 'error'); return; }
@@ -1010,7 +1073,6 @@ async function loadAllData() {
 // ============================================
 function getFilteredProducts() {
   let filtered = [...products];
-
   const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase()?.trim() || '';
   const category = document.getElementById('categoryFilter')?.value || 'all';
   const priceMin = parseFloat(document.getElementById('priceMin')?.value) || 0;
@@ -1023,11 +1085,9 @@ function getFilteredProducts() {
       p.description?.toLowerCase().includes(searchTerm)
     );
   }
-
   if (category !== 'all') {
     filtered = filtered.filter(p => p.category === category);
   }
-
   filtered = filtered.filter(p => p.price >= priceMin && p.price <= priceMax);
 
   switch (sortBy) {
@@ -1038,14 +1098,12 @@ function getFilteredProducts() {
     case 'name-desc': filtered.sort((a, b) => (b.name || '').localeCompare(a.name || '')); break;
     default: filtered.sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0)); break;
   }
-
   return filtered;
 }
 
 function displayFilteredProducts() {
   const filtered = getFilteredProducts();
   const resultsCount = document.getElementById('resultsCount');
-
   if (resultsCount) {
     if (filtered.length === 0) {
       resultsCount.innerHTML = `🔍 ${t('noResultsFound')}`;
@@ -1053,11 +1111,9 @@ function displayFilteredProducts() {
       resultsCount.innerHTML = `<span>${filtered.length}</span> ${t('resultsFound')}`;
     }
   }
-
   if (filtered.length === 0) {
     return `<p class="text-center" style="grid-column:1/-1; padding:3rem;">📭 ${t('noResultsFound')}</p>`;
   }
-
   return filtered.map(p => productCardHTML(p)).join('');
 }
 
@@ -1069,15 +1125,11 @@ function setupSearchAndFilters() {
   if (searchInput) {
     searchInput.addEventListener('input', debounce(() => refreshProductGrid(), 300));
   }
-
   document.getElementById('searchBtn')?.addEventListener('click', () => refreshProductGrid());
-
   searchInput?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') refreshProductGrid();
   });
-
   document.getElementById('applyFiltersBtn')?.addEventListener('click', () => refreshProductGrid());
-
   document.getElementById('resetFiltersBtn')?.addEventListener('click', () => {
     const si = document.getElementById('searchInput');
     const cf = document.getElementById('categoryFilter');
@@ -1091,7 +1143,6 @@ function setupSearchAndFilters() {
     if (sb) sb.value = 'date-desc';
     refreshProductGrid();
   });
-
   document.getElementById('categoryFilter')?.addEventListener('change', () => refreshProductGrid());
   document.getElementById('sortBy')?.addEventListener('change', () => refreshProductGrid());
   document.getElementById('priceMin')?.addEventListener('input', debounce(() => refreshProductGrid(), 500));
@@ -1114,7 +1165,6 @@ async function renderView(view) {
   const app = document.getElementById('appContent');
   if (!app) return;
 
-  // Afficher/cacher la barre de recherche
   const searchBar = document.getElementById('searchFilterBar');
   if (searchBar) {
     if (view === 'shop' || view === 'specialOffers') {
@@ -1140,9 +1190,11 @@ async function renderView(view) {
     }
   }
 }
+
 function productCardHTML(product) {
   const hasPromo = product.oldPrice && product.oldPrice > product.price;
   return `
+    <div class="product-card" style="position:relative;">
       ${hasPromo ? `<div class="product-badge">🔥 ${t('specialPrice')}</div>` : ''}
       <button class="wishlist-btn ${favorites.includes(product.id) ? 'active' : ''}" onclick="toggleFavorite('${product.id}')">❤️</button>
       <img src="${product.image || 'https://via.placeholder.com/400x250/0f1f38/c8963e?text=Total+Lakay'}" alt="${product.name}" class="product-img" onerror="this.src='https://via.placeholder.com/400x250/0f1f38/c8963e?text=Total+Lakay'">
@@ -1159,7 +1211,7 @@ function productCardHTML(product) {
 }
 
 // ============================================
-// DASHBOARD ADMIN (inchangé - déjà complet)
+// DASHBOARD ADMIN COMPLET
 // ============================================
 async function renderAdminDashboard(app) {
   if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
@@ -1272,8 +1324,27 @@ async function renderAdminDashboard(app) {
           </div>`).join('')}
       </div>
     </div>
-    <div id="adminClientsList" class="card mt-2 hidden"><h3>👥 ${t('manageClients')} (${allUsers.length})</h3>${allUsers.map(u => `<div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid #eee;"><div><strong>${u.displayName || u.email}</strong><span class="badge ${u.role === 'admin' ? 'badge-success' : ''}" style="margin-left:0.5rem;">${u.role}</span></div><button class="btn btn-sm ${u.role === 'admin' ? 'btn-danger' : 'btn-gold'} toggle-role" data-uid="${u.id}" data-role="${u.role}">${u.role === 'admin' ? t('makeClient') : t('makeAdmin')}</button></div>`).join('')}</div>
-    <div id="adminSendNotifForm" class="card mt-2 hidden"><h3>🔔 ${t('sendNotification')}</h3><input id="notifTitle" placeholder="${t('notificationTitle')}"><textarea id="notifMessage" placeholder="${t('notificationMessage')}"></textarea><button id="sendNotifBtn" class="btn btn-gold mt-2">📤 ${t('sendNotification')}</button></div>
+    
+    <div id="adminClientsList" class="card mt-2 hidden">
+      <h3>👥 ${t('manageClients')} (${allUsers.length})</h3>
+      ${allUsers.map(u => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid #eee;">
+          <div>
+            <strong>${u.displayName || u.email}</strong>
+            <span class="badge ${u.role === 'admin' ? 'badge-success' : ''}" style="margin-left:0.5rem;">${u.role}</span>
+          </div>
+          <button class="btn btn-sm ${u.role === 'admin' ? 'btn-danger' : 'btn-gold'} toggle-role" data-uid="${u.id}" data-role="${u.role}">
+            ${u.role === 'admin' ? t('makeClient') : t('makeAdmin')}
+          </button>
+        </div>`).join('')}
+    </div>
+    
+    <div id="adminSendNotifForm" class="card mt-2 hidden">
+      <h3>🔔 ${t('sendNotification')}</h3>
+      <input id="notifTitle" placeholder="${t('notificationTitle')}">
+      <textarea id="notifMessage" placeholder="${t('notificationMessage')}"></textarea>
+      <button id="sendNotifBtn" class="btn btn-gold mt-2">📤 ${t('sendNotification')}</button>
+    </div>
   `;
 
   // Events Admin
@@ -1429,6 +1500,16 @@ async function renderSpecialOffers(app) {
   setupSearchAndFilters();
 }
 
+function renderFavorites(app) {
+  const favProducts = products.filter(p => favorites.includes(p.id));
+  app.innerHTML = `
+    <h2>❤️ ${t('favorites') || 'Favori'}</h2>
+    <div class="grid">
+      ${favProducts.length === 0 ? `<p class="text-center" style="grid-column:1/-1;">Kè kontan pwal plen lè ou ajoute favori!</p>` : favProducts.map(p => productCardHTML(p)).join('')}
+    </div>`;
+  attachBuyButtons();
+}
+
 async function renderProfile(app) {
   if (!currentUser) {
     app.innerHTML = `<div class="card text-center"><p>🔐 ${t('loginRequired')}</p><button class="btn btn-gold" id="loginFromOrders">${t('login')}</button></div>`;
@@ -1436,7 +1517,6 @@ async function renderProfile(app) {
     return;
   }
 
-  // Charger les données utilisateur (adresse, téléphone)
   let userAddress = '';
   let userPhone = '';
   try {
@@ -1500,16 +1580,11 @@ async function renderProfile(app) {
         address: address,
         phone: phone
       });
-      // Mettre à jour le profil Firebase Auth aussi
       await currentUser.updateProfile({ displayName: name });
       showMessage(t('profileUpdated'), 'success');
       renderView('profile');
     } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
   });
-}
-
-async function renderClientOrders(app) {
-  await renderProfile(app);
 }
 
 function renderSettings(app) {
@@ -1564,13 +1639,14 @@ document.getElementById('cartBtn')?.addEventListener('click', () => {
   renderCart();
 });
 
-document.getElementById('notifBtn')?.addEventListener('click', () => {
-  currentView = 'notifications';
-  renderNotificationsModal();
-});
-
 document.getElementById('closeCartModal')?.addEventListener('click', () => {
   document.getElementById('cartModal').classList.add('hidden');
+});
+
+document.getElementById('cartModal')?.addEventListener('click', (e) => {
+  if (e.target === document.getElementById('cartModal')) {
+    document.getElementById('cartModal').classList.add('hidden');
+  }
 });
 
 document.getElementById('checkoutBtn')?.addEventListener('click', async () => {
@@ -1582,7 +1658,6 @@ document.getElementById('checkoutBtn')?.addEventListener('click', async () => {
   }
   if (cart.length === 0) return;
 
-  // Vérifier profil
   let userDoc;
   try {
     userDoc = await db.collection('users').doc(currentUser.uid).get();
@@ -1657,7 +1732,7 @@ async function renderReviews(productId) {
   try {
     const snap = await db.collection('reviews').where('productId', '==', productId).orderBy('createdAt', 'desc').get();
     const revs = snap.docs.map(d => d.data());
-    if (revs.length === 0) { list.innerHTML = '<p>Pa gen avi ankò.</p>'; return; }
+    if (revs.length === 0) { list.innerHTML = `<p>${t('noReviews')}</p>`; return; }
     list.innerHTML = revs.map(r => `
       <div class="review-item">
         <div class="review-user">${r.userName}</div>
@@ -1671,7 +1746,7 @@ async function renderReviews(productId) {
 // DÉMARRAGE
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 Total Lakay - Version Ultime avec Recherche & Filtres');
+  console.log('🚀 Total Lakay - Version Complète avec Corrections');
   applyLanguage();
   renderView('home');
 });
