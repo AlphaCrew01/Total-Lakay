@@ -579,7 +579,7 @@ function listenNotifications() {
       notifications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       updateNotifBadge();
     });
-  } catch(e) {}
+  } catch (e) { }
 }
 
 function updateNotifBadge() {
