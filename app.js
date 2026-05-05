@@ -2,7 +2,6 @@
    TOTAL LAKAY - Version Finale Ultime
    Firebase configuré - Admin Dashboard + Client
    Recherche & Filtres - Toutes traductions
-   TOUS LES BOUTONS CORRIGÉS
    ============================================ */
 
 // ---------- CONFIGURATION FIREBASE ----------
@@ -115,12 +114,6 @@ const i18n = {
     roleChanged: "✅ Wòl modifye!",
     madeAdmin: "✅ Fè admin!",
     madeClient: "✅ Fè kliyan!",
-    servicesTitle: "Sèvis Total Lakay",
-    servicesDesc: "Nou ofri livrezon rapid atravè Ayiti. Peman sekirize ak MonCash, Natcash, Kredi. Sèvis kliyan 24/7. Tout pwodui gen garanti. Retou aksepte nan 7 jou apre acha.",
-    privacyTitle: "Konfidansyalite",
-    privacyDesc: "Done ou yo sekirize ak ankrepte. Nou pa janm pataje enfòmasyon ou ak lòt moun san otorizasyon ou. Ou gen dwa mande efase tout done ou yo nenpòt lè.",
-    termsTitle: "Kondisyon Itilizasyon",
-    termsDesc: "Lè w achte sou Total Lakay, ou aksepte kondisyon nou yo. Tout pwodui gen garanti. Retou aksepte nan 7 jou. Peman dwe fèt avan livrezon. Pri yo ka chanje san avètisman.",
     // Recherche & Filtres
     searchPlaceholder: "🔍 Rechèche yon pwodui...",
     allCategories: "Tout kategori",
@@ -153,8 +146,8 @@ const i18n = {
     notifications: "Notifikasyon", noNotifications: "Pa gen notifikasyon",
     favorites: "Favori", noFavorites: "Pa gen favori ankò",
     reviews: "Avi", leaveReview: "Kite yon avi", addReview: "Ajoute yon avi", noReviews: "Pa gen avi ankò",
-    rating: "Nòt", comment: "Kòmantè", submit: "Voye",
-    backToHome: "← Retounen akèy",
+    rating: "Nòt", comment: "Kòmantè", submit: "Voye", invalidAddress: "Adrès ou antre a pa valab",
+    ratingError: "Chwazi yon nòt (zetwal)", commentError: "Ekri yon kòmantè", reviewSuccess: "Mèsi pou avi ou!", reviewError: "Erè voye avi",
   },
   fr: {
     home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -228,12 +221,6 @@ const i18n = {
     roleChanged: "✅ Rôle modifié !",
     madeAdmin: "✅ Passé admin !",
     madeClient: "✅ Passé client !",
-    servicesTitle: "Services Total Lakay",
-    servicesDesc: "Nous offrons une livraison rapide partout en Haïti. Paiement sécurisé avec MonCash, Natcash, Crédit. Service client 24/7. Tous les produits sont garantis. Retours acceptés sous 7 jours.",
-    privacyTitle: "Confidentialité",
-    privacyDesc: "Vos données sont sécurisées et cryptées. Nous ne partageons jamais vos informations sans votre autorisation. Vous pouvez demander la suppression de toutes vos données à tout moment.",
-    termsTitle: "Conditions d'Utilisation",
-    termsDesc: "En achetant sur Total Lakay, vous acceptez nos conditions. Tous les produits sont garantis. Retours acceptés sous 7 jours. Le paiement doit être effectué avant la livraison. Les prix peuvent changer sans préavis.",
     // Recherche & Filtres
     searchPlaceholder: "🔍 Rechercher un produit...",
     allCategories: "Toutes catégories",
@@ -266,8 +253,8 @@ const i18n = {
     notifications: "Notifications", noNotifications: "Pas de notifications",
     favorites: "Favoris", noFavorites: "Pas encore de favoris",
     reviews: "Avis", leaveReview: "Laisser un avis", addReview: "Ajouter un avis", noReviews: "Pas encore d'avis",
-    rating: "Note", comment: "Commentaire", submit: "Envoyer",
-    backToHome: "← Retour à l'accueil",
+    rating: "Note", comment: "Commentaire", submit: "Envoyer", invalidAddress: "Adresse invalide",
+    ratingError: "Choisissez une note (étoiles)", commentError: "Écrivez un commentaire", reviewSuccess: "Merci pour votre avis !", reviewError: "Erreur d'envoi",
   },
   en: {
     home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -340,12 +327,6 @@ const i18n = {
     roleChanged: "✅ Role changed!",
     madeAdmin: "✅ Made admin!",
     madeClient: "✅ Made client!",
-    servicesTitle: "Total Lakay Services",
-    servicesDesc: "We offer fast delivery across Haiti. Secure payment with MonCash, Natcash, Credit. 24/7 customer service. All products are guaranteed. Returns accepted within 7 days.",
-    privacyTitle: "Privacy",
-    privacyDesc: "Your data is secure and encrypted. We never share your information without your permission. You can request deletion of all your data at any time.",
-    termsTitle: "Terms of Use",
-    termsDesc: "By purchasing on Total Lakay, you agree to our terms. All products are guaranteed. Returns accepted within 7 days. Payment must be made before delivery. Prices may change without notice.",
     // Search & Filters
     searchPlaceholder: "🔍 Search a product...",
     allCategories: "All categories",
@@ -378,8 +359,8 @@ const i18n = {
     notifications: "Notifications", noNotifications: "No notifications",
     favorites: "Favorites", noFavorites: "No favorites yet",
     reviews: "Reviews", leaveReview: "Leave a review", addReview: "Add a review", noReviews: "No reviews yet",
-    rating: "Rating", comment: "Comment", submit: "Submit",
-    backToHome: "← Back to home",
+    rating: "Rating", comment: "Comment", submit: "Submit", invalidAddress: "Invalid address",
+    ratingError: "Choose a rating (stars)", commentError: "Write a comment", reviewSuccess: "Thank you for your review!", reviewError: "Error sending review",
   },
   es: {
     home: "Inicio", shop: "Tienda", orders: "Pedidos", admin: "Admin",
@@ -453,12 +434,6 @@ const i18n = {
     roleChanged: "✅ ¡Rol cambiado!",
     madeAdmin: "✅ ¡Hecho admin!",
     madeClient: "✅ ¡Hecho cliente!",
-    servicesTitle: "Servicios Total Lakay",
-    servicesDesc: "Ofrecemos entrega rápida en todo Haití. Pago seguro con MonCash, Natcash, Crédito. Servicio al cliente 24/7. Todos los productos están garantizados. Devoluciones aceptadas en 7 días.",
-    privacyTitle: "Privacidad",
-    privacyDesc: "Sus datos están seguros y encriptados. Nunca compartimos su información sin su permiso. Puede solicitar la eliminación de todos sus datos en cualquier momento.",
-    termsTitle: "Condiciones de Uso",
-    termsDesc: "Al comprar en Total Lakay, acepta nuestros términos. Todos los productos están garantizados. Devoluciones aceptadas en 7 días. El pago debe realizarse antes de la entrega. Los precios pueden cambiar sin previo aviso.",
     // Búsqueda y Filtros
     searchPlaceholder: "🔍 Buscar un producto...",
     allCategories: "Todas categorías",
@@ -491,8 +466,8 @@ const i18n = {
     notifications: "Notificaciones", noNotifications: "No hay notificaciones",
     favorites: "Favoritos", noFavorites: "Aún no hay favoritos",
     reviews: "Reseñas", leaveReview: "Dejar una reseña", addReview: "Agregar una reseña", noReviews: "Aún no hay reseñas",
-    rating: "Calificación", comment: "Comentario", submit: "Enviar",
-    backToHome: "← Volver al inicio",
+    rating: "Calificación", comment: "Comentario", submit: "Enviar", invalidAddress: "Dirección inválida",
+    ratingError: "Elige una calificación (estrellas)", commentError: "Escribe un comentario", reviewSuccess: "¡Gracias por tu reseña!", reviewError: "Error enviando reseña",
   }
 };
 
@@ -533,7 +508,7 @@ function renderCart() {
     total += item.price;
     return `
       <div class="cart-item" style="display:flex; align-items:center; gap:1rem; padding:0.8rem; border-bottom:1px solid #eee;">
-        <img src="${item.image || 'https://via.placeholder.com/50'}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; border-radius:8px;">
+        <img src="${item.image || 'logo.jpeg'}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; border-radius:8px;" onerror="this.src='logo.jpeg'">
         <div style="flex:1;">
           <div style="font-weight:700; color:var(--blue-deep);">${item.name}</div>
           <div style="color:var(--gold); font-weight:600;">${formatPrice(item.price)}</div>
@@ -574,12 +549,10 @@ function toggleFavorite(productId) {
 
 // ---------- NOTIFICATIONS FUNCTIONS ----------
 function listenNotifications() {
-  try {
-    db.collection('notifications').orderBy('createdAt', 'desc').limit(20).onSnapshot(snap => {
-      notifications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      updateNotifBadge();
-    });
-  } catch (e) { }
+  db.collection('notifications').orderBy('createdAt', 'desc').limit(20).onSnapshot(snap => {
+    notifications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    updateNotifBadge();
+  });
 }
 
 function updateNotifBadge() {
@@ -608,7 +581,6 @@ function renderNotificationsModal() {
           </div>
           <p>${n.message}</p>
         </div>`).join('')}
-      <button class="btn btn-gold mt-2" id="backFromNotif">${t('backToHome')}</button>
     </div>
   `;
   document.querySelectorAll('.mark-read').forEach(btn => {
@@ -618,7 +590,6 @@ function renderNotificationsModal() {
       renderNotificationsModal();
     });
   });
-  document.getElementById('backFromNotif')?.addEventListener('click', () => renderView('home'));
 }
 
 function formatPrice(priceUSD) {
@@ -642,6 +613,7 @@ function applyLanguage() {
     const key = el.getAttribute('data-i18n-placeholder');
     if (i18n[currentLang]?.[key]) el.placeholder = i18n[currentLang][key];
   });
+  // Mettre à jour les options de catégorie
   updateCategoryOptions();
   if (currentView) renderView(currentView);
 }
@@ -652,6 +624,7 @@ function updateCategoryOptions() {
   const options = categorySelect.querySelectorAll('option');
   const categoryKeys = ['all', 'food', 'electronics', 'clothing', 'home', 'beauty', 'other'];
   const translationKeys = ['allCategories', 'categoryFood', 'categoryElectronics', 'categoryClothing', 'categoryHome', 'categoryBeauty', 'categoryOther'];
+
   options.forEach((option, index) => {
     if (translationKeys[index]) {
       option.textContent = t(translationKeys[index]);
@@ -822,6 +795,7 @@ document.getElementById('registerBtn')?.addEventListener('click', () => {
   auth.createUserWithEmailAndPassword(email, password)
     .then(async (cred) => {
       await cred.user.sendEmailVerification();
+      await cred.user.updateProfile({ displayName: name });
       await db.collection('users').doc(cred.user.uid).set({
         email, displayName: name, role: 'client', emailVerified: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -839,90 +813,43 @@ document.getElementById('logoutBtn')?.addEventListener('click', () => {
 });
 
 // ============================================
-// MENU DROPDOWN (CORRIGÉ)
+// MENU DROPDOWN
 // ============================================
 document.getElementById('menuBtn')?.addEventListener('click', (e) => {
   e.stopPropagation();
-  const menu = document.getElementById('dropdownMenu');
-  if (menu) menu.classList.toggle('hidden');
+  document.getElementById('dropdownMenu')?.classList.toggle('hidden');
 });
-
 document.addEventListener('click', (e) => {
-  const dropdown = document.getElementById('menuDropdown');
-  if (dropdown && !dropdown.contains(e.target)) {
+  if (!e.target.closest('#menuDropdown')) {
     document.getElementById('dropdownMenu')?.classList.add('hidden');
   }
 });
-
 document.getElementById('menuSpecial')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  document.getElementById('dropdownMenu')?.classList.add('hidden');
-  currentView = 'specialOffers';
-  renderView('specialOffers');
+  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
+  currentView = 'specialOffers'; renderView('specialOffers');
 });
-
-document.getElementById('menuFavorites')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  document.getElementById('dropdownMenu')?.classList.add('hidden');
-  currentView = 'favorites';
-  renderView('favorites');
-});
-
 document.getElementById('menuSettings')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  document.getElementById('dropdownMenu')?.classList.add('hidden');
-  currentView = 'settings';
-  renderView('settings');
+  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
+  currentView = 'settings'; renderView('settings');
 });
-
 document.getElementById('menuHistory')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  document.getElementById('dropdownMenu')?.classList.add('hidden');
-  currentView = 'history';
-  renderView('history');
+  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
+  currentView = 'history'; renderView('history');
+});
+document.getElementById('menuFavorites')?.addEventListener('click', (e) => {
+  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
+  currentView = 'favorites'; renderView('favorites');
 });
 
-// ============================================
-// FOOTER LIENS (CORRIGÉS)
-// ============================================
-document.getElementById('linkServices')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  const app = document.getElementById('appContent');
-  if (!app) return;
+function renderFavorites(app) {
+  const favProducts = products.filter(p => favorites.includes(p.id));
   app.innerHTML = `
-    <div class="card-premium">
-      <h2>📦 ${t('servicesTitle')}</h2>
-      <p style="font-size:1.1rem; line-height:2;">${t('servicesDesc')}</p>
-      <button class="btn btn-gold mt-2" id="backFromServices">${t('backToHome')}</button>
+    <h2>❤️ ${t('favorites') || 'Favori'}</h2>
+    <div class="grid">
+      ${favProducts.length === 0 ? `<p class="text-center" style="grid-column:1/-1;">${t('noFavorites')}</p>` : favProducts.map(p => productCardHTML(p)).join('')}
     </div>`;
-  document.getElementById('backFromServices')?.addEventListener('click', () => renderView('home'));
-});
-
-document.getElementById('linkPrivacy')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  const app = document.getElementById('appContent');
-  if (!app) return;
-  app.innerHTML = `
-    <div class="card-premium">
-      <h2>🔒 ${t('privacyTitle')}</h2>
-      <p style="font-size:1.1rem; line-height:2;">${t('privacyDesc')}</p>
-      <button class="btn btn-gold mt-2" id="backFromPrivacy">${t('backToHome')}</button>
-    </div>`;
-  document.getElementById('backFromPrivacy')?.addEventListener('click', () => renderView('home'));
-});
-
-document.getElementById('linkTerms')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  const app = document.getElementById('appContent');
-  if (!app) return;
-  app.innerHTML = `
-    <div class="card-premium">
-      <h2>📋 ${t('termsTitle')}</h2>
-      <p style="font-size:1.1rem; line-height:2;">${t('termsDesc')}</p>
-      <button class="btn btn-gold mt-2" id="backFromTerms">${t('backToHome')}</button>
-    </div>`;
-  document.getElementById('backFromTerms')?.addEventListener('click', () => renderView('home'));
-});
+  attachBuyButtons();
+}
 
 // ============================================
 // NOTIFICATIONS
@@ -934,21 +861,24 @@ async function loadNotifications() {
     updateNotifBadge();
   } catch (e) { notifications = []; updateNotifBadge(); }
 }
-
+function updateNotifBadge() {
+  const badge = document.getElementById('notifBadge');
+  if (!badge) return;
+  const unread = notifications.filter(n => !n.read).length;
+  if (unread > 0) { badge.textContent = unread > 99 ? '99+' : unread; badge.classList.remove('hidden'); }
+  else badge.classList.add('hidden');
+}
 document.getElementById('notifBtn')?.addEventListener('click', (e) => {
   e.stopPropagation();
   document.getElementById('notifModal').classList.remove('hidden');
   renderNotifList();
 });
-
 document.getElementById('closeNotifModal')?.addEventListener('click', () => {
   document.getElementById('notifModal')?.classList.add('hidden');
 });
-
 document.getElementById('notifModal')?.addEventListener('click', (e) => {
   if (e.target === document.getElementById('notifModal')) document.getElementById('notifModal').classList.add('hidden');
 });
-
 function renderNotifList() {
   const list = document.getElementById('notifList');
   if (!list) return;
@@ -964,7 +894,7 @@ function renderNotifList() {
 }
 
 // ============================================
-// LANGUE & DEVISE
+// LANGUE
 // ============================================
 document.getElementById('langSwitch')?.addEventListener('change', (e) => {
   currentLang = e.target.value;
@@ -996,6 +926,7 @@ document.getElementById('navAdmin')?.addEventListener('click', (e) => {
   currentView = 'admin'; renderView('admin');
 });
 
+
 function setActiveNav(activeId) {
   document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
   document.getElementById(activeId)?.classList.add('active');
@@ -1007,19 +938,15 @@ function setActiveNav(activeId) {
 document.getElementById('closeBuyModal')?.addEventListener('click', () => {
   document.getElementById('buyModal')?.classList.add('hidden');
 });
-
 document.getElementById('buyModal')?.addEventListener('click', (e) => {
-  if (e.target === document.getElementById('buyModal')) {
-    document.getElementById('buyModal').classList.add('hidden');
-  }
+  if (e.target === document.getElementById('buyModal')) document.getElementById('buyModal').classList.add('hidden');
 });
-
 document.getElementById('submitOrder')?.addEventListener('click', async () => {
   if (!currentUser) { showMessage(t('loginRequired'), 'error'); return; }
   if (!currentUser.emailVerified) { showMessage(t('emailNotVerified'), 'error'); return; }
   const address = document.getElementById('orderAddress')?.value.trim();
   const payment = document.getElementById('orderPayment')?.value;
-  if (!address) { showMessage(t('fillAllFields'), 'error'); return; }
+  if (!address || address.length < 5) { showMessage(t('invalidAddress'), 'error'); return; }
   const product = products.find(p => p.id === selectedProductId);
   if (!product) return;
   try {
@@ -1039,10 +966,13 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
 // ============================================
 // CHARGEMENT DONNÉES
 // ============================================
-async function loadProducts() {
+let productsLoaded = false;
+async function loadProducts(forceRefresh = false) {
+  if (productsLoaded && !forceRefresh) return;
   try {
     const snap = await db.collection('products').orderBy('createdAt', 'desc').get();
     products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    productsLoaded = true;
   } catch (e) { products = []; }
 }
 async function loadAllOrders() {
@@ -1065,7 +995,7 @@ async function loadAllUsers() {
   } catch (e) { allUsers = []; }
 }
 async function loadAllData() {
-  await Promise.all([loadProducts(), loadAllOrders(), loadAllUsers()]);
+  await Promise.all([loadProducts(true), loadAllOrders(), loadAllUsers()]);
 }
 
 // ============================================
@@ -1073,6 +1003,7 @@ async function loadAllData() {
 // ============================================
 function getFilteredProducts() {
   let filtered = [...products];
+
   const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase()?.trim() || '';
   const category = document.getElementById('categoryFilter')?.value || 'all';
   const priceMin = parseFloat(document.getElementById('priceMin')?.value) || 0;
@@ -1085,9 +1016,11 @@ function getFilteredProducts() {
       p.description?.toLowerCase().includes(searchTerm)
     );
   }
+
   if (category !== 'all') {
     filtered = filtered.filter(p => p.category === category);
   }
+
   filtered = filtered.filter(p => p.price >= priceMin && p.price <= priceMax);
 
   switch (sortBy) {
@@ -1098,12 +1031,14 @@ function getFilteredProducts() {
     case 'name-desc': filtered.sort((a, b) => (b.name || '').localeCompare(a.name || '')); break;
     default: filtered.sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0)); break;
   }
+
   return filtered;
 }
 
 function displayFilteredProducts() {
   const filtered = getFilteredProducts();
   const resultsCount = document.getElementById('resultsCount');
+
   if (resultsCount) {
     if (filtered.length === 0) {
       resultsCount.innerHTML = `🔍 ${t('noResultsFound')}`;
@@ -1111,9 +1046,11 @@ function displayFilteredProducts() {
       resultsCount.innerHTML = `<span>${filtered.length}</span> ${t('resultsFound')}`;
     }
   }
+
   if (filtered.length === 0) {
     return `<p class="text-center" style="grid-column:1/-1; padding:3rem;">📭 ${t('noResultsFound')}</p>`;
   }
+
   return filtered.map(p => productCardHTML(p)).join('');
 }
 
@@ -1125,11 +1062,15 @@ function setupSearchAndFilters() {
   if (searchInput) {
     searchInput.addEventListener('input', debounce(() => refreshProductGrid(), 300));
   }
+
   document.getElementById('searchBtn')?.addEventListener('click', () => refreshProductGrid());
+
   searchInput?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') refreshProductGrid();
   });
+
   document.getElementById('applyFiltersBtn')?.addEventListener('click', () => refreshProductGrid());
+
   document.getElementById('resetFiltersBtn')?.addEventListener('click', () => {
     const si = document.getElementById('searchInput');
     const cf = document.getElementById('categoryFilter');
@@ -1143,6 +1084,7 @@ function setupSearchAndFilters() {
     if (sb) sb.value = 'date-desc';
     refreshProductGrid();
   });
+
   document.getElementById('categoryFilter')?.addEventListener('change', () => refreshProductGrid());
   document.getElementById('sortBy')?.addEventListener('change', () => refreshProductGrid());
   document.getElementById('priceMin')?.addEventListener('input', debounce(() => refreshProductGrid(), 500));
@@ -1165,6 +1107,7 @@ async function renderView(view) {
   const app = document.getElementById('appContent');
   if (!app) return;
 
+  // Afficher/cacher la barre de recherche
   const searchBar = document.getElementById('searchFilterBar');
   if (searchBar) {
     if (view === 'shop' || view === 'specialOffers') {
@@ -1186,18 +1129,20 @@ async function renderView(view) {
       case 'favorites': renderFavorites(app); break;
       case 'settings': renderSettings(app); break;
       case 'history': await renderProfile(app); break;
+      case 'services': renderServices(app); break;
+      case 'privacy': renderPrivacy(app); break;
+      case 'terms': renderTerms(app); break;
       default: await renderHome(app);
     }
   }
 }
-
 function productCardHTML(product) {
   const hasPromo = product.oldPrice && product.oldPrice > product.price;
   return `
-    <div class="product-card" style="position:relative;">
+    <div class="product-card" data-id="${product.id}">
       ${hasPromo ? `<div class="product-badge">🔥 ${t('specialPrice')}</div>` : ''}
       <button class="wishlist-btn ${favorites.includes(product.id) ? 'active' : ''}" onclick="toggleFavorite('${product.id}')">❤️</button>
-      <img src="${product.image || 'https://via.placeholder.com/400x250/0f1f38/c8963e?text=Total+Lakay'}" alt="${product.name}" class="product-img" onerror="this.src='https://via.placeholder.com/400x250/0f1f38/c8963e?text=Total+Lakay'">
+      <img src="${product.image || 'logo.jpeg'}" alt="${product.name}" class="product-img" onerror="this.src='logo.jpeg'">
       <div class="product-info">
         <div class="product-title">${product.name}</div>
         ${product.description ? `<div class="product-description">${product.description.substring(0, 60)}...</div>` : ''}
@@ -1211,20 +1156,20 @@ function productCardHTML(product) {
 }
 
 // ============================================
-// DASHBOARD ADMIN COMPLET
+// DASHBOARD ADMIN (inchangé - déjà complet)
 // ============================================
-async function renderAdminDashboard(app) {
-  if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
-  await loadAllData();
+  async function renderAdminDashboard(app) {
+    if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
+    await loadAllData();
 
-  const totalProducts = products.length;
-  const totalOrders = orders.length;
-  const totalClients = allUsers.filter(u => u.role === 'client').length;
-  const pendingCount = orders.filter(o => o.status === 'pending').length;
-  const confirmedCount = orders.filter(o => o.status === 'confirmed').length;
-  const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
+    const totalProducts = products.length;
+    const totalOrders = orders.length;
+    const totalClients = allUsers.filter(u => u.role === 'client').length;
+    const pendingCount = orders.filter(o => o.status === 'pending').length;
+    const confirmedCount = orders.filter(o => o.status === 'confirmed').length;
+    const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
 
-  app.innerHTML = `
+    app.innerHTML = `
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
       <h2 style="margin:0;">📊 ${t('dashboard')}</h2>
       <div class="badge badge-success">${t('welcomeAdmin')}</div>
@@ -1288,7 +1233,7 @@ async function renderAdminDashboard(app) {
         ${products.length === 0 ? `<p>${t('noProductsAdmin')}</p>` : products.map(p => `
           <div style="display:flex; justify-content:space-between; align-items:center; padding:1rem 0; border-bottom:1px solid #eee;">
             <div style="display:flex; align-items:center; gap:1rem;">
-              <img src="${p.image || 'https://via.placeholder.com/50'}" style="width:40px; height:40px; object-fit:cover; border-radius:8px;">
+              <img src="${p.image || 'logo.jpeg'}" style="width:40px; height:40px; object-fit:cover; border-radius:8px;" onerror="this.src='logo.jpeg'">
               <span><strong>${p.name}</strong> - ${formatPrice(p.price)}</span>
             </div>
             <button class="btn btn-danger btn-sm delete-product" data-id="${p.id}">🗑️</button>
@@ -1324,27 +1269,8 @@ async function renderAdminDashboard(app) {
           </div>`).join('')}
       </div>
     </div>
-    
-    <div id="adminClientsList" class="card mt-2 hidden">
-      <h3>👥 ${t('manageClients')} (${allUsers.length})</h3>
-      ${allUsers.map(u => `
-        <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid #eee;">
-          <div>
-            <strong>${u.displayName || u.email}</strong>
-            <span class="badge ${u.role === 'admin' ? 'badge-success' : ''}" style="margin-left:0.5rem;">${u.role}</span>
-          </div>
-          <button class="btn btn-sm ${u.role === 'admin' ? 'btn-danger' : 'btn-gold'} toggle-role" data-uid="${u.id}" data-role="${u.role}">
-            ${u.role === 'admin' ? t('makeClient') : t('makeAdmin')}
-          </button>
-        </div>`).join('')}
-    </div>
-    
-    <div id="adminSendNotifForm" class="card mt-2 hidden">
-      <h3>🔔 ${t('sendNotification')}</h3>
-      <input id="notifTitle" placeholder="${t('notificationTitle')}">
-      <textarea id="notifMessage" placeholder="${t('notificationMessage')}"></textarea>
-      <button id="sendNotifBtn" class="btn btn-gold mt-2">📤 ${t('sendNotification')}</button>
-    </div>
+    <div id="adminClientsList" class="card mt-2 hidden"><h3>👥 ${t('manageClients')} (${allUsers.length})</h3>${allUsers.map(u => `<div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid #eee;"><div><strong>${u.displayName || u.email}</strong><span class="badge ${u.role === 'admin' ? 'badge-success' : ''}" style="margin-left:0.5rem;">${u.role}</span></div><button class="btn btn-sm ${u.role === 'admin' ? 'btn-danger' : 'btn-gold'} toggle-role" data-uid="${u.id}" data-role="${u.role}">${u.role === 'admin' ? t('makeClient') : t('makeAdmin')}</button></div>`).join('')}</div>
+    <div id="adminSendNotifForm" class="card mt-2 hidden"><h3>🔔 ${t('sendNotification')}</h3><input id="notifTitle" placeholder="${t('notificationTitle')}"><textarea id="notifMessage" placeholder="${t('notificationMessage')}"></textarea><button id="sendNotifBtn" class="btn btn-gold mt-2">📤 ${t('sendNotification')}</button></div>
   `;
 
   // Events Admin
@@ -1500,16 +1426,6 @@ async function renderSpecialOffers(app) {
   setupSearchAndFilters();
 }
 
-function renderFavorites(app) {
-  const favProducts = products.filter(p => favorites.includes(p.id));
-  app.innerHTML = `
-    <h2>❤️ ${t('favorites') || 'Favori'}</h2>
-    <div class="grid">
-      ${favProducts.length === 0 ? `<p class="text-center" style="grid-column:1/-1;">Kè kontan pwal plen lè ou ajoute favori!</p>` : favProducts.map(p => productCardHTML(p)).join('')}
-    </div>`;
-  attachBuyButtons();
-}
-
 async function renderProfile(app) {
   if (!currentUser) {
     app.innerHTML = `<div class="card text-center"><p>🔐 ${t('loginRequired')}</p><button class="btn btn-gold" id="loginFromOrders">${t('login')}</button></div>`;
@@ -1529,50 +1445,141 @@ async function renderProfile(app) {
 
   await loadMyOrders();
 
-  app.innerHTML = `
-    <div class="card-premium">
-      <h2>👤 ${t('profile')}</h2>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
-        <div>
-          <label>👤 ${t('name')}</label>
-          <input type="text" id="profName" value="${currentUser.displayName || ''}" placeholder="${t('namePlaceholder')}">
-        </div>
-        <div>
-          <label>📧 ${t('email')}</label>
-          <input type="text" value="${currentUser.email}" disabled style="background:#eee;">
-        </div>
-      </div>
-      
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
-        <div>
-          <label>📍 ${t('addressRecommend')}</label>
-          <input type="text" id="profAddress" value="${userAddress}" placeholder="${t('addressPlaceholder')}">
-        </div>
-        <div>
-          <label>📞 ${t('phoneRecommend')}</label>
-          <input type="text" id="profPhone" value="${userPhone}" placeholder="${t('phonePlaceholder')}">
-        </div>
-      </div>
-      
-      <button id="saveProfileBtn" class="btn btn-gold" style="width:100%;">💾 ${t('saveProfile')}</button>
-    </div>
+  const totalSpent = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
+  const totalOrders = orders.length;
+  const initials = (currentUser.displayName || currentUser.email || 'U').substring(0, 2).toUpperCase();
 
-    <h2 style="margin-top:2rem;">📦 ${t('myOrders')}</h2>
-    ${orders.length === 0 ? `<p>📭 ${t('noOrders')}</p>` : orders.map(o => `
-      <div class="card" style="margin-bottom:0.8rem;">
-        <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
-          <strong>${o.productName}</strong>
-          <span class="badge ${o.status === 'confirmed' || o.status === 'delivered' ? 'badge-success' : 'badge-pending'}">${t(o.status)}</span>
+  app.innerHTML = `
+    <div class="profile-layout">
+      <!-- SIDEBAR -->
+      <div class="profile-sidebar">
+        <div class="avatar-container">
+          <div class="avatar">${currentUser.photoURL ? `<img src="${currentUser.photoURL}">` : initials}</div>
+          <h3 style="color:var(--blue-deep); font-size:1.1rem; margin-bottom:0.2rem;">${currentUser.displayName || t('clientLabel')}</h3>
+          <p style="font-size:0.8rem; color:var(--text-soft); word-break:break-all;">${currentUser.email}</p>
         </div>
-        <p>💰 ${formatPrice(o.price)} | 💳 ${o.payment} | 📍 ${o.address}</p>
-        ${o.deliveryEstimate ? `<p>🚚 ${t('delivery')}: ${o.deliveryEstimate}</p>` : `<p>⏳ ${t('waiting')}</p>`}
-      </div>`).join('')}
+        <nav>
+          <button class="tab-btn active" data-target="tab-overview">📊 Aperçu</button>
+          <button class="tab-btn" data-target="tab-info">👤 ${t('profile')}</button>
+          <button class="tab-btn" data-target="tab-orders">📦 ${t('myOrders')}</button>
+          <button class="tab-btn" data-target="tab-security">🔒 Sécurité</button>
+        </nav>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="profile-content">
+        
+        <!-- TAB: OVERVIEW -->
+        <div id="tab-overview" class="profile-tab-content active">
+          <h2 style="color:var(--blue-deep); margin-bottom:1.5rem;">📊 Aperçu du Compte</h2>
+          <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:1.5rem; margin-bottom:2rem;">
+            <div class="profile-stat-box">
+              <div class="profile-stat-val">${totalOrders}</div>
+              <div style="font-size:0.9rem; color:var(--text-soft); font-weight:600;">Commandes</div>
+            </div>
+            <div class="profile-stat-box">
+              <div class="profile-stat-val">${formatPrice(totalSpent)}</div>
+              <div style="font-size:0.9rem; color:var(--text-soft); font-weight:600;">Total Dépensé</div>
+            </div>
+          </div>
+          ${orders.length > 0 ? `
+            <h3 style="margin-bottom:1rem; font-size:1.1rem;">Dernière commande</h3>
+            <div class="card" style="margin-bottom:0; padding:1.2rem; border-color:var(--gold-pale);">
+              <div style="display:flex; justify-content:space-between; flex-wrap:wrap; margin-bottom:0.5rem;">
+                <strong style="color:var(--blue-deep); font-size:1.05rem;">${orders[0].productName}</strong>
+                <span class="badge ${orders[0].status === 'confirmed' || orders[0].status === 'delivered' ? 'badge-success' : 'badge-pending'}">${t(orders[0].status)}</span>
+              </div>
+              <p style="font-size:0.9rem; color:var(--text-soft);">💰 <strong>${formatPrice(orders[0].price)}</strong> | 📍 ${orders[0].address}</p>
+              ${orders[0].deliveryEstimate ? `<div style="margin-top:0.5rem; font-size:0.85rem; font-weight:600; color:var(--success);">🚚 ${t('delivery')}: ${orders[0].deliveryEstimate}</div>` : `<div style="margin-top:0.5rem; font-size:0.85rem; color:#f39c12;">⏳ ${t('waiting')}</div>`}
+            </div>
+          ` : `<p class="text-center" style="padding:2rem; background:var(--gray-100); border-radius:12px; color:var(--text-soft);">Vous n'avez pas encore passé de commande.</p>`}
+        </div>
+
+        <!-- TAB: INFO -->
+        <div id="tab-info" class="profile-tab-content">
+          <h2 style="color:var(--blue-deep); margin-bottom:1.5rem;">👤 ${t('profile')}</h2>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+            <div>
+              <label>👤 ${t('name')}</label>
+              <input type="text" id="profName" value="${currentUser.displayName || ''}" placeholder="${t('namePlaceholder')}">
+            </div>
+            <div>
+              <label>📧 ${t('email')}</label>
+              <input type="text" value="${currentUser.email}" disabled style="background:#eee; cursor:not-allowed;">
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+            <div>
+              <label>📍 ${t('addressRecommend')}</label>
+              <input type="text" id="profAddress" value="${userAddress}" placeholder="${t('addressPlaceholder')}">
+            </div>
+            <div>
+              <label>📞 ${t('phoneRecommend')}</label>
+              <input type="text" id="profPhone" value="${userPhone}" placeholder="${t('phonePlaceholder')}">
+            </div>
+          </div>
+          <button id="saveProfileBtn" class="btn btn-gold" style="width:100%;">💾 ${t('saveProfile')}</button>
+        </div>
+
+        <!-- TAB: ORDERS -->
+        <div id="tab-orders" class="profile-tab-content">
+          <h2 style="color:var(--blue-deep); margin-bottom:1.5rem;">📦 ${t('myOrders')}</h2>
+          <div style="max-height:500px; overflow-y:auto; padding-right:0.5rem;">
+          ${orders.length === 0 ? `<p class="text-center" style="padding:2rem; background:var(--gray-100); border-radius:12px; color:var(--text-soft);">📭 ${t('noOrders')}</p>` : orders.map(o => `
+            <div class="card" style="margin-bottom:0.8rem; padding:1.2rem; border-left:4px solid var(--gold);">
+              <div style="display:flex; justify-content:space-between; flex-wrap:wrap; margin-bottom:0.5rem;">
+                <strong style="font-size:1.05rem; color:var(--blue-deep);">${o.productName}</strong>
+                <span class="badge ${o.status === 'confirmed' || o.status === 'delivered' ? 'badge-success' : 'badge-pending'}">${t(o.status)}</span>
+              </div>
+              <div style="font-size:0.9rem; color:var(--text-soft);">
+                <span style="font-weight:600; color:var(--blue-deep);">💰 ${formatPrice(o.price)}</span> | 
+                <span>💳 ${o.payment}</span> | 
+                <span>📍 ${o.address}</span>
+              </div>
+              ${o.deliveryEstimate ? `<div style="margin-top:0.5rem; font-size:0.85rem; font-weight:600; color:var(--success);">🚚 ${t('delivery')}: ${o.deliveryEstimate}</div>` : `<div style="margin-top:0.5rem; font-size:0.85rem; color:#f39c12;">⏳ ${t('waiting')}</div>`}
+            </div>`).join('')}
+          </div>
+        </div>
+
+        <!-- TAB: SECURITY -->
+        <div id="tab-security" class="profile-tab-content">
+          <h2 style="color:var(--blue-deep); margin-bottom:1.5rem;">🔒 Sécurité</h2>
+          <div class="card" style="padding:1.5rem; border-color:var(--gray-200); background:var(--white-soft);">
+            <h3 style="margin-bottom:0.5rem; font-size:1.1rem;">Mot de passe</h3>
+            <p style="font-size:0.9rem; color:var(--text-soft); margin-bottom:1rem;">Vous pouvez demander un lien sécurisé par email pour réinitialiser votre mot de passe.</p>
+            <button id="resetPasswordBtn" class="btn btn-outline" style="color:var(--blue-deep); border-color:var(--blue-deep); font-weight:600;">📧 Envoyer lien de réinitialisation</button>
+          </div>
+          <div style="margin-top:2.5rem; text-align:center; padding-top:2rem; border-top:1px solid var(--gray-200);">
+             <button id="profileLogoutBtn" class="btn btn-danger" style="min-width:200px;">🚪 ${t('logout')}</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
   `;
 
+  // Tab Switching Logic
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.profile-tab-content').forEach(c => c.classList.remove('active'));
+      
+      e.currentTarget.classList.add('active');
+      const targetId = e.currentTarget.getAttribute('data-target');
+      document.getElementById(targetId).classList.add('active');
+    });
+  });
+
+  // Save Profile Logic
   document.getElementById('saveProfileBtn')?.addEventListener('click', async () => {
     const name = document.getElementById('profName').value.trim();
     const address = document.getElementById('profAddress').value.trim();
     const phone = document.getElementById('profPhone').value.trim();
+
+    if (address && address.length < 5) {
+      showMessage(t('invalidAddress'), 'error');
+      return;
+    }
 
     try {
       await db.collection('users').doc(currentUser.uid).update({
@@ -1582,9 +1589,31 @@ async function renderProfile(app) {
       });
       await currentUser.updateProfile({ displayName: name });
       showMessage(t('profileUpdated'), 'success');
-      renderView('profile');
+      // Update UI without full reload
+      document.querySelector('.avatar-container h3').textContent = name || t('clientLabel');
+      document.querySelector('.avatar').innerHTML = (name || currentUser.email || 'U').substring(0, 2).toUpperCase();
     } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
   });
+
+  // Reset Password Logic
+  document.getElementById('resetPasswordBtn')?.addEventListener('click', async () => {
+    try {
+      await auth.sendPasswordResetEmail(currentUser.email);
+      showMessage('Email de réinitialisation envoyé !', 'success');
+    } catch(e) {
+      showMessage('Erreur: ' + e.message, 'error');
+    }
+  });
+
+  // Logout Logic
+  document.getElementById('profileLogoutBtn')?.addEventListener('click', () => {
+    auth.signOut();
+    showMessage(t('loggedOut'), 'success');
+  });
+}
+
+async function renderClientOrders(app) {
+  await renderProfile(app);
 }
 
 function renderSettings(app) {
@@ -1639,14 +1668,16 @@ document.getElementById('cartBtn')?.addEventListener('click', () => {
   renderCart();
 });
 
+document.getElementById('notifBtn')?.addEventListener('click', () => {
+  currentView = 'notifications';
+  renderNotificationsModal();
+});
+
 document.getElementById('closeCartModal')?.addEventListener('click', () => {
   document.getElementById('cartModal').classList.add('hidden');
 });
-
 document.getElementById('cartModal')?.addEventListener('click', (e) => {
-  if (e.target === document.getElementById('cartModal')) {
-    document.getElementById('cartModal').classList.add('hidden');
-  }
+  if (e.target === document.getElementById('cartModal')) document.getElementById('cartModal').classList.add('hidden');
 });
 
 document.getElementById('checkoutBtn')?.addEventListener('click', async () => {
@@ -1658,12 +1689,13 @@ document.getElementById('checkoutBtn')?.addEventListener('click', async () => {
   }
   if (cart.length === 0) return;
 
+  // Vérifier profil
   let userDoc;
   try {
     userDoc = await db.collection('users').doc(currentUser.uid).get();
-    if (!userDoc.exists || !userDoc.data().address || !userDoc.data().phone) {
+    if (!userDoc.exists || !userDoc.data().address || userDoc.data().address.length < 5 || !userDoc.data().phone) {
       document.getElementById('cartModal').classList.add('hidden');
-      showMessage(t('fillAllFields') + " (Profil)", 'error');
+      showMessage(t('invalidAddress') + " / " + t('fillAllFields'), 'error');
       currentView = 'profile'; renderView('profile');
       return;
     }
@@ -1704,9 +1736,9 @@ document.querySelectorAll('#starRating span').forEach(star => {
 
 document.getElementById('submitReviewBtn')?.addEventListener('click', async () => {
   if (!currentUser) { showMessage(t('loginRequired'), 'error'); return; }
-  if (currentRating === 0) { showMessage('Chwazi yon nòt (zetwal)', 'error'); return; }
+  if (currentRating === 0) { showMessage(t('ratingError'), 'error'); return; }
   const comment = document.getElementById('reviewComment').value.trim();
-  if (!comment) { showMessage('Ekri yon kòmantè', 'error'); return; }
+  if (!comment) { showMessage(t('commentError'), 'error'); return; }
 
   try {
     await db.collection('reviews').add({
@@ -1717,12 +1749,12 @@ document.getElementById('submitReviewBtn')?.addEventListener('click', async () =
       comment,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    showMessage('Mèsi pou avi ou!');
+    showMessage(t('reviewSuccess'));
     document.getElementById('reviewComment').value = '';
     currentRating = 0;
     document.querySelectorAll('#starRating span').forEach(s => s.classList.remove('active'));
     renderReviews(selectedProductId);
-  } catch (e) { showMessage('Erè voye avi', 'error'); }
+  } catch (e) { showMessage(t('reviewError'), 'error'); }
 });
 
 async function renderReviews(productId) {
@@ -1732,7 +1764,7 @@ async function renderReviews(productId) {
   try {
     const snap = await db.collection('reviews').where('productId', '==', productId).orderBy('createdAt', 'desc').get();
     const revs = snap.docs.map(d => d.data());
-    if (revs.length === 0) { list.innerHTML = `<p>${t('noReviews')}</p>`; return; }
+    if (revs.length === 0) { list.innerHTML = '<p>Pa gen avi ankò.</p>'; return; }
     list.innerHTML = revs.map(r => `
       <div class="review-item">
         <div class="review-user">${r.userName}</div>
@@ -1742,11 +1774,76 @@ async function renderReviews(productId) {
   } catch (e) { list.innerHTML = ''; }
 }
 
+function renderServices(app) {
+  app.innerHTML = `
+    <div class="card-premium" style="animation: viewFadeIn 0.4s ease;">
+      <h2>🛠️ ${t('footerServices') || 'Sèvis nou yo'}</h2>
+      <div style="padding: 1rem 0; line-height: 1.8;">
+        <p>Total Lakay ofri plizyè sèvis pou fasilite lavi w :</p>
+        <ul style="margin-left: 1.5rem; margin-top: 1rem;">
+          <li style="margin-bottom: 0.5rem;"><strong>Vant an liy :</strong> Yon gran chwa pwodwi nan plizyè kategori (manje, elektwonik, kay, elatriye).</li>
+          <li style="margin-bottom: 0.5rem;"><strong>Livrezon rapid :</strong> Nou asire nou ke ou jwenn komand ou nan pi bon delè yo.</li>
+          <li style="margin-bottom: 0.5rem;"><strong>Sèvis kliyan :</strong> Nou disponib pou reponn tout kesyon w via WhatsApp ou imèl.</li>
+          <li style="margin-bottom: 0.5rem;"><strong>Peman sekirize :</strong> Nou aksepte plizyè mwayen peman pou sekirite w ak konfò w.</li>
+        </ul>
+      </div>
+    </div>
+  `;
+}
+
+function renderPrivacy(app) {
+  app.innerHTML = `
+    <div class="card-premium" style="animation: viewFadeIn 0.4s ease;">
+      <h2>🔒 ${t('footerPrivacy') || 'Politik Konfidansyalite'}</h2>
+      <div style="padding: 1rem 0; line-height: 1.8;">
+        <p>Nan Total Lakay, nou pran vi prive w trè oserye. Men kijan nou itilize ak pwoteje done ou yo :</p>
+        <ul style="margin-left: 1.5rem; margin-top: 1rem;">
+          <li style="margin-bottom: 0.5rem;"><strong>Kolek done :</strong> Nou sèlman kolekte enfòmasyon ki nesesè pou trete komand ou yo (non, adrès, imèl, nimewo telefòn).</li>
+          <li style="margin-bottom: 0.5rem;"><strong>Sekirite :</strong> Tout done pèsonèl ou yo chiffres epi estoke sou sèvè ki an sekirite (Firebase).</li>
+          <li style="margin-bottom: 0.5rem;"><strong>Pataj done :</strong> Nou pa janm vann oswa pataje enfòmasyon pèsonèl ou ak twazyèm pati san konsantman w, sof si lalwa mande sa.</li>
+          <li style="margin-bottom: 0.5rem;"><strong>Dwa w yo :</strong> Ou gen dwa pou w modifye oswa efase kont ou nenpòt kilè nan paramèt pwofil ou.</li>
+        </ul>
+      </div>
+    </div>
+  `;
+}
+
+function renderTerms(app) {
+  app.innerHTML = `
+    <div class="card-premium" style="animation: viewFadeIn 0.4s ease;">
+      <h2>📜 ${t('footerTerms') || 'Kondisyon Itilizasyon'}</h2>
+      <div style="padding: 1rem 0; line-height: 1.8;">
+        <p>Lè w itilize platfòm Total Lakay la, ou asepte kondisyon sa yo :</p>
+        <ul style="margin-left: 1.5rem; margin-top: 1rem;">
+          <li style="margin-bottom: 0.5rem;"><strong>Kont itilizatè :</strong> Ou responsab pou kenbe modpas ou an sekirite. Tout aktivite sou kont ou se responsablite w.</li>
+          <li style="margin-bottom: 0.5rem;"><strong>Acha :</strong> Tout acha fèt final sof nan ka kote pwodwi a domaje nan livrezon. Nou rezève dwa pou n anile nenpòt komand sispèk.</li>
+          <li style="margin-bottom: 0.5rem;"><strong>Pri ak Pwodwi :</strong> Pri yo ka chanje san avètisman alavans. Nou fè efò pou n gen deskripsyon egzak pou chak pwodwi.</li>
+          <li style="margin-bottom: 0.5rem;"><strong>Modifikasyon :</strong> Total Lakay ka modifye kondisyon sa yo nenpòt moman. N ap fè itilizatè yo konnen via notifikasyon.</li>
+        </ul>
+      </div>
+    </div>
+  `;
+}
+
 // ============================================
 // DÉMARRAGE
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 Total Lakay - Version Complète avec Corrections');
+  console.log('🚀 Total Lakay - Version Ultime avec Recherche & Filtres');
   applyLanguage();
+  
+  document.getElementById('linkServices')?.addEventListener('click', (e) => {
+    e.preventDefault(); renderView('services');
+    window.scrollTo(0, 0);
+  });
+  document.getElementById('linkPrivacy')?.addEventListener('click', (e) => {
+    e.preventDefault(); renderView('privacy');
+    window.scrollTo(0, 0);
+  });
+  document.getElementById('linkTerms')?.addEventListener('click', (e) => {
+    e.preventDefault(); renderView('terms');
+    window.scrollTo(0, 0);
+  });
+
   renderView('home');
 });
