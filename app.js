@@ -129,9 +129,8 @@ const i18n = {
     sortNameDesc: "Non: Z → A",
     resultsFound: "rezilta jwenn",
     noResultsFound: "Pa gen rezilta. Eseye ak lòt mo.",
-    categoryFood: "🍚 Manje / Alimentation",
     categoryElectronics: "📱 Elektwonik",
-    categoryClothing: "👕 Vètman",
+    categoryClothing: "👕 Vètman ak Akseswa",
     categorySchool: "🎓 Lekòl / École",
     categoryWork: "💼 Travay / Travail",
     categoryHome: "🏠 Kay / Maison",
@@ -143,7 +142,7 @@ const i18n = {
     cancellationReason: "Rezon anilasyon", reasonPlaceholder: "Poukisa ou anile kòmand sa?",
     reasonRequired: "Ou dwe bay yon rezon pou anilasyon an.",
     recentProducts: "Pwodui Resan", categoriesTitle: "Kategori yo", exploreCategories: "Eksplore tout kategori nou yo",
-    school: "Lekòl", work: "Travay", home: "Kay", food: "Manje", electronics: "Elektwonik", beauty: "Bote", clothing: "Vètman",
+    school: "Lekòl", work: "Travay", home: "Kay", electronics: "Elektwonik", beauty: "Bote", clothing: "Vètman",
     profile: "Profil", phone: "Telefòn", phonePlaceholder: "Ex: +509 1234 5678",
     updateProfile: "Mete ajou profil", profileUpdated: "Profil mete ajou ak siksè!",
     phoneNumber: "Nimewo telefòn", saveProfile: "Anrejistre Profil",
@@ -187,6 +186,7 @@ const i18n = {
     termsPriceDesc: "Pri yo ka chanje san avètisman alavans. Nou fè efò pou n gen deskripsyon egzak pou cada pwodwi.",
     termsMod: "Modifikasyon :",
     termsModDesc: "Total Lakay ka modifye kondisyon sa yo nenpòt moman. N ap fè itilizatè yo konnen via notifikasyon.",
+    school: "Lekòl", work: "Travay", home: "Kay", electronics: "Elektwonik", beauty: "Bote", clothing: "Vètman",
   },
   fr: {
     home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -275,9 +275,8 @@ const i18n = {
     sortNameDesc: "Nom: Z → A",
     resultsFound: "résultats trouvés",
     noResultsFound: "Aucun résultat. Essayez d'autres mots.",
-    categoryFood: "🍚 Alimentation",
     categoryElectronics: "📱 Électronique",
-    categoryClothing: "👕 Vêtements",
+    categoryClothing: "👕 Vêtements & Accessoires",
     categorySchool: "🎓 École",
     categoryWork: "💼 Travail",
     categoryHome: "🏠 Maison",
@@ -289,7 +288,7 @@ const i18n = {
     cancellationReason: "Raison de l'annulation", reasonPlaceholder: "Pourquoi annulez-vous cette commande ?",
     reasonRequired: "Vous devez fournir une raison pour l'annulation.",
     recentProducts: "Produits Récents", categoriesTitle: "Catégories", exploreCategories: "Explorez toutes nos catégories",
-    school: "École", work: "Travail", home: "Maison", food: "Alimentation", electronics: "Électronique", beauty: "Beauté", clothing: "Vêtements",
+    school: "École", work: "Travail", home: "Maison", electronics: "Électronique", beauty: "Beauté", clothing: "Vêtements",
     profile: "Profil", phone: "Téléphone", phonePlaceholder: "Ex: +509 1234 5678",
     updateProfile: "Mettre à jour le profil", profileUpdated: "Profil mis à jour avec succès !",
     phoneNumber: "Numéro de téléphone", saveProfile: "Enregistrer le Profil",
@@ -333,6 +332,7 @@ const i18n = {
     termsPriceDesc: "Les prix sont sujets à changement sans préavis. Nous nous efforçons d'avoir des descriptions exactes pour chaque produit.",
     termsMod: "Modifications :",
     termsModDesc: "Total Lakay peut modifier ces conditions à tout moment. Nous en informerons les utilisateurs via des notifications.",
+    school: "École", work: "Travail", home: "Maison", electronics: "Électronique", beauty: "Beauté", clothing: "Vêtements",
   },
   en: {
     home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -420,9 +420,8 @@ const i18n = {
     sortNameDesc: "Name: Z → A",
     resultsFound: "results found",
     noResultsFound: "No results. Try other words.",
-    categoryFood: "🍚 Food",
     categoryElectronics: "📱 Electronics",
-    categoryClothing: "👕 Clothing",
+    categoryClothing: "👕 Clothing & Accessories",
     categorySchool: "🎓 School",
     categoryWork: "💼 Work",
     categoryHome: "🏠 Home",
@@ -434,7 +433,7 @@ const i18n = {
     cancellationReason: "Cancellation Reason", reasonPlaceholder: "Why are you cancelling this order?",
     reasonRequired: "You must provide a reason for the cancellation.",
     recentProducts: "Recent Products", categoriesTitle: "Categories", exploreCategories: "Explore all our categories",
-    school: "School", work: "Work", home: "Home", food: "Food", electronics: "Electronics", beauty: "Beauty", clothing: "Clothing",
+    school: "School", work: "Work", home: "Home", electronics: "Electronics", beauty: "Beauty", clothing: "Clothing",
     profile: "Profile", phone: "Phone", phonePlaceholder: "Ex: +509 1234 5678",
     updateProfile: "Update Profile", profileUpdated: "Profile updated successfully!",
     phoneNumber: "Phone Number", saveProfile: "Save Profile",
@@ -478,6 +477,13 @@ const i18n = {
     termsPriceDesc: "Prices are subject to change without notice. We strive to have accurate descriptions for each product.",
     termsMod: "Modifications:",
     termsModDesc: "Total Lakay may modify these conditions at any time. We will notify users via notifications.",
+    termsConsentTitle: "Terms of Use",
+    termsConsentDesc: "To continue using Total Lakay, you must accept our terms of use and our privacy policy.",
+    accept: "Accept", decline: "Decline",
+    cancellationReason: "Cancellation Reason", reasonPlaceholder: "Why are you cancelling this order?",
+    reasonRequired: "You must provide a reason for the cancellation.",
+    recentProducts: "Recent Products", categoriesTitle: "Categories", exploreCategories: "Explore all our categories",
+    school: "School", work: "Work", home: "Home", electronics: "Electronics", beauty: "Beauty", clothing: "Clothing",
   },
   es: {
     home: "Inicio", shop: "Tienda", orders: "Pedidos", admin: "Admin",
@@ -566,9 +572,8 @@ const i18n = {
     sortNameDesc: "Nombre: Z → A",
     resultsFound: "resultados encontrados",
     noResultsFound: "Sin resultados. Prueba otras palabras.",
-    categoryFood: "🍚 Comida",
     categoryElectronics: "📱 Electrónica",
-    categoryClothing: "👕 Ropa",
+    categoryClothing: "👕 Ropa y Accesorios",
     categoryHome: "🏠 Hogar",
     categoryBeauty: "💄 Belleza",
     categoryOther: "📦 Otros",
@@ -615,6 +620,13 @@ const i18n = {
     termsPriceDesc: "Los precios están sujetos a cambios sin previo aviso. Nos esforzamos por tener descripciones precisas para cada producto.",
     termsMod: "Modificaciones:",
     termsModDesc: "Total Lakay puede modificar estas condiciones en cualquier momento. Notificaremos a los usuarios a través de notificaciones.",
+    termsConsentTitle: "Condiciones de Uso",
+    termsConsentDesc: "Para continuar usando Total Lakay, debe aceptar nuestros términos de uso y nuestra política de privacidad.",
+    accept: "Aceptar", decline: "Rechazar",
+    cancellationReason: "Motivo de cancelación", reasonPlaceholder: "¿Por qué cancela este pedido?",
+    reasonRequired: "Debe proporcionar un motivo para la cancelación.",
+    recentProducts: "Productos Recientes", categoriesTitle: "Categorías", exploreCategories: "Explore todas nuestras categorías",
+    school: "Escuela", work: "Trabajo", home: "Hogar", electronics: "Electrónica", beauty: "Belleza", clothing: "Ropa",
   }
 };
 
@@ -1552,13 +1564,9 @@ async function renderHome(app) {
           <span class="category-icon">🏠</span>
           <span class="category-name">${t('home')}</span>
         </div>
-        <div class="category-card" onclick="filterByCategory('work')">
-          <span class="category-icon">💼</span>
-          <span class="category-name">${t('work')}</span>
-        </div>
-        <div class="category-card" onclick="filterByCategory('food')">
-          <span class="category-icon">🍚</span>
-          <span class="category-name">${t('food')}</span>
+        <div class="category-card" onclick="filterByCategory('clothing')">
+          <span class="category-icon">👕</span>
+          <span class="category-name">${t('clothing')}</span>
         </div>
         <div class="category-card" onclick="filterByCategory('electronics')">
           <span class="category-icon">📱</span>
