@@ -935,7 +935,9 @@ auth.onAuthStateChanged(async (user) => {
       adminElements.forEach(el => el.classList.add('hidden'));
     }
 
-    if (logoutBtn) logoutBtn.textContent = '🚪 ' + (isAdmin ? 'Admin: ' : '') + t('logout');
+    if (logoutBtn) {
+      logoutBtn.innerHTML = `🚪 <span>${(isAdmin ? 'Admin: ' : '') + t('logout')}</span>`;
+    }
     listenNotifications();
   } else {
     if (authBtn) authBtn.classList.remove('hidden');
@@ -2265,17 +2267,25 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('🚀 Total Lakay - Version Ultime avec Recherche & Filtres');
   applyLanguage();
 
-  document.getElementById('linkServices')?.addEventListener('click', (e) => {
-    e.preventDefault(); renderView('services');
-    window.scrollTo(0, 0);
+  // Navigation Links (Menu & Footer)
+  const navActions = [
+    { id: 'linkServices', view: 'services' },
+    { id: 'linkPrivacy', view: 'privacy' },
+    { id: 'linkTerms', view: 'terms' },
+    { id: 'footerServices', view: 'services' },
+    { id: 'footerPrivacy', view: 'privacy' },
+    { id: 'footerTerms', view: 'terms' }
+  ];
+
+  navActions.forEach(action => {
+    document.getElementById(action.id)?.addEventListener('click', (e) => {
+      e.preventDefault(); renderView(action.view); window.scrollTo(0, 0);
+    });
   });
-  document.getElementById('linkPrivacy')?.addEventListener('click', (e) => {
-    e.preventDefault(); renderView('privacy');
-    window.scrollTo(0, 0);
-  });
-  document.getElementById('linkTerms')?.addEventListener('click', (e) => {
-    e.preventDefault(); renderView('terms');
-    window.scrollTo(0, 0);
+
+  document.getElementById('footerContact')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelector('.footer')?.scrollIntoView({ behavior: 'smooth' });
   });
 
   // Consent Modal Events
