@@ -355,6 +355,44 @@
 
   <!-- ========== JavaScript ========== -->
   <script src="app.js"></script>
+  <!-- ... TON CONTENU EXISTANT ... -->
+
+<!-- Service Worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(registration => {
+          console.log('✅ Service Worker enregistré:', registration.scope);
+          
+          // Vérifier les mises à jour
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // Nouvelle version disponible
+                showMessage('🔄 Nouvelle version disponible ! Rechargez la page.', 'info');
+              }
+            });
+          });
+        })
+        .catch(error => {
+          console.log('❌ Service Worker échec:', error);
+        });
+    });
+    
+    // Recharger quand le nouveau Service Worker prend le contrôle
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
+    });
+  }
+</script>
+</body>
+</html>
 </body>
 
 </html>.
