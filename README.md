@@ -4,36 +4,37 @@
 
 ## 🌟 Fonctionnalités Principales
 
-- **Interface Utilisateur Premium (UI/UX) :** Design moderne utilisant le glassmorphism, des chargeurs "skeleton" et un affichage responsive pour une excellente expérience sur mobile et ordinateur.
-- **Multilingue et Multidevise :** Support du Kreyòl (HT), Français (FR), Anglais (EN) et Espagnol (ES). Changement de devise dynamique (USD, HTG, EUR).
-- **Système de Comptes (Auth) :** Authentification sécurisée via Firebase (Email/Mot de passe ou Google). Différenciation des rôles (Client vs Administrateur).
-- **Boutique et Panier :** Navigation par catégories, recherche, filtres par prix et gestion de panier d'achat.
-- **Tableau de Bord Administrateur :** Gestion complète des produits (ajout, modification, suppression), gestion des catégories et statistiques de vente.
-- **Avis et Favoris :** Les utilisateurs peuvent laisser des avis sur les produits (avec un système d'étoiles) et enregistrer leurs articles favoris.
-- **Support Client :** Bouton flottant WhatsApp pour un contact direct et rapide.
+- **Interface Utilisateur Premium (UI/UX) :** Design moderne utilisant le glassmorphism, des chargeurs "skeleton" et un affichage responsive optimisé pour mobile et ordinateur.
+- **Multilingue et Multidevise :** Support complet du Kreyòl (HT), Français (FR), Anglais (EN) et Espagnol (ES). Changement de devise dynamique (USD, HTG, EUR) avec formatage local.
+- **Système de Comptes (Auth) :** Authentification sécurisée via Firebase. Gestion des rôles avec un tableau de bord Administrateur puissant et une interface Client intuitive.
+- **Consentement Légal :** Système de validation des Conditions d'Utilisation obligatoire pour les nouveaux utilisateurs, garantissant la conformité légale de la plateforme.
+- **Boutique & Navigation :** Accès rapide par catégories (École, Travail, Maison, Alimentation, etc.), recherche instantanée et filtres avancés.
+- **Transparence des Commandes :** Système de suivi incluant les raisons d'annulation fournies par les administrateurs pour une meilleure communication client.
+- **Avis & Notifications Admin :** Système d'avis étoilés avec notifications automatiques pour les administrateurs lors de chaque nouvelle publication.
+- **Support Client :** Intégration WhatsApp pour une assistance directe.
 
 ## 🛠️ Technologies Utilisées
 
-- **Frontend :** HTML5, CSS3 (Vanilla CSS), JavaScript (ES6+).
-- **Backend & Base de données :** Firebase SDK (Authentication, Firestore, Storage).
-- **Design :** Polices Google Fonts (Poppins).
+- **Frontend :** HTML5, CSS3 (Custom Properties, Flexbox, Grid), JavaScript (ES6+).
+- **Backend :** Firebase SDK (Authentication, Firestore Database, Storage).
+- **Design :** Google Fonts (Poppins), système de design harmonieux avec palettes HSL.
 
 ## 📂 Structure du Projet
 
-- `index (1).html` : Fichier principal de la structure HTML, contenant les éléments d'interface (Navbar, Modals, Footer, etc.).
-- `style.css` : Contient toute la feuille de style du projet, garantissant un rendu esthétique "premium".
-- `app.js` : Toute la logique front-end, y compris les appels à Firebase, la gestion du panier, la traduction (i18n), et le tableau de bord administrateur.
-- `logo.jpeg` : Le logo de la plateforme Total Lakay.
+- `index (1).html` : Structure HTML sémantique, modales dynamiques et système de vues.
+- `style.css` : Système de design premium avec variables CSS pour une maintenance facile.
+- `app.js` : Logique métier, intégration Firebase, dictionnaire multilingue (i18n) et gestion d'état.
+- `logo.jpeg` : Identité visuelle de la marque.
 
 ## 🚀 Installation & Lancement
 
-1. Ouvrez le dossier du projet (`Total-Lakay`).
-2. Aucune installation Node.js requise. La configuration Firebase est directement embarquée dans le front-end.
-3. Ouvrez le fichier `index (1).html` dans n'importe quel navigateur web moderne (Google Chrome, Firefox, Safari, Edge) pour utiliser la plateforme en local.
+1. Clonez ou téléchargez le dossier `Total-Lakay`.
+2. Aucune installation de dépendances lourdes n'est requise.
+3. Ouvrez `index (1).html` dans votre navigateur ou utilisez une extension "Live Server" pour tester en local.
 
-## 🛡️ Sécurité et Paiements
+## 🛡️ Sécurité
 
-Les paiements et données utilisateurs sont gérés via l'intégration des protocoles de sécurité de Firebase. Les choix de paiements locaux (MonCash, Natcash, etc.) sont intégrés à l'interface de commande.
+La plateforme utilise les règles de sécurité Firestore pour protéger les données. Les administrateurs disposent de privilèges exclusifs pour la gestion du stock et des utilisateurs.
 
 ---
 *Total Lakay &copy; 2026 - Tout bagay lakay ou.*
