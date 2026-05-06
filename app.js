@@ -25,7 +25,7 @@ let currentUser = null;
 let userRole = null;
 let isAdmin = false;
 let currentLang = 'ht';
-let currentCurrency = 'USD';
+let currentCurrency = 'HTG';
 let currentView = 'home';
 let products = [];
 let orders = [];
@@ -36,9 +36,9 @@ let favorites = JSON.parse(localStorage.getItem('totalLakayFavorites') || '[]');
 let selectedProductId = null;
 
 const exchangeRates = {
-  USD: 1,
-  HTG: 135,
-  EUR: 0.95
+  HTG: 1,
+  USD: 1 / 135,
+  EUR: 1 / 140
 };
 
 // ---------- TRADUCTIONS COMPLÈTES ----------
@@ -143,6 +143,12 @@ const i18n = {
     reasonRequired: "Ou dwe bay yon rezon pou anilasyon an.",
     recentProducts: "Pwodui Resan", categoriesTitle: "Kategori yo", exploreCategories: "Eksplore tout kategori nou yo",
     school: "Lekòl", work: "Travay", home: "Kay", electronics: "Elektwonik", beauty: "Bote", clothing: "Vètman",
+    stock: "Kantite nan stòk", category: "Kategori", colors: "Koulè (separe ak vigil)", sizes: "Gwosè / Size (separe ak vigil)",
+    selectColor: "Chwazi Koulè", selectSize: "Chwazi Gwosè", quantity: "Kantite", outOfStock: "Pa gen nan stòk ankò",
+    categoryClothingAccessories: "👕 Vètman ak Akseswa",
+    categorySchoolOffice: "🎓 Lekòl ak Travay",
+    categoryHomePersonal: "🏠 Kay ak Pèsonèl",
+    categoryElectronicsTech: "📱 Elektwonik",
     profile: "Profil", phone: "Telefòn", phonePlaceholder: "Ex: +509 1234 5678",
     updateProfile: "Mete ajou profil", profileUpdated: "Profil mete ajou ak siksè!",
     phoneNumber: "Nimewo telefòn", saveProfile: "Anrejistre Profil",
@@ -289,6 +295,12 @@ const i18n = {
     reasonRequired: "Vous devez fournir une raison pour l'annulation.",
     recentProducts: "Produits Récents", categoriesTitle: "Catégories", exploreCategories: "Explorez toutes nos catégories",
     school: "École", work: "Travail", home: "Maison", electronics: "Électronique", beauty: "Beauté", clothing: "Vêtements",
+    stock: "Quantité en stock", category: "Catégorie", colors: "Couleurs (séparées par virgule)", sizes: "Tailles / Sizes (séparées par virgule)",
+    selectColor: "Choisir Couleur", selectSize: "Choisir Taille", quantity: "Quantité", outOfStock: "Rupture de stock",
+    categoryClothingAccessories: "👕 Vêtements & Accessoires",
+    categorySchoolOffice: "🎓 École & Travail",
+    categoryHomePersonal: "🏠 Maison & Personnel",
+    categoryElectronicsTech: "📱 Électronique",
     profile: "Profil", phone: "Téléphone", phonePlaceholder: "Ex: +509 1234 5678",
     updateProfile: "Mettre à jour le profil", profileUpdated: "Profil mis à jour avec succès !",
     phoneNumber: "Numéro de téléphone", saveProfile: "Enregistrer le Profil",
@@ -434,6 +446,12 @@ const i18n = {
     reasonRequired: "You must provide a reason for the cancellation.",
     recentProducts: "Recent Products", categoriesTitle: "Categories", exploreCategories: "Explore all our categories",
     school: "School", work: "Work", home: "Home", electronics: "Electronics", beauty: "Beauty", clothing: "Clothing",
+    stock: "Stock Quantity", category: "Category", colors: "Colors (comma separated)", sizes: "Sizes (comma separated)",
+    selectColor: "Select Color", selectSize: "Select Size", quantity: "Quantity", outOfStock: "Out of stock",
+    categoryClothingAccessories: "👕 Clothing & Accessories",
+    categorySchoolOffice: "🎓 School & Work",
+    categoryHomePersonal: "🏠 Home & Personal",
+    categoryElectronicsTech: "📱 Electronics",
     profile: "Profile", phone: "Phone", phonePlaceholder: "Ex: +509 1234 5678",
     updateProfile: "Update Profile", profileUpdated: "Profile updated successfully!",
     phoneNumber: "Phone Number", saveProfile: "Save Profile",
@@ -627,6 +645,12 @@ const i18n = {
     reasonRequired: "Debe proporcionar un motivo para la cancelación.",
     recentProducts: "Productos Recientes", categoriesTitle: "Categorías", exploreCategories: "Explore todas nuestras categorías",
     school: "Escuela", work: "Trabajo", home: "Hogar", electronics: "Electrónica", beauty: "Belleza", clothing: "Ropa",
+    stock: "Cantidad en stock", category: "Categoría", colors: "Colores (separados por coma)", sizes: "Tallas (separadas por coma)",
+    selectColor: "Seleccionar Color", selectSize: "Seleccionar Talla", quantity: "Cantidad", outOfStock: "Agotado",
+    categoryClothingAccessories: "👕 Ropa y Accesorios",
+    categorySchoolOffice: "🎓 Escuela y Trabajo",
+    categoryHomePersonal: "🏠 Hogar y Personal",
+    categoryElectronicsTech: "📱 Electrónica",
   }
 };
 
@@ -751,9 +775,9 @@ function renderNotificationsModal() {
   });
 }
 
-function formatPrice(priceUSD) {
+function formatPrice(priceBase) {
   const rate = exchangeRates[currentCurrency] || 1;
-  const converted = priceUSD * rate;
+  const converted = priceBase * rate;
   if (currentCurrency === 'USD') return `$${converted.toFixed(2)}`;
   if (currentCurrency === 'HTG') return `${Math.round(converted).toLocaleString()} G`;
   if (currentCurrency === 'EUR') return `${converted.toFixed(2)} €`;
@@ -1128,11 +1152,17 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
   if (!address || address.length < 5) { showMessage(t('invalidAddress'), 'error'); return; }
   const product = products.find(p => p.id === selectedProductId);
   if (!product) return;
+  const quantity = parseInt(document.getElementById('orderQuantity')?.value) || 1;
+  const color = document.getElementById('orderColor')?.value || null;
+  const size = document.getElementById('orderSize')?.value || null;
+
   try {
     await db.collection('orders').add({
       userId: currentUser.uid, userEmail: currentUser.email,
       productId: product.id, productName: product.name,
-      price: product.price, currency: currentCurrency, image: product.image || '',
+      price: product.price, quantity, color, size,
+      totalPrice: product.price * quantity,
+      currency: currentCurrency, image: product.image || '',
       address, payment, status: 'pending', deliveryEstimate: '',
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -1399,7 +1429,23 @@ async function renderAdminDashboard(app) {
       <h3>➕ ${t('addProduct')}</h3>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
         <div><label>${t('productName')}</label><input id="adminProdName" placeholder="${t('productNamePlaceholder')}"></div>
-        <div><label>${t('productPrice')} ($)</label><input id="adminProdPrice" type="number" placeholder="${t('productPricePlaceholder')}" step="0.01"></div>
+        <div><label>${t('productPrice')} (G)</label><input id="adminProdPrice" type="number" placeholder="${t('productPricePlaceholder')}" step="1"></div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:0.8rem;">
+        <div>
+          <label>${t('category')}</label>
+          <select id="adminProdCategory">
+            <option value="clothing">${t('categoryClothingAccessories')}</option>
+            <option value="school">${t('categorySchoolOffice')}</option>
+            <option value="home">${t('categoryHomePersonal')}</option>
+            <option value="electronics">${t('categoryElectronicsTech')}</option>
+          </select>
+        </div>
+        <div><label>${t('stock')}</label><input id="adminProdStock" type="number" placeholder="0" min="0"></div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:0.8rem;">
+        <div><label>${t('colors')}</label><input id="adminProdColors" placeholder="Rouge, Bleu, Vert"></div>
+        <div><label>${t('sizes')}</label><input id="adminProdSizes" placeholder="S, M, L, XL"></div>
       </div>
       <label>${t('oldPrice')}</label><input id="adminProdOldPrice" type="number" placeholder="${t('oldPricePlaceholder')}" step="0.01">
       <label>${t('productImage')}</label><input id="adminProdImage" placeholder="${t('productImagePlaceholder')}">
@@ -1436,7 +1482,8 @@ async function renderAdminDashboard(app) {
               </select>
             </div>
             <div style="font-size:0.9rem; color:var(--text-soft); margin-bottom:0.5rem;">
-              <div>💰 <strong>${formatPrice(o.price)}</strong> | 👤 ${o.userName || o.userEmail || t('clientLabel')}</div>
+              <div>💰 <strong>${formatPrice(o.price)} ${o.quantity > 1 ? `(x${o.quantity})` : ''}</strong> | 👤 ${o.userName || o.userEmail || t('clientLabel')}</div>
+              ${o.color || o.size ? `<div style="font-size:0.85rem; margin-bottom:0.2rem;">${o.color ? `🎨 ${o.color} ` : ''}${o.size ? `📏 ${o.size}` : ''}</div>` : ''}
               <div>📍 ${o.address} | 📞 ${o.phone || '---'}</div>
             </div>
             ${o.items ? `<div style="font-size:0.8rem; background:#fff; padding:0.5rem; border-radius:8px; margin-bottom:0.5rem; border:1px dashed #ccc;">
@@ -1477,11 +1524,23 @@ async function renderAdminDashboard(app) {
     const name = document.getElementById('adminProdName')?.value.trim();
     const price = parseFloat(document.getElementById('adminProdPrice')?.value);
     const oldPrice = parseFloat(document.getElementById('adminProdOldPrice')?.value) || null;
+    const category = document.getElementById('adminProdCategory')?.value;
+    const stock = parseInt(document.getElementById('adminProdStock')?.value) || 0;
+    const colorsRaw = document.getElementById('adminProdColors')?.value.trim();
+    const sizesRaw = document.getElementById('adminProdSizes')?.value.trim();
     const image = document.getElementById('adminProdImage')?.value.trim();
     const description = document.getElementById('adminProdDesc')?.value.trim();
+
     if (!name || !price) { showMessage(t('fillAllFields'), 'error'); return; }
+
+    const colors = colorsRaw ? colorsRaw.split(',').map(c => c.trim()) : [];
+    const sizes = sizesRaw ? sizesRaw.split(',').map(s => s.trim()) : [];
+
     try {
-      await db.collection('products').add({ name, price, oldPrice, image: image || '', description, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      await db.collection('products').add({ 
+        name, price, oldPrice, category, stock, colors, sizes,
+        image: image || '', description, createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+      });
       showMessage(t('productAdded'), 'success');
       await loadAllData(); renderView('admin');
     } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
@@ -1501,22 +1560,40 @@ async function renderAdminDashboard(app) {
     select.addEventListener('change', async (e) => {
       const orderId = e.target.dataset.orderId;
       const newStatus = e.target.value;
+      const order = orders.find(o => o.id === orderId);
+      const oldStatus = order ? order.status : 'pending';
       let reason = '';
 
       if (newStatus === 'cancelled') {
         reason = prompt(t('reasonPlaceholder'));
         if (!reason) {
-          e.target.value = orders.find(o => o.id === orderId).status;
+          e.target.value = oldStatus;
           showMessage(t('reasonRequired'), 'error');
           return;
         }
       }
 
-      await db.collection('orders').doc(orderId).update({ 
-        status: newStatus,
-        cancellationReason: reason || null
-      });
-      showMessage(t('statusUpdated'), 'success');
+      try {
+        await db.collection('orders').doc(orderId).update({ 
+          status: newStatus,
+          cancellationReason: reason || null
+        });
+
+        // Stock Decrement Logic
+        if (newStatus === 'confirmed' && oldStatus !== 'confirmed' && order.productId) {
+          const productRef = db.collection('products').doc(order.productId);
+          const productDoc = await productRef.get();
+          if (productDoc.exists) {
+            const currentStock = productDoc.data().stock || 0;
+            const orderQty = order.quantity || 1;
+            await productRef.update({ stock: Math.max(0, currentStock - orderQty) });
+            await loadProducts(true); // Refresh local products list
+          }
+        }
+
+        showMessage(t('statusUpdated'), 'success');
+        await loadAllOrders(); // Refresh orders to ensure UI is up to date
+      } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
     });
   });
 
@@ -1754,7 +1831,9 @@ async function renderProfile(app) {
                 <span class="badge ${o.status === 'confirmed' || o.status === 'delivered' ? 'badge-success' : 'badge-pending'}">${t(o.status)}</span>
               </div>
               <div style="font-size:0.9rem; color:var(--text-soft);">
-                <span style="font-weight:600; color:var(--blue-deep);">💰 ${formatPrice(o.price)}</span> | 
+                <span style="font-weight:600; color:var(--blue-deep);">💰 ${formatPrice(o.price)} ${o.quantity > 1 ? `(x${o.quantity})` : ''}</span> | 
+                ${o.color ? `<span>🎨 ${o.color}</span> | ` : ''}
+                ${o.size ? `<span>📏 ${o.size}</span> | ` : ''}
                 <span>💳 ${o.payment}</span> | 
                 <span>📍 ${o.address}</span>
               </div>
@@ -1874,6 +1953,48 @@ function attachBuyButtons() {
       document.getElementById('modalProductName').textContent = product.name;
       document.getElementById('modalProductPrice').textContent = formatPrice(product.price);
       document.getElementById('productDetailsContent').innerHTML = `<p style="margin:1rem 0; color:var(--text-soft);">${product.description || ''}</p>`;
+      
+      const variationContainer = document.getElementById('variationSelectors');
+      if (variationContainer) {
+        let html = '';
+        
+        // Stock / Quantity
+        if (product.stock > 0) {
+          html += `
+            <div>
+              <label>🔢 ${t('quantity')}</label>
+              <input type="number" id="orderQuantity" value="1" min="1" max="${product.stock}" style="width:100px;">
+              <span style="font-size:0.8rem; color:var(--text-soft); margin-left:0.5rem;">(${product.stock} ${t('available') || 'disponibles'})</span>
+            </div>`;
+        } else {
+          html += `<p style="color:var(--danger); font-weight:700;">🚫 ${t('outOfStock')}</p>`;
+        }
+
+        // Colors
+        if (product.colors && product.colors.length > 0) {
+          html += `
+            <div>
+              <label>🎨 ${t('selectColor')}</label>
+              <select id="orderColor">
+                ${product.colors.map(c => `<option value="${c}">${c}</option>`).join('')}
+              </select>
+            </div>`;
+        }
+
+        // Sizes
+        if (product.sizes && product.sizes.length > 0) {
+          html += `
+            <div>
+              <label>📏 ${t('selectSize')}</label>
+              <select id="orderSize">
+                ${product.sizes.map(s => `<option value="${s}">${s}</option>`).join('')}
+              </select>
+            </div>`;
+        }
+        
+        variationContainer.innerHTML = html;
+      }
+
       document.getElementById('buyModal').classList.remove('hidden');
 
       try {
