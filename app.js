@@ -132,9 +132,18 @@ const i18n = {
     categoryFood: "🍚 Manje / Alimentation",
     categoryElectronics: "📱 Elektwonik",
     categoryClothing: "👕 Vètman",
+    categorySchool: "🎓 Lekòl / École",
+    categoryWork: "💼 Travay / Travail",
     categoryHome: "🏠 Kay / Maison",
     categoryBeauty: "💄 Bote / Beauté",
     categoryOther: "📦 Lòt / Autres",
+    termsConsentTitle: "Kondisyon Itilizasyon",
+    termsConsentDesc: "Pou w ka kontinye sèvi ak Total Lakay, ou dwe aksepte kondisyon itilizasyon nou yo ak politik konfidansyalite nou an.",
+    accept: "Aksepte", decline: "Refize",
+    cancellationReason: "Rezon anilasyon", reasonPlaceholder: "Poukisa ou anile kòmand sa?",
+    reasonRequired: "Ou dwe bay yon rezon pou anilasyon an.",
+    recentProducts: "Pwodui Resan", categoriesTitle: "Kategori yo", exploreCategories: "Eksplore tout kategori nou yo",
+    school: "Lekòl", work: "Travay", home: "Kay", food: "Manje", electronics: "Elektwonik", beauty: "Bote", clothing: "Vètman",
     profile: "Profil", phone: "Telefòn", phonePlaceholder: "Ex: +509 1234 5678",
     updateProfile: "Mete ajou profil", profileUpdated: "Profil mete ajou ak siksè!",
     phoneNumber: "Nimewo telefòn", saveProfile: "Anrejistre Profil",
@@ -269,9 +278,18 @@ const i18n = {
     categoryFood: "🍚 Alimentation",
     categoryElectronics: "📱 Électronique",
     categoryClothing: "👕 Vêtements",
+    categorySchool: "🎓 École",
+    categoryWork: "💼 Travail",
     categoryHome: "🏠 Maison",
     categoryBeauty: "💄 Beauté",
     categoryOther: "📦 Autres",
+    termsConsentTitle: "Conditions d'Utilisation",
+    termsConsentDesc: "Pour continuer à utiliser Total Lakay, vous devez accepter nos conditions d'utilisation et notre politique de confidentialité.",
+    accept: "Accepter", decline: "Refuser",
+    cancellationReason: "Raison de l'annulation", reasonPlaceholder: "Pourquoi annulez-vous cette commande ?",
+    reasonRequired: "Vous devez fournir une raison pour l'annulation.",
+    recentProducts: "Produits Récents", categoriesTitle: "Catégories", exploreCategories: "Explorez toutes nos catégories",
+    school: "École", work: "Travail", home: "Maison", food: "Alimentation", electronics: "Électronique", beauty: "Beauté", clothing: "Vêtements",
     profile: "Profil", phone: "Téléphone", phonePlaceholder: "Ex: +509 1234 5678",
     updateProfile: "Mettre à jour le profil", profileUpdated: "Profil mis à jour avec succès !",
     phoneNumber: "Numéro de téléphone", saveProfile: "Enregistrer le Profil",
@@ -405,9 +423,18 @@ const i18n = {
     categoryFood: "🍚 Food",
     categoryElectronics: "📱 Electronics",
     categoryClothing: "👕 Clothing",
+    categorySchool: "🎓 School",
+    categoryWork: "💼 Work",
     categoryHome: "🏠 Home",
     categoryBeauty: "💄 Beauty",
     categoryOther: "📦 Other",
+    termsConsentTitle: "Terms of Use",
+    termsConsentDesc: "To continue using Total Lakay, you must accept our terms of use and our privacy policy.",
+    accept: "Accept", decline: "Decline",
+    cancellationReason: "Cancellation Reason", reasonPlaceholder: "Why are you cancelling this order?",
+    reasonRequired: "You must provide a reason for the cancellation.",
+    recentProducts: "Recent Products", categoriesTitle: "Categories", exploreCategories: "Explore all our categories",
+    school: "School", work: "Work", home: "Home", food: "Food", electronics: "Electronics", beauty: "Beauty", clothing: "Clothing",
     profile: "Profile", phone: "Phone", phonePlaceholder: "Ex: +509 1234 5678",
     updateProfile: "Update Profile", profileUpdated: "Profile updated successfully!",
     phoneNumber: "Phone Number", saveProfile: "Save Profile",
@@ -799,13 +826,19 @@ auth.onAuthStateChanged(async (user) => {
       if (userDoc.exists) {
         userRole = userDoc.data().role || 'client';
         isAdmin = (userRole === 'admin');
+        
+        // Vérifier consentement
+        if (!isAdmin && !userDoc.data().termsAccepted) {
+          document.getElementById('consentModal')?.classList.remove('hidden');
+        }
       } else {
         userRole = 'client'; isAdmin = false;
         await db.collection('users').doc(user.uid).set({
           email: user.email, displayName: user.displayName || '',
           photoURL: user.photoURL || '', role: 'client',
-          emailVerified: true, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          emailVerified: true, termsAccepted: false, createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
+        document.getElementById('consentModal')?.classList.remove('hidden');
       }
     } catch (e) { userRole = 'client'; isAdmin = false; }
 
@@ -1440,7 +1473,23 @@ async function renderAdminDashboard(app) {
 
   document.querySelectorAll('.status-select').forEach(select => {
     select.addEventListener('change', async (e) => {
-      await db.collection('orders').doc(e.target.dataset.orderId).update({ status: e.target.value });
+      const orderId = e.target.dataset.orderId;
+      const newStatus = e.target.value;
+      let reason = '';
+
+      if (newStatus === 'cancelled') {
+        reason = prompt(t('reasonPlaceholder'));
+        if (!reason) {
+          e.target.value = orders.find(o => o.id === orderId).status;
+          showMessage(t('reasonRequired'), 'error');
+          return;
+        }
+      }
+
+      await db.collection('orders').doc(orderId).update({ 
+        status: newStatus,
+        cancellationReason: reason || null
+      });
       showMessage(t('statusUpdated'), 'success');
     });
   });
@@ -1489,25 +1538,43 @@ async function renderHome(app) {
       <div id="homePromo"></div>
       <button class="btn btn-gold mt-2" id="goShopBtn">🛒 ${t('goShop')}</button>
     </div>
-    <h2>🔥 ${t('featured')}</h2>
-    <div class="grid" id="featuredProducts">
-      ${Array(4).fill(0).map(() => `
-        <div class="product-card skeleton">
-          <div class="skeleton-img"></div>
-          <div class="product-info">
-            <div class="skeleton-text"></div>
-            <div class="skeleton-text" style="width:60%;"></div>
-          </div>
-        </div>`).join('')}
+
+    <!-- CATEGORIES QUICK ACCESS -->
+    <div class="category-section">
+      <h2 style="margin-bottom:0.5rem;">📁 ${t('categoriesTitle')}</h2>
+      <p style="color:var(--text-soft); font-size:0.9rem;">${t('exploreCategories')}</p>
+      <div class="category-grid">
+        <div class="category-card" onclick="filterByCategory('school')">
+          <span class="category-icon">🎓</span>
+          <span class="category-name">${t('school')}</span>
+        </div>
+        <div class="category-card" onclick="filterByCategory('home')">
+          <span class="category-icon">🏠</span>
+          <span class="category-name">${t('home')}</span>
+        </div>
+        <div class="category-card" onclick="filterByCategory('work')">
+          <span class="category-icon">💼</span>
+          <span class="category-name">${t('work')}</span>
+        </div>
+        <div class="category-card" onclick="filterByCategory('food')">
+          <span class="category-icon">🍚</span>
+          <span class="category-name">${t('food')}</span>
+        </div>
+        <div class="category-card" onclick="filterByCategory('electronics')">
+          <span class="category-icon">📱</span>
+          <span class="category-name">${t('electronics')}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="recent-section">
+      <h2>🆕 ${t('recentProducts')}</h2>
+      <div class="grid" id="featuredProducts">
+        ${Array(4).fill(0).map(() => `<div class="product-card skeleton"><div class="skeleton-img"></div><div class="product-info"><div class="skeleton-text"></div><div class="skeleton-text" style="width:60%;"></div></div></div>`).join('')}
+      </div>
     </div>`;
 
   await loadProducts();
-  const specials = products.filter(p => p.oldPrice && p.oldPrice > p.price);
-  const promoEl = document.getElementById('homePromo');
-  if (promoEl && specials.length > 0) {
-    promoEl.innerHTML = `<div class="special-offer-card mt-2" style="text-align:left;"><h3>🎉 ${t('specialPrice')}!</h3><p><strong>${specials[0].name}</strong> - $${specials[0].price} <span style="text-decoration:line-through;">$${specials[0].oldPrice}</span></p></div>`;
-  }
-
   const grid = document.getElementById('featuredProducts');
   if (grid) {
     grid.innerHTML = products.length === 0 ? `<p>📦 ${t('noProducts')}</p>` : products.slice(0, 4).map(p => productCardHTML(p)).join('');
@@ -1515,6 +1582,18 @@ async function renderHome(app) {
 
   document.getElementById('goShopBtn')?.addEventListener('click', () => { currentView = 'shop'; renderView('shop'); });
   attachBuyButtons();
+}
+
+function filterByCategory(cat) {
+  currentView = 'shop';
+  renderView('shop').then(() => {
+    const filter = document.getElementById('categoryFilter');
+    if (filter) {
+      filter.value = cat;
+      refreshProductGrid();
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 }
 
 async function renderShop(app) {
@@ -1657,7 +1736,12 @@ async function renderProfile(app) {
                 <span>💳 ${o.payment}</span> | 
                 <span>📍 ${o.address}</span>
               </div>
-              ${o.deliveryEstimate ? `<div style="margin-top:0.5rem; font-size:0.85rem; font-weight:600; color:var(--success);">🚚 ${t('delivery')}: ${o.deliveryEstimate}</div>` : `<div style="margin-top:0.5rem; font-size:0.85rem; color:#f39c12;">⏳ ${t('waiting')}</div>`}
+              ${o.deliveryEstimate ? `<div style="margin-top:0.5rem; font-size:0.85rem; font-weight:600; color:var(--success);">🚚 ${t('delivery')}: ${o.deliveryEstimate}</div>` : o.status !== 'cancelled' ? `<div style="margin-top:0.5rem; font-size:0.85rem; color:#f39c12;">⏳ ${t('waiting')}</div>` : ''}
+              ${o.status === 'cancelled' && o.cancellationReason ? `
+                <div class="cancellation-reason">
+                  <strong>❌ ${t('cancellationReason')}</strong>
+                  ${o.cancellationReason}
+                </div>` : ''}
             </div>`).join('')}
           </div>
         </div>
@@ -1974,6 +2058,21 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('linkTerms')?.addEventListener('click', (e) => {
     e.preventDefault(); renderView('terms');
     window.scrollTo(0, 0);
+  });
+
+  // Consent Modal Events
+  document.getElementById('acceptConsent')?.addEventListener('click', async () => {
+    if (currentUser) {
+      await db.collection('users').doc(currentUser.uid).update({ termsAccepted: true });
+      document.getElementById('consentModal').classList.add('hidden');
+      showMessage(t('welcome'), 'success');
+    }
+  });
+
+  document.getElementById('declineConsent')?.addEventListener('click', () => {
+    auth.signOut();
+    document.getElementById('consentModal').classList.add('hidden');
+    showMessage(t('loggedOut'), 'error');
   });
 
   renderView('home');
