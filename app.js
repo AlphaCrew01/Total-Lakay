@@ -107,7 +107,7 @@ const i18n = {
     emailVerifyWarning: "⚠️ Verifye email ou pou kontinye",
     resendEmail: "⏳ Si w poko wè email la, tcheke spam ou...",
     errorOccurred: "Erè: ", clientLabel: "Kliyan", date: "Dat",
-    footerRights: "Total Lakay © 2025", footerContact: "Kontakte nou",
+    footerRights: "Total Lakay © 2026", footerContact: "Kontakte nou",
     footerServices: "Sèvis", footerPrivacy: "Konfidansyalite",
     footerTerms: "Kondisyon Itilizasyon",
     notifSent: "✅ Notifikasyon voye!",
@@ -148,6 +148,36 @@ const i18n = {
     reviews: "Avi", leaveReview: "Kite yon avi", addReview: "Ajoute yon avi", noReviews: "Pa gen avi ankò",
     rating: "Nòt", comment: "Kòmantè", submit: "Voye", invalidAddress: "Adrès ou antre a pa valab",
     ratingError: "Chwazi yon nòt (zetwal)", commentError: "Ekri yon kòmantè", reviewSuccess: "Mèsi pou avi ou!", reviewError: "Erè voye avi",
+    servicesTitle: "Sèvis nou yo",
+    servicesIntro: "Total Lakay ofri plizyè sèvis pou fasilite lavi w :",
+    servicesOnline: "Vant an liy :",
+    servicesOnlineDesc: "Yon gran chwa pwodwi nan plizyè kategori (elektwonik, akseswa pou kay, akseswa pèsonel, elatriye).",
+    servicesDelivery: "Livrezon rapid :",
+    servicesDeliveryDesc: "Nou asire nou ke ou jwenn komand ou nan pi bon delè yo.",
+    servicesCustomer: "Sèvis kliyan :",
+    servicesCustomerDesc: "Nou disponib pou reponn tout kesyon w via apèl dirèk, WhatsApp oswa imèl.",
+    servicesSecure: "Peman sekirize :",
+    servicesSecureDesc: "Nou aksepte plizyè mwayen peman pou sekirite w ak konfò w.",
+    privacyTitle: "Politik Konfidansyalite",
+    privacyIntro: "Nan Total Lakay, nou pran vi prive w trè oserye. Men kijan nou itilize ak pwoteje done ou yo :",
+    privacyData: "Kolek done :",
+    privacyDataDesc: "Nou sèlman kolekte enfòmasyon ki nesesè pou trete komand ou yo (non, adrès, imèl, nimewo telefòn).",
+    privacySecurity: "Sekirite :",
+    privacySecurityDesc: "Tout done pèsonèl ou yo chiffres epi estoke sou sèvè ki an sekirite (Firebase).",
+    privacySharing: "Pataj done :",
+    privacySharingDesc: "Nou pa janm vann oswa pataje enfòmasyon pèsonèl ou ak twazyèm pati san konsantman w, sof si lalwa mande sa.",
+    privacyRights: "Dwa w yo :",
+    privacyRightsDesc: "Ou gen dwa pou w modifye oswa efase kont ou nenpòt kilè nan paramèt pwofil ou.",
+    termsTitle: "Kondisyon Itilizasyon",
+    termsIntro: "Lè w itilize platfòm Total Lakay la, ou asepte kondisyon sa yo :",
+    termsAccount: "Kont itilizatè :",
+    termsAccountDesc: "Ou responsab pou kenbe modpas ou an sekirite. Tout aktivite sou kont ou se responsablite w.",
+    termsPurchase: "Acha :",
+    termsPurchaseDesc: "Tout acha fèt final sof nan ka kote pwodwi a domaje nan livrezon. Nou rezève dwa pou n anile nenpòt komand sispèk.",
+    termsPrice: "Pri ak Pwodwi :",
+    termsPriceDesc: "Pri yo ka chanje san avètisman alavans. Nou fè efò pou n gen deskripsyon egzak pou cada pwodwi.",
+    termsMod: "Modifikasyon :",
+    termsModDesc: "Total Lakay ka modifye kondisyon sa yo nenpòt moman. N ap fè itilizatè yo konnen via notifikasyon.",
   },
   fr: {
     home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -214,7 +244,7 @@ const i18n = {
     emailVerifyWarning: "⚠️ Vérifiez votre email pour continuer",
     resendEmail: "⏳ Si vous ne voyez pas l'email, vérifiez vos spams...",
     errorOccurred: "Erreur : ", clientLabel: "Client", date: "Date",
-    footerRights: "Total Lakay © 2025", footerContact: "Contactez-nous",
+    footerRights: "Total Lakay © 2026", footerContact: "Contactez-nous",
     footerServices: "Services", footerPrivacy: "Confidentialité",
     footerTerms: "Conditions d'Utilisation",
     notifSent: "✅ Notification envoyée !",
@@ -255,6 +285,36 @@ const i18n = {
     reviews: "Avis", leaveReview: "Laisser un avis", addReview: "Ajouter un avis", noReviews: "Pas encore d'avis",
     rating: "Note", comment: "Commentaire", submit: "Envoyer", invalidAddress: "Adresse invalide",
     ratingError: "Choisissez une note (étoiles)", commentError: "Écrivez un commentaire", reviewSuccess: "Merci pour votre avis !", reviewError: "Erreur d'envoi",
+    servicesTitle: "Nos Services",
+    servicesIntro: "Total Lakay offre plusieurs services pour vous faciliter la vie :",
+    servicesOnline: "Vente en ligne :",
+    servicesOnlineDesc: "Un grand choix de produits dans plusieurs catégories (électronique, accessoires pour la maison, accessoires personnels, etc.).",
+    servicesDelivery: "Livraison rapide :",
+    servicesDeliveryDesc: "Nous nous assurons que vous recevez votre commande dans les meilleurs délais.",
+    servicesCustomer: "Service client :",
+    servicesCustomerDesc: "Nous sommes disponibles pour répondre à toutes vos questions via appel direct, WhatsApp ou e-mail.",
+    servicesSecure: "Paiement sécurisé :",
+    servicesSecureDesc: "Nous acceptons plusieurs moyens de paiement pour votre sécurité et votre confort.",
+    privacyTitle: "Politique de Confidentialité",
+    privacyIntro: "Chez Total Lakay, nous prenons votre vie privée très au sérieux. Voici comment nous utilisons et protégeons vos données :",
+    privacyData: "Collecte de données :",
+    privacyDataDesc: "Nous ne collectons que les informations nécessaires au traitement de vos commandes (nom, adresse, e-mail, numéro de téléphone).",
+    privacySecurity: "Sécurité :",
+    privacySecurityDesc: "Toutes vos données personnelles sont cryptées et stockées sur des serveurs sécurisés (Firebase).",
+    privacySharing: "Partage de données :",
+    privacySharingDesc: "Nous ne vendons ni ne partageons jamais vos informations personnelles avec des tiers sans votre consentement, sauf si la loi l'exige.",
+    privacyRights: "Vos droits :",
+    privacyRightsDesc: "Vous avez le droit de modifier ou de supprimer votre compte à tout moment dans vos paramètres de profil.",
+    termsTitle: "Conditions d'Utilisation",
+    termsIntro: "En utilisant la plateforme Total Lakay, vous acceptez les conditions suivantes :",
+    termsAccount: "Compte utilisateur :",
+    termsAccountDesc: "Vous êtes responsable du maintien de la sécurité de votre mot de passe. Toutes les activités sur votre compte sont sous votre responsabilité.",
+    termsPurchase: "Achat :",
+    termsPurchaseDesc: "Tous les achats sont définitifs sauf si le produit est endommagé lors de la livraison. Nous nous réservons le droit d'annuler toute commande suspecte.",
+    termsPrice: "Prix et Produits :",
+    termsPriceDesc: "Les prix sont sujets à changement sans préavis. Nous nous efforçons d'avoir des descriptions exactes pour chaque produit.",
+    termsMod: "Modifications :",
+    termsModDesc: "Total Lakay peut modifier ces conditions à tout moment. Nous en informerons les utilisateurs via des notifications.",
   },
   en: {
     home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -320,7 +380,7 @@ const i18n = {
     emailVerifyWarning: "⚠️ Verify your email to continue",
     resendEmail: "⏳ If you don't see the email, check your spam folder...",
     errorOccurred: "Error: ", clientLabel: "Client", date: "Date",
-    footerRights: "Total Lakay © 2025", footerContact: "Contact us",
+    footerRights: "Total Lakay © 2026", footerContact: "Contact us",
     footerServices: "Services", footerPrivacy: "Privacy",
     footerTerms: "Terms of Use",
     notifSent: "✅ Notification sent!",
@@ -361,6 +421,36 @@ const i18n = {
     reviews: "Reviews", leaveReview: "Leave a review", addReview: "Add a review", noReviews: "No reviews yet",
     rating: "Rating", comment: "Comment", submit: "Submit", invalidAddress: "Invalid address",
     ratingError: "Choose a rating (stars)", commentError: "Write a comment", reviewSuccess: "Thank you for your review!", reviewError: "Error sending review",
+    servicesTitle: "Our Services",
+    servicesIntro: "Total Lakay offers several services to make your life easier:",
+    servicesOnline: "Online sales:",
+    servicesOnlineDesc: "A wide choice of products in several categories (electronics, home accessories, personal accessories, etc.).",
+    servicesDelivery: "Fast delivery:",
+    servicesDeliveryDesc: "We ensure that you receive your order in the best possible time.",
+    servicesCustomer: "Customer service:",
+    servicesCustomerDesc: "We are available to answer all your questions via direct call, WhatsApp or email.",
+    servicesSecure: "Secure payment:",
+    servicesSecureDesc: "We accept several payment methods for your security and comfort.",
+    privacyTitle: "Privacy Policy",
+    privacyIntro: "At Total Lakay, we take your privacy very seriously. Here is how we use and protect your data:",
+    privacyData: "Data collection:",
+    privacyDataDesc: "We only collect the information necessary to process your orders (name, address, email, phone number).",
+    privacySecurity: "Security:",
+    privacySecurityDesc: "All your personal data is encrypted and stored on secure servers (Firebase).",
+    privacySharing: "Data sharing:",
+    privacySharingDesc: "We never sell or share your personal information with third parties without your consent, unless required by law.",
+    privacyRights: "Your rights:",
+    privacyRightsDesc: "You have the right to modify or delete your account at any time in your profile settings.",
+    termsTitle: "Terms of Use",
+    termsIntro: "By using the Total Lakay platform, you accept the following conditions:",
+    termsAccount: "User account:",
+    termsAccountDesc: "You are responsible for maintaining the security of your password. All activities on your account are your responsibility.",
+    termsPurchase: "Purchase:",
+    termsPurchaseDesc: "All purchases are final unless the product is damaged during delivery. We reserve the right to cancel any suspicious order.",
+    termsPrice: "Price and Products:",
+    termsPriceDesc: "Prices are subject to change without notice. We strive to have accurate descriptions for each product.",
+    termsMod: "Modifications:",
+    termsModDesc: "Total Lakay may modify these conditions at any time. We will notify users via notifications.",
   },
   es: {
     home: "Inicio", shop: "Tienda", orders: "Pedidos", admin: "Admin",
@@ -427,7 +517,7 @@ const i18n = {
     emailVerifyWarning: "⚠️ Verifica tu email para continuar",
     resendEmail: "⏳ Si no ves el email, revisa tu carpeta de spam...",
     errorOccurred: "Error: ", clientLabel: "Cliente", date: "Fecha",
-    footerRights: "Total Lakay © 2025", footerContact: "Contáctanos",
+    footerRights: "Total Lakay © 2026", footerContact: "Contáctanos",
     footerServices: "Servicios", footerPrivacy: "Privacidad",
     footerTerms: "Condiciones de Uso",
     notifSent: "✅ ¡Notificación enviada!",
@@ -468,6 +558,36 @@ const i18n = {
     reviews: "Reseñas", leaveReview: "Dejar una reseña", addReview: "Agregar una reseña", noReviews: "Aún no hay reseñas",
     rating: "Calificación", comment: "Comentario", submit: "Enviar", invalidAddress: "Dirección inválida",
     ratingError: "Elige una calificación (estrellas)", commentError: "Escribe un comentario", reviewSuccess: "¡Gracias por tu reseña!", reviewError: "Error enviando reseña",
+    servicesTitle: "Nuestros Servicios",
+    servicesIntro: "Total Lakay ofrece varios servicios para facilitar su vida:",
+    servicesOnline: "Ventas en línea:",
+    servicesOnlineDesc: "Una gran selección de productos en varias categorías (electrónica, accesorios para el hogar, accesorios personales, etc.).",
+    servicesDelivery: "Entrega rápida:",
+    servicesDeliveryDesc: "Nos aseguramos de que reciba su pedido en el mejor tiempo posible.",
+    servicesCustomer: "Servicio al cliente:",
+    servicesCustomerDesc: "Estamos disponibles para responder a todas sus preguntas a través de llamada directa, WhatsApp o correo electrónico.",
+    servicesSecure: "Pago seguro:",
+    servicesSecureDesc: "Aceptamos varios métodos de pago para su seguridad y comodidad.",
+    privacyTitle: "Política de Privacidad",
+    privacyIntro: "En Total Lakay, nos tomamos su privacidad muy en serio. Aquí le mostramos cómo usamos y protegemos sus datos:",
+    privacyData: "Recopilación de datos:",
+    privacyDataDesc: "Solo recopilamos la información necesaria para procesar sus pedidos (nombre, dirección, correo electrónico, número de teléfono).",
+    privacySecurity: "Seguridad:",
+    privacySecurityDesc: "Todos sus datos personales están cifrados y almacenados en servidores seguros (Firebase).",
+    privacySharing: "Intercambio de datos:",
+    privacySharingDesc: "Nunca vendemos ni compartimos su información personal con terceros sin su consentimiento, a menos que la ley lo exija.",
+    privacyRights: "Sus derechos:",
+    privacyRightsDesc: "Tiene derecho a modificar o eliminar su cuenta en cualquier momento en la configuración de su perfil.",
+    termsTitle: "Condiciones de Uso",
+    termsIntro: "Al usar la plataforma Total Lakay, usted acepta las siguientes condiciones:",
+    termsAccount: "Cuenta de usuario:",
+    termsAccountDesc: "Usted es responsable de mantener la seguridad de su contraseña. Todas las actividades en su cuenta son su responsabilidad.",
+    termsPurchase: "Compra:",
+    termsPurchaseDesc: "Todas las compras son finales a menos que el producto se dañe durante la entrega. Nos reservamos el derecho de cancelar cualquier pedido sospechoso.",
+    termsPrice: "Precio y Productos:",
+    termsPriceDesc: "Los precios están sujetos a cambios sin previo aviso. Nos esforzamos por tener descripciones precisas para cada producto.",
+    termsMod: "Modificaciones:",
+    termsModDesc: "Total Lakay puede modificar estas condiciones en cualquier momento. Notificaremos a los usuarios a través de notificaciones.",
   }
 };
 
@@ -984,8 +1104,9 @@ async function loadAllOrders() {
 async function loadMyOrders() {
   if (!currentUser) { orders = []; return; }
   try {
-    const snap = await db.collection('orders').where('userId', '==', currentUser.uid).orderBy('createdAt', 'desc').get();
-    orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const snap = await db.collection('orders').where('userId', '==', currentUser.uid).get();
+    orders = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0));
   } catch (e) { orders = []; }
 }
 async function loadAllUsers() {
@@ -1158,18 +1279,18 @@ function productCardHTML(product) {
 // ============================================
 // DASHBOARD ADMIN (inchangé - déjà complet)
 // ============================================
-  async function renderAdminDashboard(app) {
-    if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
-    await loadAllData();
+async function renderAdminDashboard(app) {
+  if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
+  await loadAllData();
 
-    const totalProducts = products.length;
-    const totalOrders = orders.length;
-    const totalClients = allUsers.filter(u => u.role === 'client').length;
-    const pendingCount = orders.filter(o => o.status === 'pending').length;
-    const confirmedCount = orders.filter(o => o.status === 'confirmed').length;
-    const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
+  const totalProducts = products.length;
+  const totalOrders = orders.length;
+  const totalClients = allUsers.filter(u => u.role === 'client').length;
+  const pendingCount = orders.filter(o => o.status === 'pending').length;
+  const confirmedCount = orders.filter(o => o.status === 'confirmed').length;
+  const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
 
-    app.innerHTML = `
+  app.innerHTML = `
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
       <h2 style="margin:0;">📊 ${t('dashboard')}</h2>
       <div class="badge badge-success">${t('welcomeAdmin')}</div>
@@ -1563,7 +1684,7 @@ async function renderProfile(app) {
     btn.addEventListener('click', (e) => {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.profile-tab-content').forEach(c => c.classList.remove('active'));
-      
+
       e.currentTarget.classList.add('active');
       const targetId = e.currentTarget.getAttribute('data-target');
       document.getElementById(targetId).classList.add('active');
@@ -1600,7 +1721,7 @@ async function renderProfile(app) {
     try {
       await auth.sendPasswordResetEmail(currentUser.email);
       showMessage('Email de réinitialisation envoyé !', 'success');
-    } catch(e) {
+    } catch (e) {
       showMessage('Erreur: ' + e.message, 'error');
     }
   });
@@ -1749,6 +1870,16 @@ document.getElementById('submitReviewBtn')?.addEventListener('click', async () =
       comment,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
+
+    // Notifier l'admin
+    await db.collection('notifications').add({
+      title: 'Nouvel avis',
+      message: `${currentUser.displayName || 'Client'} a laissé un avis de ${currentRating} étoiles.`,
+      type: 'review',
+      read: false,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
     showMessage(t('reviewSuccess'));
     document.getElementById('reviewComment').value = '';
     currentRating = 0;
@@ -1762,13 +1893,13 @@ async function renderReviews(productId) {
   if (!list) return;
   list.innerHTML = t('loading');
   try {
-    const snap = await db.collection('reviews').where('productId', '==', productId).orderBy('createdAt', 'desc').get();
-    const revs = snap.docs.map(d => d.data());
-    if (revs.length === 0) { list.innerHTML = '<p>Pa gen avi ankò.</p>'; return; }
+    const snap = await db.collection('reviews').where('productId', '==', productId).get();
+    const revs = snap.docs.map(d => d.data()).sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0));
+    if (revs.length === 0) { list.innerHTML = `<p>${t('noReviews')}</p>`; return; }
     list.innerHTML = revs.map(r => `
       <div class="review-item">
         <div class="review-user">${r.userName}</div>
-        <div class="review-stars">${'⭐'.repeat(r.rating)}</div>
+        <div class="review-stars">${'★'.repeat(r.rating)}</div>
         <p>${r.comment}</p>
       </div>`).join('');
   } catch (e) { list.innerHTML = ''; }
@@ -1777,14 +1908,14 @@ async function renderReviews(productId) {
 function renderServices(app) {
   app.innerHTML = `
     <div class="card-premium" style="animation: viewFadeIn 0.4s ease;">
-      <h2>🛠️ ${t('footerServices') || 'Sèvis nou yo'}</h2>
+      <h2>🛠️ ${t('servicesTitle')}</h2>
       <div style="padding: 1rem 0; line-height: 1.8;">
-        <p>Total Lakay ofri plizyè sèvis pou fasilite lavi w :</p>
+        <p>${t('servicesIntro')}</p>
         <ul style="margin-left: 1.5rem; margin-top: 1rem;">
-          <li style="margin-bottom: 0.5rem;"><strong>Vant an liy :</strong> Yon gran chwa pwodwi nan plizyè kategori (manje, elektwonik, kay, elatriye).</li>
-          <li style="margin-bottom: 0.5rem;"><strong>Livrezon rapid :</strong> Nou asire nou ke ou jwenn komand ou nan pi bon delè yo.</li>
-          <li style="margin-bottom: 0.5rem;"><strong>Sèvis kliyan :</strong> Nou disponib pou reponn tout kesyon w via WhatsApp ou imèl.</li>
-          <li style="margin-bottom: 0.5rem;"><strong>Peman sekirize :</strong> Nou aksepte plizyè mwayen peman pou sekirite w ak konfò w.</li>
+          <li style="margin-bottom: 0.5rem;"><strong>${t('servicesOnline')}</strong> ${t('servicesOnlineDesc')}</li>
+          <li style="margin-bottom: 0.5rem;"><strong>${t('servicesDelivery')}</strong> ${t('servicesDeliveryDesc')}</li>
+          <li style="margin-bottom: 0.5rem;"><strong>${t('servicesCustomer')}</strong> ${t('servicesCustomerDesc')}</li>
+          <li style="margin-bottom: 0.5rem;"><strong>${t('servicesSecure')}</strong> ${t('servicesSecureDesc')}</li>
         </ul>
       </div>
     </div>
@@ -1794,14 +1925,14 @@ function renderServices(app) {
 function renderPrivacy(app) {
   app.innerHTML = `
     <div class="card-premium" style="animation: viewFadeIn 0.4s ease;">
-      <h2>🔒 ${t('footerPrivacy') || 'Politik Konfidansyalite'}</h2>
+      <h2>🔒 ${t('privacyTitle')}</h2>
       <div style="padding: 1rem 0; line-height: 1.8;">
-        <p>Nan Total Lakay, nou pran vi prive w trè oserye. Men kijan nou itilize ak pwoteje done ou yo :</p>
+        <p>${t('privacyIntro')}</p>
         <ul style="margin-left: 1.5rem; margin-top: 1rem;">
-          <li style="margin-bottom: 0.5rem;"><strong>Kolek done :</strong> Nou sèlman kolekte enfòmasyon ki nesesè pou trete komand ou yo (non, adrès, imèl, nimewo telefòn).</li>
-          <li style="margin-bottom: 0.5rem;"><strong>Sekirite :</strong> Tout done pèsonèl ou yo chiffres epi estoke sou sèvè ki an sekirite (Firebase).</li>
-          <li style="margin-bottom: 0.5rem;"><strong>Pataj done :</strong> Nou pa janm vann oswa pataje enfòmasyon pèsonèl ou ak twazyèm pati san konsantman w, sof si lalwa mande sa.</li>
-          <li style="margin-bottom: 0.5rem;"><strong>Dwa w yo :</strong> Ou gen dwa pou w modifye oswa efase kont ou nenpòt kilè nan paramèt pwofil ou.</li>
+          <li style="margin-bottom: 0.5rem;"><strong>${t('privacyData')}</strong> ${t('privacyDataDesc')}</li>
+          <li style="margin-bottom: 0.5rem;"><strong>${t('privacySecurity')}</strong> ${t('privacySecurityDesc')}</li>
+          <li style="margin-bottom: 0.5rem;"><strong>${t('privacySharing')}</strong> ${t('privacySharingDesc')}</li>
+          <li style="margin-bottom: 0.5rem;"><strong>${t('privacyRights')}</strong> ${t('privacyRightsDesc')}</li>
         </ul>
       </div>
     </div>
@@ -1811,14 +1942,14 @@ function renderPrivacy(app) {
 function renderTerms(app) {
   app.innerHTML = `
     <div class="card-premium" style="animation: viewFadeIn 0.4s ease;">
-      <h2>📜 ${t('footerTerms') || 'Kondisyon Itilizasyon'}</h2>
+      <h2>📜 ${t('termsTitle')}</h2>
       <div style="padding: 1rem 0; line-height: 1.8;">
-        <p>Lè w itilize platfòm Total Lakay la, ou asepte kondisyon sa yo :</p>
+        <p>${t('termsIntro')}</p>
         <ul style="margin-left: 1.5rem; margin-top: 1rem;">
-          <li style="margin-bottom: 0.5rem;"><strong>Kont itilizatè :</strong> Ou responsab pou kenbe modpas ou an sekirite. Tout aktivite sou kont ou se responsablite w.</li>
-          <li style="margin-bottom: 0.5rem;"><strong>Acha :</strong> Tout acha fèt final sof nan ka kote pwodwi a domaje nan livrezon. Nou rezève dwa pou n anile nenpòt komand sispèk.</li>
-          <li style="margin-bottom: 0.5rem;"><strong>Pri ak Pwodwi :</strong> Pri yo ka chanje san avètisman alavans. Nou fè efò pou n gen deskripsyon egzak pou chak pwodwi.</li>
-          <li style="margin-bottom: 0.5rem;"><strong>Modifikasyon :</strong> Total Lakay ka modifye kondisyon sa yo nenpòt moman. N ap fè itilizatè yo konnen via notifikasyon.</li>
+          <li style="margin-bottom: 0.5rem;"><strong>${t('termsAccount')}</strong> ${t('termsAccountDesc')}</li>
+          <li style="margin-bottom: 0.5rem;"><strong>${t('termsPurchase')}</strong> ${t('termsPurchaseDesc')}</li>
+          <li style="margin-bottom: 0.5rem;"><strong>${t('termsPrice')}</strong> ${t('termsPriceDesc')}</li>
+          <li style="margin-bottom: 0.5rem;"><strong>${t('termsMod')}</strong> ${t('termsModDesc')}</li>
         </ul>
       </div>
     </div>
@@ -1831,7 +1962,7 @@ function renderTerms(app) {
 document.addEventListener('DOMContentLoaded', () => {
   console.log('🚀 Total Lakay - Version Ultime avec Recherche & Filtres');
   applyLanguage();
-  
+
   document.getElementById('linkServices')?.addEventListener('click', (e) => {
     e.preventDefault(); renderView('services');
     window.scrollTo(0, 0);
