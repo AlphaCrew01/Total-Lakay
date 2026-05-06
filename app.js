@@ -149,6 +149,10 @@ const i18n = {
     categorySchoolOffice: "🎓 Lekòl ak Travay",
     categoryHomePersonal: "🏠 Kay ak Pèsonèl",
     categoryElectronicsTech: "📱 Elektwonik",
+    servicesTitle: "Sèvis nou yo", privacyTitle: "Konfidansyalite", termsTitle: "Kondisyon yo",
+    phoneRecommend: "Nimewo telefòn ou", addressRecommend: "Adrès ou konplè", phoneRequired: "Telefòn obligatwa",
+    cart: "Panyen", checkout: "Peye kounye a", securePaymentInfo: "Peman 100% sekirize",
+    noNotifications: "Pa gen notifikasyon pou kounye a",
     profile: "Profil", phone: "Telefòn", phonePlaceholder: "Ex: +509 1234 5678",
     updateProfile: "Mete ajou profil", profileUpdated: "Profil mete ajou ak siksè!",
     phoneNumber: "Nimewo telefòn", saveProfile: "Anrejistre Profil",
@@ -301,6 +305,10 @@ const i18n = {
     categorySchoolOffice: "🎓 École & Travail",
     categoryHomePersonal: "🏠 Maison & Personnel",
     categoryElectronicsTech: "📱 Électronique",
+    servicesTitle: "Nos Services", privacyTitle: "Confidentialité", termsTitle: "Conditions",
+    phoneRecommend: "Votre numéro de téléphone", addressRecommend: "Votre adresse complète", phoneRequired: "Téléphone requis",
+    cart: "Panier", checkout: "Payer maintenant", securePaymentInfo: "Paiement 100% sécurisé",
+    noNotifications: "Pas de notifications pour le moment",
     profile: "Profil", phone: "Téléphone", phonePlaceholder: "Ex: +509 1234 5678",
     updateProfile: "Mettre à jour le profil", profileUpdated: "Profil mis à jour avec succès !",
     phoneNumber: "Numéro de téléphone", saveProfile: "Enregistrer le Profil",
@@ -452,6 +460,10 @@ const i18n = {
     categorySchoolOffice: "🎓 School & Work",
     categoryHomePersonal: "🏠 Home & Personal",
     categoryElectronicsTech: "📱 Electronics",
+    servicesTitle: "Our Services", privacyTitle: "Privacy Policy", termsTitle: "Terms of Use",
+    phoneRecommend: "Your phone number", addressRecommend: "Your full address", phoneRequired: "Phone is required",
+    cart: "Cart", checkout: "Checkout now", securePaymentInfo: "100% Secure Payment",
+    noNotifications: "No notifications at the moment",
     profile: "Profile", phone: "Phone", phonePlaceholder: "Ex: +509 1234 5678",
     updateProfile: "Update Profile", profileUpdated: "Profile updated successfully!",
     phoneNumber: "Phone Number", saveProfile: "Save Profile",
@@ -651,6 +663,11 @@ const i18n = {
     categorySchoolOffice: "🎓 Escuela y Trabajo",
     categoryHomePersonal: "🏠 Hogar y Personal",
     categoryElectronicsTech: "📱 Electrónica",
+    servicesTitle: "Nuestros Servicios", privacyTitle: "Privacidad", termsTitle: "Términos",
+    phoneRecommend: "Tu número de teléfono", addressRecommend: "Tu dirección completa", phoneRequired: "Teléfono requerido",
+    cart: "Carrito", checkout: "Pagar ahora", securePaymentInfo: "Pago 100% seguro",
+    noNotifications: "No hay notificaciones por ahora",
+    profile: "Perfil", phone: "Teléfono", phonePlaceholder: "Ex: +509 1234 5678",
   }
 };
 
@@ -1187,13 +1204,16 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
   const size = document.getElementById('orderSize')?.value || null;
 
   try {
+    const phone = document.getElementById('orderPhone')?.value.trim();
+    if (!phone) { showMessage(t('phoneRequired') || "Telefòn obligatwa", 'error'); return; }
+
     await db.collection('orders').add({
       userId: currentUser.uid, userEmail: currentUser.email,
       productId: product.id, productName: product.name,
       price: product.price, quantity, color, size,
       totalPrice: product.price * quantity,
       currency: currentCurrency, image: product.image || '',
-      address, payment, status: 'pending', deliveryEstimate: '',
+      address, phone, payment, status: 'pending', deliveryEstimate: '',
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     document.getElementById('buyModal')?.classList.add('hidden');
@@ -2051,13 +2071,19 @@ function attachBuyButtons() {
 
       try {
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
-        if (userDoc.exists && userDoc.data().address) {
-          document.getElementById('orderAddress').value = userDoc.data().address;
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          if (userData.address) document.getElementById('orderAddress').value = userData.address;
+          if (userData.phone) document.getElementById('orderPhone').value = userData.phone;
         } else {
           document.getElementById('orderAddress').value = '';
+          document.getElementById('orderPhone').value = '';
         }
         renderReviews(product.id);
-      } catch (e) { document.getElementById('orderAddress').value = ''; }
+      } catch (e) { 
+        document.getElementById('orderAddress').value = ''; 
+        document.getElementById('orderPhone').value = '';
+      }
     });
   });
 }
