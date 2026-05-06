@@ -8,7 +8,7 @@
 - **Multilingue et Multidevise :** Support complet du Kreyòl (HT), Français (FR), Anglais (EN) et Espagnol (ES). Changement de devise dynamique (USD, HTG, EUR) avec formatage local.
 - **Système de Comptes (Auth) :** Authentification sécurisée via Firebase. Gestion des rôles avec un tableau de bord Administrateur puissant et une interface Client intuitive.
 - **Consentement Légal :** Système de validation des Conditions d'Utilisation obligatoire pour les nouveaux utilisateurs, garantissant la conformité légale de la plateforme.
-- **Boutique & Navigation :** Accès rapide par catégories (École, Travail, Maison, Alimentation, etc.), recherche instantanée et filtres avancés.
+- **Boutique & Navigation :** Accès rapide par catégories (École, Travail, Maison, Vêtements, etc.), recherche instantanée et filtres avancés.
 - **Transparence des Commandes :** Système de suivi incluant les raisons d'annulation fournies par les administrateurs pour une meilleure communication client.
 - **Avis & Notifications Admin :** Système d'avis étoilés avec notifications automatiques pour les administrateurs lors de chaque nouvelle publication.
 - **Support Client :** Intégration WhatsApp pour une assistance directe.
