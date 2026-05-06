@@ -158,6 +158,14 @@ const i18n = {
     phoneNumber: "Nimewo telefòn", saveProfile: "Anrejistre Profil",
     addressRecommend: "Adrès (Rekòmande)", phoneRecommend: "Telefòn (Rekòmande)",
     cart: "Panyen", addToCart: "Ajoute nan panyen", removeFromCart: "Retire",
+    notifSettings: "Paramèt Notifikasyon", notifPushEnable: "Aktive notifikasyon sou telefòn",
+    notifNewProducts: "Nouvo Pwodui", notifSpecialPrices: "Pri Spesyal & Pwomo",
+    notifUpdates: "Mizajou sou sit la", notifStatus: "Estati Notifikasyon",
+    notifBlocked: "Bloke pa navigatè a", notifGranted: "Otorize",
+    notifRequest: "Otorize kounye a", notifSave: "Anrejistre preferans",
+    notifPreferencesSaved: "Preferans notifikasyon anrejistre!",
+    accountInfo: "Enfòmasyon Kont", email: "Email", name: "Non", role: "Wòl", emailVerified: "Email Verifye",
+    yes: "Wi", no: "Non", resendVerifyEmail: "Voye email verifikasyon ankò",
     checkout: "Peye kounye a", total: "Total", emptyCart: "Panyen ou vid",
     securePayment: "Peman Sekirize", contactUs: "Kontakte nou",
     securePaymentInfo: "Peman 100% sekirize",
@@ -305,6 +313,14 @@ const i18n = {
     categorySchoolOffice: "🎓 École & Travail",
     categoryHomePersonal: "🏠 Maison & Personnel",
     categoryElectronicsTech: "📱 Électronique",
+    notifSettings: "Paramètres de Notifications", notifPushEnable: "Activer les notifications push",
+    notifNewProducts: "Nouveaux Produits", notifSpecialPrices: "Prix Spéciaux & Promos",
+    notifUpdates: "Mises à jour du site", notifStatus: "Statut des Notifications",
+    notifBlocked: "Bloqué par le navigateur", notifGranted: "Autorisé",
+    notifRequest: "Autoriser maintenant", notifSave: "Enregistrer les préférences",
+    notifPreferencesSaved: "Préférences de notifications enregistrées !",
+    accountInfo: "Informations du Compte", email: "Email", name: "Nom", role: "Rôle", emailVerified: "Email Vérifié",
+    yes: "Oui", no: "Non", resendVerifyEmail: "Renvoyer l'email de vérification",
     servicesTitle: "Nos Services", privacyTitle: "Confidentialité", termsTitle: "Conditions",
     phoneRecommend: "Votre numéro de téléphone", addressRecommend: "Votre adresse complète", phoneRequired: "Téléphone requis",
     cart: "Panier", checkout: "Payer maintenant", securePaymentInfo: "Paiement 100% sécurisé",
@@ -460,6 +476,14 @@ const i18n = {
     categorySchoolOffice: "🎓 School & Work",
     categoryHomePersonal: "🏠 Home & Personal",
     categoryElectronicsTech: "📱 Electronics",
+    notifSettings: "Notification Settings", notifPushEnable: "Enable Push Notifications",
+    notifNewProducts: "New Products", notifSpecialPrices: "Special Prices & Promos",
+    notifUpdates: "Site Updates", notifStatus: "Notification Status",
+    notifBlocked: "Blocked by browser", notifGranted: "Authorized",
+    notifRequest: "Authorize Now", notifSave: "Save Preferences",
+    notifPreferencesSaved: "Notification preferences saved!",
+    accountInfo: "Account Info", email: "Email", name: "Name", role: "Role", emailVerified: "Email Verified",
+    yes: "Yes", no: "No", resendVerifyEmail: "Resend verification email",
     servicesTitle: "Our Services", privacyTitle: "Privacy Policy", termsTitle: "Terms of Use",
     phoneRecommend: "Your phone number", addressRecommend: "Your full address", phoneRequired: "Phone is required",
     cart: "Cart", checkout: "Checkout now", securePaymentInfo: "100% Secure Payment",
@@ -663,6 +687,14 @@ const i18n = {
     categorySchoolOffice: "🎓 Escuela y Trabajo",
     categoryHomePersonal: "🏠 Hogar y Personal",
     categoryElectronicsTech: "📱 Electrónica",
+    notifSettings: "Ajustes de Notificaciones", notifPushEnable: "Activar notificaciones push",
+    notifNewProducts: "Nuevos Productos", notifSpecialPrices: "Precios Especiales & Promos",
+    notifUpdates: "Actualizaciones del sitio", notifStatus: "Estado de Notificaciones",
+    notifBlocked: "Bloqueado por el navegador", notifGranted: "Autorizado",
+    notifRequest: "Autorizar ahora", notifSave: "Guardar preferencias",
+    notifPreferencesSaved: "¡Preferencias de notificaciones guardadas!",
+    accountInfo: "Información de la Cuenta", email: "Correo", name: "Nombre", role: "Rol", emailVerified: "Correo Verificado",
+    yes: "Sí", no: "No", resendVerifyEmail: "Reenviar correo de verificación",
     servicesTitle: "Nuestros Servicios", privacyTitle: "Privacidad", termsTitle: "Términos",
     phoneRecommend: "Tu número de teléfono", addressRecommend: "Tu dirección completa", phoneRequired: "Teléfono requerido",
     cart: "Carrito", checkout: "Pagar ahora", securePaymentInfo: "Pago 100% seguro",
@@ -1996,16 +2028,148 @@ async function renderClientOrders(app) {
   await renderProfile(app);
 }
 
-function renderSettings(app) {
+async function renderSettings(app) {
+  let notifPrefs = { newProducts: true, specialPrices: true, updates: true };
+  if (currentUser) {
+    try {
+      const userDoc = await db.collection('users').doc(currentUser.uid).get();
+      if (userDoc.exists && userDoc.data().notifPrefs) {
+        notifPrefs = userDoc.data().notifPrefs;
+      }
+    } catch (e) { console.error(e); }
+  }
+
   app.innerHTML = `
-    <div class="card-premium">
-      <h2>⚙️ ${t('settings')}</h2>
-      <div><label>🌍 ${t('language')}</label><select id="settingsLang" style="width:auto;"><option value="ht" ${currentLang === 'ht' ? 'selected' : ''}>🇭🇹 Kreyòl</option><option value="fr" ${currentLang === 'fr' ? 'selected' : ''}>🇫🇷 Français</option><option value="en" ${currentLang === 'en' ? 'selected' : ''}>🇺🇸 English</option><option value="es" ${currentLang === 'es' ? 'selected' : ''}>🇪🇸 Español</option></select></div>
-      ${currentUser ? `<div style="margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid #eee;"><h4>${t('accountInfo')}</h4><p><strong>${t('email')}:</strong> ${currentUser.email}</p><p><strong>${t('name')}:</strong> ${currentUser.displayName || '---'}</p><p><strong>${t('role')}:</strong> ${isAdmin ? 'Admin' : 'Client'}</p><p><strong>${t('emailVerified')}:</strong> ${currentUser.emailVerified ? '✅ ' + t('yes') : '❌ ' + t('no')}</p>${!currentUser.emailVerified ? `<button class="btn btn-gold btn-sm mt-2" id="resendVerifyEmail">📧 ${t('resendVerifyEmail')}</button>` : ''}</div>` : ''}
+    <div class="card-premium settings-card" style="animation: viewFadeIn 0.4s ease;">
+      <h2 style="margin-bottom:2rem; color:var(--blue-deep);">⚙️ ${t('settings')}</h2>
+      
+      <div class="settings-section">
+        <h3>🌍 ${t('language')}</h3>
+        <select id="settingsLang" class="filter-select" style="width:100%; max-width:300px;">
+          <option value="ht" ${currentLang === 'ht' ? 'selected' : ''}>🇭🇹 Kreyòl</option>
+          <option value="fr" ${currentLang === 'fr' ? 'selected' : ''}>🇫🇷 Français</option>
+          <option value="en" ${currentLang === 'en' ? 'selected' : ''}>🇺🇸 English</option>
+          <option value="es" ${currentLang === 'es' ? 'selected' : ''}>🇪🇸 Español</option>
+        </select>
+      </div>
+
+      <div class="settings-section mt-3">
+        <h3>🔔 ${t('notifSettings')}</h3>
+        <div class="notif-status-box" id="notifStatusBox">
+          <span>${t('notifStatus')}: <strong id="notifStatusLabel">...</strong></span>
+          <button class="btn btn-gold btn-sm" id="requestNotifBtn" style="display:none;">${t('notifRequest')}</button>
+        </div>
+        
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">${t('notifNewProducts')}</div>
+            <div class="setting-desc">Recevez une alerte pour chaque nouveauté</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="prefNewProducts" ${notifPrefs.newProducts ? 'checked' : ''}>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">${t('notifSpecialPrices')}</div>
+            <div class="setting-desc">Promotions et ventes flash</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="prefSpecialPrices" ${notifPrefs.specialPrices ? 'checked' : ''}>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">${t('notifUpdates')}</div>
+            <div class="setting-desc">Infos sur le site et nouvelles fonctions</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="prefUpdates" ${notifPrefs.updates ? 'checked' : ''}>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <button class="btn btn-gold mt-2" id="saveNotifPrefsBtn" style="width:100%;">${t('notifSave')}</button>
+      </div>
+
+      ${currentUser ? `
+      <div class="settings-section mt-3" style="padding-top:1.5rem; border-top:1px solid #eee;">
+        <h3>👤 ${t('accountInfo')}</h3>
+        <div class="account-details">
+          <p><strong>${t('email')}:</strong> ${currentUser.email}</p>
+          <p><strong>${t('name')}:</strong> ${currentUser.displayName || '---'}</p>
+          <p><strong>${t('role')}:</strong> ${isAdmin ? 'Admin' : 'Client'}</p>
+          <p><strong>${t('emailVerified')}:</strong> ${currentUser.emailVerified ? '✅ ' + t('yes') : '❌ ' + t('no')}</p>
+          ${!currentUser.emailVerified ? `<button class="btn btn-gold btn-sm mt-2" id="resendVerifyEmail">📧 ${t('resendVerifyEmail')}</button>` : ''}
+        </div>
+      </div>` : ''}
     </div>`;
-  document.getElementById('settingsLang')?.addEventListener('change', (e) => { currentLang = e.target.value; document.getElementById('langSwitch').value = currentLang; applyLanguage(); });
-  document.getElementById('resendVerifyEmail')?.addEventListener('click', async () => { if (currentUser) { await currentUser.sendEmailVerification(); showMessage(t('emailVerifySent'), 'success'); } });
+
+  // Language Change
+  document.getElementById('settingsLang')?.addEventListener('change', (e) => {
+    currentLang = e.target.value;
+    document.getElementById('langSwitch').value = currentLang;
+    applyLanguage();
+    renderView('settings'); // Refresh to update labels
+  });
+
+  // Notif Status Update
+  updateNotifUI();
+
+  document.getElementById('requestNotifBtn')?.addEventListener('click', async () => {
+    const permission = await Notification.requestPermission();
+    updateNotifUI();
+    if (permission === 'granted') showMessage("Notifications autorisées !", "success");
+  });
+
+  document.getElementById('saveNotifPrefsBtn')?.addEventListener('click', async () => {
+    if (!currentUser) { showMessage(t('loginRequired'), 'error'); return; }
+    const prefs = {
+      newProducts: document.getElementById('prefNewProducts').checked,
+      specialPrices: document.getElementById('prefSpecialPrices').checked,
+      updates: document.getElementById('prefUpdates').checked
+    };
+    try {
+      await db.collection('users').doc(currentUser.uid).update({ notifPrefs: prefs });
+      showMessage(t('notifPreferencesSaved'), 'success');
+    } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
+  });
+
+  document.getElementById('resendVerifyEmail')?.addEventListener('click', async () => {
+    if (currentUser) { await currentUser.sendEmailVerification(); showMessage(t('emailVerifySent'), 'success'); }
+  });
 }
+
+function updateNotifUI() {
+  const label = document.getElementById('notifStatusLabel');
+  const btn = document.getElementById('requestNotifBtn');
+  if (!label) return;
+
+  if (!("Notification" in window)) {
+    label.textContent = "Non supporté";
+    label.style.color = "var(--danger)";
+    return;
+  }
+
+  if (Notification.permission === 'granted') {
+    label.textContent = t('notifGranted');
+    label.style.color = "var(--success)";
+    btn.style.display = 'none';
+  } else if (Notification.permission === 'denied') {
+    label.textContent = t('notifBlocked');
+    label.style.color = "var(--danger)";
+    btn.style.display = 'none';
+  } else {
+    label.textContent = "Non configuré";
+    label.style.color = "#f39c12";
+    btn.style.display = 'inline-block';
+  }
+}
+
 
 // ============================================
 // ATTACHER BOUTONS ACHAT
@@ -2285,7 +2449,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('footerContact')?.addEventListener('click', (e) => {
     e.preventDefault();
-    document.querySelector('.footer')?.scrollIntoView({ behavior: 'smooth' });
+    window.open('https://wa.me/50938824664', '_blank');
   });
 
   // Consent Modal Events
