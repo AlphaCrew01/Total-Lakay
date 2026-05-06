@@ -1051,11 +1051,25 @@ function renderNotifList() {
     list.innerHTML = `<p class="text-center" style="padding:2rem;">🔔 ${t('noNotifications')}</p>`; return;
   }
   list.innerHTML = notifications.map(n => `
-    <div class="notif-item ${n.read ? '' : 'unread'}">
-      <div class="notif-title">${n.type === 'promo' ? '🎉' : n.type === 'new' ? '🆕' : '💰'} ${n.title}</div>
+    <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markNotifAsRead('${n.id}')" style="cursor:pointer;">
+      <div class="notif-title">${n.type === 'promo' ? '🎉' : n.type === 'new' ? '🆕' : n.type === 'review' ? '⭐' : '💰'} ${n.title}</div>
       <p>${n.message}</p>
       <div class="notif-date">${n.createdAt?.toDate?.()?.toLocaleDateString?.('fr-FR') || t('today')}</div>
+      ${!n.read ? `<span style="color:var(--gold); font-size:0.75rem; font-weight:700;">● ${t('new') || 'Nouveau'}</span>` : ''}
     </div>`).join('');
+}
+
+async function markNotifAsRead(notifId) {
+  try {
+    await db.collection('notifications').doc(notifId).update({ read: true });
+    // Update local state to avoid re-fetch immediately
+    const notif = notifications.find(n => n.id === notifId);
+    if (notif) {
+      notif.read = true;
+      updateNotifBadge();
+      renderNotifList();
+    }
+  } catch (e) { console.error("Erreur lecture notif:", e); }
 }
 
 // ============================================
@@ -1881,10 +1895,7 @@ document.getElementById('cartBtn')?.addEventListener('click', () => {
   renderCart();
 });
 
-document.getElementById('notifBtn')?.addEventListener('click', () => {
-  currentView = 'notifications';
-  renderNotificationsModal();
-});
+
 
 document.getElementById('closeCartModal')?.addEventListener('click', () => {
   document.getElementById('cartModal').classList.add('hidden');
