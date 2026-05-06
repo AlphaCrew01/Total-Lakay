@@ -1,395 +1,387 @@
 <!DOCTYPE html>
 <html lang="ht">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Total Lakay | Tout bagay lakay ou</title>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="style.css">
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Total Lakay - Tout bagay lakay ou nan yon sèl klike</title>
+    <meta name="description" content="Total Lakay - Votre boutique en ligne. Tout bagay lakay ou nan yon sèl klike.">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="logo.jpeg" type="image/jpeg">
+    <link rel="shortcut icon" href="logo.jpeg" type="image/jpeg">
+    
+    <!-- ============================================ -->
+    <!-- PWA META TAGS - AJOUTÉS -->
+    <!-- ============================================ -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#050a14">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Total Lakay">
+    <link rel="apple-touch-icon" href="logo.jpeg">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Total Lakay">
+    <meta name="msapplication-TileColor" content="#050a14">
+    <meta name="msapplication-TileImage" content="logo.jpeg">
+    <meta name="msapplication-starturl" content="/">
+    <!-- ============================================ -->
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    
+    <!-- Ton Script Principal -->
+    <script src="script.js" defer></script>
+    
 </head>
-
 <body>
 
-  <!-- ========== NAVBAR PREMIUM ========== -->
-  <header class="navbar">
-    <div class="logo-area">
-      <img src="logo.jpeg" alt="Total Lakay Logo" class="logo-img"
-        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-      <div class="logo-icon-fallback" style="display:none;">TL</div>
-      <div class="logo-text">
-        Total Lakay
-        <small>Tout bagay lakay ou</small>
-      </div>
-    </div>
-
-    <nav class="nav-links" id="navLinks">
-      <a href="#" id="navHome" class="nav-item active">
-        🏠 <span data-i18n="home">Akèy</span>
-      </a>
-      <a href="#" id="navShop" class="nav-item">
-        🛍️ <span data-i18n="shop">Boutik</span>
-      </a>
-      <a href="#" id="navProfile" class="nav-item hidden user-only">
-        👤 <span data-i18n="profile">Profil</span>
-      </a>
-      <a href="#" id="navAdmin" class="nav-item hidden admin-only">
-        📊 <span data-i18n="dashboard">Tablodbò</span>
-      </a>
-
-      <!-- Panier -->
-      <button id="cartBtn" class="notif-btn" title="Panier">
-        🛒
-        <span id="cartBadge" class="notif-badge hidden">0</span>
-      </button>
-
-      <!-- Notifications -->
-      <button id="notifBtn" class="notif-btn" title="Notifikasyon">
-        🔔
-        <span id="notifBadge" class="notif-badge hidden">0</span>
-      </button>
-
-      <!-- Menu -->
-      <div class="dropdown" id="menuDropdown">
-        <button id="menuBtn" class="btn-menu" title="Menu">☰</button>
-        <div class="dropdown-content hidden" id="dropdownMenu">
-          <a href="#" id="menuSpecial">🎉 <span data-i18n="specialOffers">Òf espesyal</span></a>
-          <a href="#" id="menuFavorites">❤️ <span data-i18n="favorites">Favori</span></a>
-          <a href="#" id="menuSettings">⚙️ <span data-i18n="settings">Paramèt</span></a>
-          <a href="#" id="menuHistory">🕐 <span data-i18n="history">Istwa</span></a>
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="logo-area">
+            <img src="logo.jpeg" alt="Total Lakay" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="logo-icon-fallback" style="display:none; width:45px; height:45px; font-size:1.5rem; background:linear-gradient(135deg, var(--gold), var(--gold-light)); color:var(--blue-deep); font-weight:900; align-items:center; justify-content:center; border-radius:10px; box-shadow:var(--shadow-gold);">TL</div>
+            <div class="logo-text">
+                Total Lakay
+                <small>Tout bagay lakay ou</small>
+            </div>
         </div>
-      </div>
 
-      <div style="display: flex; gap: 5px;">
-        <select id="langSwitch" class="lang-select">
-          <option value="ht">🇭🇹 Kreyòl</option>
-          <option value="fr">🇫🇷 Français</option>
-          <option value="en">🇺🇸 English</option>
-          <option value="es">🇪🇸 Español</option>
-        </select>
+        <nav class="nav-links">
+            <button id="navHome" class="nav-item active">🏠 <span data-i18n="home">Akèy</span></button>
+            <button id="navShop" class="nav-item">🛍️ <span data-i18n="shop">Boutik</span></button>
+            
+            <!-- Menu Profil (visible si connecté) -->
+            <button id="navProfile" class="nav-item user-only hidden">👤 <span data-i18n="profile">Profil</span></button>
+            
+            <!-- Admin (visible si admin) -->
+            <button id="navAdmin" class="nav-item admin-only hidden">⚙️ <span data-i18n="admin">Admin</span></button>
 
-        <select id="currencySwitch" class="lang-select">
-          <option value="HTG" selected>🇭🇹 HTG</option>
-          <option value="USD">🇺🇸 USD</option>
-          <option value="EUR">🇪🇺 EUR</option>
-        </select>
-      </div>
+            <!-- Panier -->
+            <button id="cartBtn" class="nav-item user-only hidden">
+                🛒 <span data-i18n="cart">Panyen</span>
+                <span id="cartBadge" class="cart-badge hidden" style="background:var(--gold); color:var(--blue-deep); border-radius:50%; padding:0.15rem 0.4rem; font-size:0.7rem; font-weight:700;">0</span>
+            </button>
 
-      <button id="authBtn" class="btn btn-gold">
-        🔐 <span data-i18n="login">Konekte</span>
-      </button>
-      <button id="logoutBtn" class="btn btn-outline hidden">
-        🚪 <span data-i18n="logout">Dekonekte</span>
-      </button>
-    </nav>
-  </header>
+            <!-- Bouton Connexion / Déconnexion -->
+            <button id="authBtn" class="btn btn-gold btn-sm">🔐 <span data-i18n="login">Konekte</span></button>
+            <button id="logoutBtn" class="btn btn-outline btn-sm hidden">🚪 <span data-i18n="logout">Dekonekte</span></button>
 
-  <!-- ========== RECHERCHE & FILTRES ========== -->
-  <div class="search-filter-bar hidden" id="searchFilterBar">
-    <div class="search-container">
-      <input type="text" id="searchInput" class="search-input" data-i18n-placeholder="searchPlaceholder"
-        placeholder="🔍 Rechèche yon pwodui..." />
-      <button id="searchBtn" class="btn btn-gold btn-sm">🔍</button>
-    </div>
+            <!-- Notifications -->
+            <div style="position:relative;">
+                <button id="notifBtn" class="notif-btn user-only hidden">🔔</button>
+                <span id="notifBadge" class="notif-badge hidden">0</span>
+            </div>
 
-    <div class="filter-container">
-      <select id="categoryFilter" class="filter-select">
-        <option value="all" data-i18n="allCategories">Tout kategori</option>
-        <option value="electronics" data-i18n="categoryElectronics">📱 Elektwonik</option>
-        <option value="clothing" data-i18n="categoryClothing">👕 Vètman ak Akseswa</option>
-        <option value="school" data-i18n="categorySchool">🎓 Lekòl / École</option>
-        <option value="work" data-i18n="categoryWork">💼 Travay / Travail</option>
-        <option value="home" data-i18n="categoryHome">🏠 Kay / Maison</option>
-        <option value="beauty" data-i18n="categoryBeauty">💄 Bote / Beauté</option>
-        <option value="other" data-i18n="categoryOther">📦 Lòt / Autres</option>
-      </select>
+            <!-- Langue & Menu -->
+            <select id="langSwitch" class="lang-select">
+                <option value="ht">🇭🇹 Kreyòl</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="en">🇺🇸 English</option>
+                <option value="es">🇪🇸 Español</option>
+            </select>
 
-      <input type="number" id="priceMin" class="price-input" data-i18n-placeholder="priceMin" placeholder="Pri min" />
-      <input type="number" id="priceMax" class="price-input" data-i18n-placeholder="priceMax" placeholder="Pri max" />
+            <!-- Devise -->
+            <select id="currencySwitch" class="lang-select">
+                <option value="HTG">🇭🇹 HTG</option>
+                <option value="USD">🇺🇸 USD</option>
+                <option value="EUR">🇪🇺 EUR</option>
+            </select>
 
-      <select id="sortBy" class="filter-select">
-        <option value="date-desc" data-i18n="sortDateDesc">Pi resan</option>
-        <option value="date-asc" data-i18n="sortDateAsc">Pi ansyen</option>
-        <option value="price-asc" data-i18n="sortPriceAsc">Pri: Ba → Wo</option>
-        <option value="price-desc" data-i18n="sortPriceDesc">Pri: Wo → Ba</option>
-        <option value="name-asc" data-i18n="sortNameAsc">Non: A → Z</option>
-        <option value="name-desc" data-i18n="sortNameDesc">Non: Z → A</option>
-      </select>
+            <div class="dropdown" id="menuDropdown">
+                <button id="menuBtn" class="btn-menu">☰</button>
+                <div id="dropdownMenu" class="dropdown-content hidden">
+                    <a href="#" id="menuFavorites">❤️ <span data-i18n="favorites">Favori</span></a>
+                    <a href="#" id="menuSpecial">🎉 <span data-i18n="specialOffers">Òf espesyal</span></a>
+                    <a href="#" id="menuHistory">📋 <span data-i18n="history">Istwa</span></a>
+                    <a href="#" id="menuSettings">⚙️ <span data-i18n="settings">Paramèt</span></a>
+                    <a href="#" id="linkServices">🛠️ <span data-i18n="servicesTitle">Sèvis</span></a>
+                    <a href="#" id="linkPrivacy">🔒 <span data-i18n="privacyTitle">Konfidansyalite</span></a>
+                    <a href="#" id="linkTerms">📜 <span data-i18n="termsTitle">Kondisyon</span></a>
+                </div>
+            </div>
+        </nav>
+    </header>
 
-      <button id="applyFiltersBtn" class="btn btn-gold btn-sm">
-        <span data-i18n="applyFilters">Filtre</span>
-      </button>
-      <button id="resetFiltersBtn" class="btn btn-outline btn-sm" style="color:#333; border-color:#ccc;">
-        <span data-i18n="resetFilters">Reinisyalize</span>
-      </button>
-    </div>
-
-    <div id="resultsCount" class="results-count"></div>
-  </div>
-
-  <!-- ========== CONTENU PRINCIPAL ========== -->
-  <main class="container" id="appContent">
-    <!-- Rendu dynamique par app.js -->
-    <!-- 
-      Pour Admin : renderAdminDashboard() 
-      Pour Client : renderHome(), renderShop(), renderClientOrders(), etc.
-    -->
-  </main>
-
-  <!-- ========== MODAL CONNEXION ========== -->
-  <div id="loginModal" class="modal hidden">
-    <!-- Formulaire Connexion -->
-    <div class="modal-content login-card" id="loginFormCard">
-      <span class="close-modal" id="closeLoginModal">&times;</span>
-
-      <div class="login-header">
-        <img src="logo.jpeg" alt="Logo" class="login-logo"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-        <div class="logo-icon-fallback" style="display:none; margin:0 auto;">TL</div>
-        <h2>Total Lakay</h2>
-        <p data-i18n="loginTitle">Konekte pou achte</p>
-      </div>
-
-      <button id="googleLoginBtn" class="btn btn-google">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" width="20">
-        <span data-i18n="continueGoogle">Kontinye ak Google</span>
-      </button>
-
-      <div class="separator"><span data-i18n="or">oubyen</span></div>
-
-      <input type="email" id="loginEmail" data-i18n-placeholder="emailPlaceholder" placeholder="Email" />
-      <input type="password" id="loginPassword" data-i18n-placeholder="passwordPlaceholder" placeholder="Modpas" />
-
-      <button id="emailLoginBtn" class="btn btn-gold" style="width:100%;">
-        🔐 <span data-i18n="login">Konekte</span>
-      </button>
-
-      <p class="login-switch">
-        <span data-i18n="noAccount">Pa gen kont?</span>
-        <a href="#" id="switchToRegister" data-i18n="createAccount">Kreye yon kont</a>
-      </p>
-    </div>
-
-    <!-- Formulaire Inscription -->
-    <div class="modal-content login-card hidden" id="registerForm">
-      <span class="close-modal" id="closeRegisterModal">&times;</span>
-
-      <div class="login-header">
-        <img src="logo.jpeg" alt="Logo" class="login-logo"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-        <div class="logo-icon-fallback" style="display:none; margin:0 auto;">TL</div>
-        <h2>Total Lakay</h2>
-        <p data-i18n="createAccountTitle">Kreye kont ou</p>
-      </div>
-
-      <input type="text" id="registerName" data-i18n-placeholder="namePlaceholder" placeholder="Non ou" />
-      <input type="email" id="registerEmail" data-i18n-placeholder="emailPlaceholder" placeholder="Email" />
-      <input type="password" id="registerPassword" data-i18n-placeholder="passwordMin"
-        placeholder="Modpas (min 6 karaktè)" />
-
-
-
-      <button id="registerBtn" class="btn btn-gold" style="width:100%;">
-        ✅ <span data-i18n="createAccount">Kreye kont</span>
-      </button>
-
-      <p class="login-switch">
-        <span data-i18n="alreadyAccount">Deja gen yon kont?</span>
-        <a href="#" id="switchToLogin" data-i18n="login">Konekte</a>
-      </p>
-    </div>
-  </div>
-
-  <!-- ========== MODAL NOTIFICATIONS ========== -->
-  <div id="notifModal" class="modal hidden">
-    <div class="modal-content card-premium">
-      <span class="close-modal" id="closeNotifModal">&times;</span>
-      <h2>🔔 <span data-i18n="notifications">Notifikasyon</span></h2>
-      <div id="notifList">
-        <p class="text-center">Chajman...</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========== MODAL CONSENTEMENT ========== -->
-  <div id="consentModal" class="modal hidden">
-    <div class="modal-content card-premium consent-modal-content">
-      <h2 style="color:var(--blue-deep);">📜 <span data-i18n="termsConsentTitle">Kondisyon Itilizasyon</span></h2>
-      <p style="margin:1.5rem 0; line-height:1.6;" data-i18n="termsConsentDesc">
-        Pou w ka kontinye sèvi ak Total Lakay, ou dwe aksepte kondisyon itilizasyon nou yo ak politik konfidansyalite nou an.
-      </p>
-      <div class="consent-actions">
-        <button id="declineConsent" class="btn btn-outline" style="flex:1;" data-i18n="decline">Refize</button>
-        <button id="acceptConsent" class="btn btn-gold" style="flex:1;" data-i18n="accept">Aksepte</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========== MODAL ACHAT ========== -->
-  <div id="buyModal" class="modal hidden">
-    <div class="modal-content card-premium">
-      <span class="close-modal" id="closeBuyModal">&times;</span>
-      <h2 id="modalProductName"></h2>
-      <p class="product-price-large" id="modalProductPrice"></p>
-
-      <div id="productDetailsContent">
-        <!-- Contenu dynamique (description, avis) -->
-      </div>
-
-      <div id="variationSelectors" style="margin: 1.5rem 0; display: grid; gap: 1rem; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 1rem 0;">
-        <!-- Sélecteurs dynamiques (Quantité, Couleur, Taille) -->
-      </div>
-
-      <label for="orderAddress">📍 <span data-i18n="address">Adrès ou</span></label>
-      <input type="text" id="orderAddress" data-i18n-placeholder="addressPlaceholder"
-        placeholder="Rue, Ville, Code postal" />
-
-      <label for="orderPayment">💳 <span data-i18n="payment">Mwayen peman</span></label>
-      <select id="orderPayment">
-        <option value="moncash">MonCash</option>
-        <option value="natcash">Natcash</option>
-        <option value="credit">Kredi / Crédit</option>
-        <option value="cash">Lajan kach / Cash</option>
-      </select>
-
-      <button id="submitOrder" class="btn btn-gold" style="width:100%; margin-top:1rem;">
-        ✅ <span data-i18n="orderNow">Kòmande</span>
-      </button>
-
-      <div class="reviews-section mt-3">
-        <h3>⭐ <span data-i18n="reviews">Avi kliyan</span></h3>
-        <div id="productReviewsList"></div>
-        <div class="add-review-form mt-2">
-          <h4 data-i18n="addReview">Ajoute yon avi</h4>
-          <div class="star-rating" id="starRating">
-            <span data-rating="1">★</span><span data-rating="2">★</span><span data-rating="3">★</span><span
-              data-rating="4">★</span><span data-rating="5">★</span>
-          </div>
-          <textarea id="reviewComment" data-i18n-placeholder="comment" placeholder="Kòmantè..."></textarea>
-          <button id="submitReviewBtn" class="btn btn-sm btn-gold" data-i18n="submit">Voye</button>
+    <!-- Barre de Recherche & Filtres -->
+    <div id="searchFilterBar" class="search-filter-bar hidden" style="margin:1rem auto; max-width:1250px; padding:1.5rem;">
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Rechercher un produit..." data-i18n-placeholder="searchPlaceholder">
+            <button id="searchBtn" class="btn btn-gold">🔍</button>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========== MODAL CONFIRMATION (Admin) ========== -->
-  <div id="confirmModal" class="modal hidden">
-    <div class="modal-content card-premium text-center">
-      <p id="confirmMessage" style="font-size:1.2rem; margin:1rem 0;">Eske w sèten?</p>
-      <div style="display:flex; gap:1rem; justify-content:center;">
-        <button id="confirmYes" class="btn btn-danger">✅ Wi</button>
-        <button id="confirmNo" class="btn btn-outline" style="color:#333; border-color:#ccc;">❌ Non</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========== BOUTON WHATSAPP FLOTTANT ========== -->
-  <a href="https://wa.me/50938824664" class="whatsapp-float" target="_blank" title="WhatsApp Support">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
-  </a>
-
-  <!-- ========== FOOTER PREMIUM ========== -->
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-brand">
-        <img src="logo.jpeg" alt="Total Lakay" class="footer-logo" onerror="this.style.display='none';">
-        <p><strong>Total Lakay</strong><br>Tout bagay lakay ou</p>
-        <p data-i18n="footerRights">Total Lakay &copy; 2026</p>
-      </div>
-
-      <div class="footer-section">
-        <h4 data-i18n="contactUs">Kontakte nou</h4>
-        <p>📍 Port-au-Prince, Haïti</p>
-        <p>📞 +509 38 82 46 64</p>
-        <p>📧 totallakaystore@gmail.com</p>
-      </div>
-
-      <div class="footer-section">
-        <h4 data-i18n="securePayment">Peman Sekirize</h4>
-        <div class="trust-badges">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" height="20">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard"
-            height="20">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" height="20">
-          <div class="moncash-badge">MonCash</div>
+        <div class="filter-container">
+            <select id="categoryFilter" class="filter-select">
+                <option value="all" data-i18n="allCategories">Toutes catégories</option>
+                <option value="clothing" data-i18n="categoryClothingAccessories">👕 Vêtements & Accessoires</option>
+                <option value="school" data-i18n="categorySchoolOffice">🎓 École & Travail</option>
+                <option value="home" data-i18n="categoryHomePersonal">🏠 Maison & Personnel</option>
+                <option value="electronics" data-i18n="categoryElectronicsTech">📱 Électronique</option>
+            </select>
+            <input type="number" id="priceMin" class="price-input" placeholder="Prix min" data-i18n-placeholder="priceMin">
+            <input type="number" id="priceMax" class="price-input" placeholder="Prix max" data-i18n-placeholder="priceMax">
+            <select id="sortBy" class="filter-select">
+                <option value="date-desc" data-i18n="sortDateDesc">Plus récent</option>
+                <option value="date-asc" data-i18n="sortDateAsc">Plus ancien</option>
+                <option value="price-asc" data-i18n="sortPriceAsc">Prix: Bas → Haut</option>
+                <option value="price-desc" data-i18n="sortPriceDesc">Prix: Haut → Bas</option>
+                <option value="name-asc" data-i18n="sortNameAsc">Nom: A → Z</option>
+                <option value="name-desc" data-i18n="sortNameDesc">Nom: Z → A</option>
+            </select>
+            <button id="applyFiltersBtn" class="btn btn-gold btn-sm">🔍 <span data-i18n="applyFilters">Filtrer</span></button>
+            <button id="resetFiltersBtn" class="btn btn-outline btn-sm" style="color:var(--text-dark);">🔄 <span data-i18n="resetFilters">Reset</span></button>
+            <span id="resultsCount" class="results-count"></span>
         </div>
-      </div>
-
-      <div class="footer-links">
-        <a href="#" id="linkServices" data-i18n="footerServices">Sèvis</a>
-        <a href="#" id="linkPrivacy" data-i18n="footerPrivacy">Konfidansyalite</a>
-        <a href="#" id="linkTerms" data-i18n="footerTerms">Kondisyon</a>
-      </div>
     </div>
-  </footer>
 
-  <!-- ========== MODAL PANIER ========== -->
-  <div id="cartModal" class="modal hidden">
-    <div class="modal-content card-premium" style="max-width: 600px;">
-      <span class="close-modal" id="closeCartModal">&times;</span>
-      <h2>🛒 <span data-i18n="cart">Panier</span></h2>
-      <div id="cartItemsList" class="cart-items-list">
-        <!-- Rempli par JS -->
-      </div>
-      <div class="cart-summary">
-        <div class="cart-total">
-          <span data-i18n="total">Total</span>: <span id="cartTotalAmount">0.00</span>
+    <!-- Contenu Principal -->
+    <main id="appContent" class="container">
+        <!-- Rendu dynamique par JavaScript -->
+        <div style="text-align:center; padding:4rem 2rem;">
+            <img src="logo.jpeg" alt="Total Lakay" style="width:100px; height:100px; border-radius:20px; border:3px solid var(--gold); margin-bottom:1rem;" onerror="this.style.display='none';">
+            <h1 style="color:var(--blue-deep);">🏠 Byenveni nan Total Lakay</h1>
+            <p style="font-size:1.2rem; color:var(--text-soft);">Tout bagay lakay ou nan yon sèl klike.</p>
+            <div class="spinner" style="margin:2rem auto;"></div>
         </div>
-        <button id="checkoutBtn" class="btn btn-gold" style="width:100%; margin-top:1rem;">
-          💳 <span data-i18n="checkout">Payer maintenant</span>
-        </button>
-        <p class="secure-text">🔒 <span data-i18n="securePaymentInfo">Paiement 100% sécurisé</span></p>
-      </div>
+    </main>
+
+    <!-- ============================================ -->
+    <!-- MODAL DE CONNEXION -->
+    <!-- ============================================ -->
+    <div id="loginModal" class="modal hidden">
+        <div class="modal-content login-card">
+            <span class="close-modal" id="closeLoginModal">&times;</span>
+            
+            <!-- Formulaire de connexion -->
+            <div id="loginFormCard">
+                <div class="login-header">
+                    <img src="logo.jpeg" alt="Total Lakay" class="login-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="logo-icon-fallback login-logo-fallback" style="display:none; width:70px; height:70px; font-size:2rem; background:linear-gradient(135deg, var(--gold), var(--gold-light)); color:var(--blue-deep); font-weight:900; align-items:center; justify-content:center; border-radius:14px; box-shadow:var(--shadow-gold); margin:0 auto 1rem;">TL</div>
+                    <h2 data-i18n="loginTitle">Konekte pou achte</h2>
+                    <p data-i18n="welcome">Byenveni nan Total Lakay</p>
+                </div>
+                
+                <button id="googleLoginBtn" class="btn-google">
+                    🟢 <span data-i18n="continueGoogle">Kontinye ak Google</span>
+                </button>
+                
+                <div class="separator"><span data-i18n="or">oubyen</span></div>
+                
+                <input type="email" id="loginEmail" placeholder="Email" data-i18n-placeholder="emailPlaceholder">
+                <input type="password" id="loginPassword" placeholder="Modpas" data-i18n-placeholder="passwordPlaceholder">
+                
+                <button id="emailLoginBtn" class="btn btn-gold" style="width:100%; margin-top:0.5rem;">🔐 <span data-i18n="login">Konekte</span></button>
+                
+                <div class="login-switch">
+                    <span data-i18n="noAccount">Pa gen kont?</span> <a href="#" id="switchToRegister" data-i18n="createAccount">Kreye yon kont</a>
+                </div>
+            </div>
+
+            <!-- Formulaire d'inscription -->
+            <div id="registerForm" class="hidden">
+                <div class="login-header">
+                    <h2 data-i18n="createAccountTitle">Kreye kont ou</h2>
+                </div>
+                
+                <input type="text" id="registerName" placeholder="Non ou" data-i18n-placeholder="namePlaceholder">
+                <input type="email" id="registerEmail" placeholder="Email" data-i18n-placeholder="emailPlaceholder">
+                <input type="password" id="registerPassword" placeholder="Modpas (min 6 karaktè)" data-i18n-placeholder="passwordMin">
+                
+                <button id="registerBtn" class="btn btn-gold" style="width:100%;">✅ <span data-i18n="createAccount">Kreye kont</span></button>
+                
+                <div class="login-switch">
+                    <span data-i18n="alreadyAccount">Deja gen yon kont?</span> <a href="#" id="switchToLogin" data-i18n="login">Konekte</a>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- ========== JavaScript ========== -->
-  <script src="app.js"></script>
-  <!-- ... TON CONTENU EXISTANT ... -->
+    <!-- ============================================ -->
+    <!-- MODAL D'ACHAT -->
+    <!-- ============================================ -->
+    <div id="buyModal" class="modal hidden">
+        <div class="modal-content card-premium" style="max-width:500px;">
+            <span class="close-modal" id="closeBuyModal">&times;</span>
+            <h2 style="color:var(--blue-deep); text-align:center;">🛒 <span id="modalProductName">---</span></h2>
+            <div class="product-price-large"><span id="modalProductPrice">---</span></div>
+            
+            <div id="productDetailsContent" style="margin:1rem 0;"></div>
+            
+            <div id="variationSelectors" style="display:flex; flex-direction:column; gap:1rem;"></div>
+            
+            <label>📍 <span data-i18n="addressRecommend">Adrès ou</span></label>
+            <input type="text" id="orderAddress" placeholder="Rue, Ville, Code postal" data-i18n-placeholder="addressPlaceholder">
+            
+            <label>📞 <span data-i18n="phoneRecommend">Telefòn ou</span></label>
+            <input type="text" id="orderPhone" placeholder="Ex: +509 1234 5678" data-i18n-placeholder="phonePlaceholder">
+            
+            <label>💳 <span data-i18n="payment">Mwayen peman</span></label>
+            <select id="orderPayment">
+                <option value="MonCash">MonCash</option>
+                <option value="Cash">Cash</option>
+            </select>
+            
+            <button id="submitOrder" class="btn btn-gold" style="width:100%; margin-top:1rem;">✅ <span data-i18n="orderNow">Kòmande</span></button>
+            
+            <div style="margin-top:1.5rem; border-top:1px solid #eee; padding-top:1rem;">
+                <h4>⭐ <span data-i18n="reviews">Avi</span></h4>
+                <div class="star-rating" id="starRating">
+                    <span data-rating="1">⭐</span>
+                    <span data-rating="2">⭐</span>
+                    <span data-rating="3">⭐</span>
+                    <span data-rating="4">⭐</span>
+                    <span data-rating="5">⭐</span>
+                </div>
+                <textarea id="reviewComment" rows="2" placeholder="Votre avis..." data-i18n-placeholder="comment" style="border-radius:12px;"></textarea>
+                <button id="submitReviewBtn" class="btn btn-outline btn-sm mt-1" style="color:var(--blue-deep); border-color:var(--gold);">
+                    📝 <span data-i18n="addReview">Ajoute yon avi</span>
+                </button>
+                <div id="productReviewsList" style="margin-top:1rem;"></div>
+            </div>
+        </div>
+    </div>
 
-<!-- Service Worker -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(registration => {
-          console.log('✅ Service Worker enregistré:', registration.scope);
-          
-          // Vérifier les mises à jour
-          registration.addEventListener('updatefound', () => {
-            const newWorker = registration.installing;
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // Nouvelle version disponible
-                showMessage('🔄 Nouvelle version disponible ! Rechargez la page.', 'info');
-              }
+    <!-- ============================================ -->
+    <!-- MODAL PANIER -->
+    <!-- ============================================ -->
+    <div id="cartModal" class="modal hidden">
+        <div class="modal-content card-premium" style="max-width:550px;">
+            <span class="close-modal" id="closeCartModal">&times;</span>
+            <h2 style="color:var(--blue-deep);">🛒 <span data-i18n="cart">Panyen</span></h2>
+            <div id="cartItemsList" class="cart-items-list" style="max-height:400px; overflow-y:auto; margin:1rem 0;"></div>
+            <div class="cart-summary">
+                <div class="cart-total">
+                    <span data-i18n="total">Total</span>
+                    <span id="cartTotalAmount">0 G</span>
+                </div>
+                <button id="checkoutBtn" class="btn btn-gold" style="width:100%;">💳 <span data-i18n="checkout">Peye kounye a</span></button>
+                <div class="secure-text">
+                    🔒 <span data-i18n="securePaymentInfo">Peman 100% sekirize</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL NOTIFICATIONS -->
+    <!-- ============================================ -->
+    <div id="notifModal" class="modal hidden">
+        <div class="modal-content card-premium" style="max-width:420px;">
+            <span class="close-modal" id="closeNotifModal">&times;</span>
+            <h2>🔔 <span data-i18n="notifications">Notifikasyon</span></h2>
+            <div id="notifList" style="max-height:400px; overflow-y:auto;">
+                <p class="text-center" style="padding:2rem;">📭 <span data-i18n="noNotifications">Pa gen notifikasyon</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL CONSENTEMENT -->
+    <!-- ============================================ -->
+    <div id="consentModal" class="modal hidden">
+        <div class="modal-content consent-modal-content card-premium">
+            <h2 data-i18n="termsConsentTitle">Kondisyon Itilizasyon</h2>
+            <p data-i18n="termsConsentDesc">Pou w ka kontinye sèvi ak Total Lakay, ou dwe aksepte kondisyon itilizasyon nou yo ak politik konfidansyalite nou an.</p>
+            <div class="consent-actions" style="display:flex; gap:1rem; justify-content:center; margin-top:1.5rem;">
+                <button id="acceptConsent" class="btn btn-gold" data-i18n="accept">Aksepte</button>
+                <button id="declineConsent" class="btn btn-danger" data-i18n="decline">Refize</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================ -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="logo.jpeg" class="footer-logo" alt="Total Lakay" onerror="this.style.display='none';">
+                <span>Total Lakay © 2026</span>
+            </div>
+            <div class="footer-links">
+                <a href="#" id="footerServices"><span data-i18n="servicesTitle">Sèvis</span></a>
+                <a href="#" id="footerPrivacy"><span data-i18n="privacyTitle">Konfidansyalite</span></a>
+                <a href="#" id="footerTerms"><span data-i18n="termsTitle">Kondisyon</span></a>
+                <a href="#" id="footerContact"><span data-i18n="footerContact">Kontakte nou</span></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float -->
+    <a href="https://wa.me/50912345678" target="_blank" class="whatsapp-float" aria-label="Chat WhatsApp">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xNy40NzIgMTQuMzgyYy0uMjk3LS4xNDktMS43NTgtLjg2Ny0yLjAzLS45NjctLjI3My0uMS0uNDcxLS4xNDgtLjY3LjE1LS4yLjI5Ny0uNzY3Ljk2Ni0uOTQgMS4xNjQtLjE3My4xOTktLjM0Ny4yMjMtLjY0NC4wNzUtLjI5Ny0uMTUtMS4yNjUtLjQ2NS0yLjQxLTEuNDc3LS44OTEtLjc5NS0xLjQ5My0xLjc3NS0xLjY2Ny0yLjA3NC0uMTczLS4yOTgtLjAxOC0uNDYuMTMtLjYxLjEzNC0uMTM0LjI5Ny0uMzQ3LjQ0Ni0uNTIuMTQ5LS4xNzQuMTk4LS4yOTguMy0uNDk2LjEtLjE5OC4wNS0uMzcyLS4wMjUtLjUyLS4wNzUtLjE0OS0uNjctMS42MTItLjkxNy0yLjIwNi0uMjQyLS41NzktLjQ4Ny0uNS0uNjctLjUxLS4xNzMtLjAwOC0uMzcxLS4wMS0uNTctLjAxLS4yIDAtLjUyLjA3NC0uNzkyLjM3Mi0uMjcyLjI5Ny0xLjA0IDEuMDE3LTEuMDQgMi40NzkgMCAxLjQ2MiAxLjA2NSAyLjg3NSAxLjIxMyAzLjA3NC4xNDkuMTk4IDIuMDk2IDMuMiA1LjA3NyA0LjQ4Ny43MDkuMzA2IDEuMjYyLjQ4OSAxLjY5NC42MjUuNzEyLjIyNyAxLjM2LjE5NSAxLjg3MS4xMTguNTcxLS4wODUgMS43NTgtLjcxOSAyLjAwNi0xLjQxMy4yNDgtLjY5NC4yNDgtMS4yODkuMTczLTEuNDEzLS4wNzQtLjEyNC0uMjcyLS4xOTgtLjU3LS4zNDd6Ii8+PC9zdmc+" alt="WhatsApp" style="width:35px; height:35px;">
+    </a>
+
+    <!-- ============================================ -->
+    <!-- SERVICE WORKER - AJOUTÉ -->
+    <!-- ============================================ -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker enregistré avec succès:', registration.scope);
+                        
+                        // Vérifier les mises à jour du Service Worker
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            if (newWorker) {
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        console.log('🔄 Nouvelle version disponible!');
+                                        // Notification discrète pour l'utilisateur
+                                        const updateToast = document.createElement('div');
+                                        updateToast.style.cssText = `
+                                            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+                                            background: var(--blue-deep); color: white; padding: 1rem 2rem;
+                                            border-radius: 30px; font-weight: 600; z-index: 3000;
+                                            box-shadow: 0 10px 30px rgba(0,0,0,0.3); cursor: pointer;
+                                            animation: slideUp 0.3s ease;
+                                        `;
+                                        updateToast.textContent = '🔄 Nouvelle version disponible! Cliquez pour actualiser';
+                                        updateToast.addEventListener('click', () => {
+                                            window.location.reload();
+                                        });
+                                        document.body.appendChild(updateToast);
+                                        setTimeout(() => updateToast.remove(), 10000);
+                                    }
+                                });
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.log('❌ Erreur Service Worker:', error);
+                    });
             });
-          });
-        })
-        .catch(error => {
-          console.log('❌ Service Worker échec:', error);
-        });
-    });
+
+            // Recharger la page quand un nouveau Service Worker prend le contrôle
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) {
+                    refreshing = true;
+                    window.location.reload();
+                }
+            });
+        }
+    </script>
     
-    // Recharger quand le nouveau Service Worker prend le contrôle
-    let refreshing = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!refreshing) {
-        refreshing = true;
-        window.location.reload();
-      }
-    });
-  }
-</script>
+    <!-- Animation CSS pour le toast -->
+    <style>
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+    </style>
+    <!-- ============================================ -->
+
 </body>
-</html>.
+</html>
