@@ -108,6 +108,8 @@
         <option value="food" data-i18n="categoryFood">🍚 Manje / Alimentation</option>
         <option value="electronics" data-i18n="categoryElectronics">📱 Elektwonik</option>
         <option value="clothing" data-i18n="categoryClothing">👕 Vètman</option>
+        <option value="school" data-i18n="categorySchool">🎓 Lekòl / École</option>
+        <option value="work" data-i18n="categoryWork">💼 Travay / Travail</option>
         <option value="home" data-i18n="categoryHome">🏠 Kay / Maison</option>
         <option value="beauty" data-i18n="categoryBeauty">💄 Bote / Beauté</option>
         <option value="other" data-i18n="categoryOther">📦 Lòt / Autres</option>
@@ -216,6 +218,20 @@
       <h2>🔔 <span data-i18n="notifications">Notifikasyon</span></h2>
       <div id="notifList">
         <p class="text-center">Chajman...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MODAL CONSENTEMENT ========== -->
+  <div id="consentModal" class="modal hidden">
+    <div class="modal-content card-premium consent-modal-content">
+      <h2 style="color:var(--blue-deep);">📜 <span data-i18n="termsConsentTitle">Kondisyon Itilizasyon</span></h2>
+      <p style="margin:1.5rem 0; line-height:1.6;" data-i18n="termsConsentDesc">
+        Pou w ka kontinye sèvi ak Total Lakay, ou dwe aksepte kondisyon itilizasyon nou yo ak politik konfidansyalite nou an.
+      </p>
+      <div class="consent-actions">
+        <button id="declineConsent" class="btn btn-outline" style="flex:1;" data-i18n="decline">Refize</button>
+        <button id="acceptConsent" class="btn btn-gold" style="flex:1;" data-i18n="accept">Aksepte</button>
       </div>
     </div>
   </div>
