@@ -823,13 +823,43 @@ function showMessage(message, type = 'success') {
   toast.textContent = message;
   toast.style.cssText = `
     position:fixed; bottom:20px; right:20px;
-    background:${type === 'success' ? '#1e7e5b' : '#c0392b'};
+    background:${type === 'success' ? '#1e7e5b' : type === 'info' ? '#2980b9' : '#c0392b'};
     color:white; padding:1rem 1.5rem; border-radius:30px;
     font-weight:600; z-index:3000;
     box-shadow:0 20px 40px rgba(0,0,0,0.3);
   `;
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 5000);
+}
+
+// Translation Helpers
+async function autoTranslate(text, targetLang) {
+  if (!text) return "";
+  const sourceLang = currentLang;
+  if (sourceLang === targetLang) return text;
+  try {
+    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`);
+    const data = await res.json();
+    return data.responseData.translatedText || text;
+  } catch (e) { return text; }
+}
+
+async function getTranslations(text) {
+  if (!text) return "";
+  const langs = ['ht', 'fr', 'en', 'es'];
+  const results = {};
+  await Promise.all(langs.map(async (l) => {
+    results[l] = await autoTranslate(text, l);
+  }));
+  return results;
+}
+
+function gt(field) {
+  if (!field) return "";
+  if (typeof field === 'object') {
+    return field[currentLang] || field['ht'] || field['en'] || Object.values(field)[0] || "";
+  }
+  return field;
 }
 
 function debounce(func, delay) {
@@ -1076,8 +1106,8 @@ function renderNotifList() {
   }
   list.innerHTML = notifications.map(n => `
     <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markNotifAsRead('${n.id}')" style="cursor:pointer;">
-      <div class="notif-title">${n.type === 'promo' ? '🎉' : n.type === 'new' ? '🆕' : n.type === 'review' ? '⭐' : '💰'} ${n.title}</div>
-      <p>${n.message}</p>
+      <div class="notif-title">${n.type === 'promo' ? '🎉' : n.type === 'new' ? '🆕' : n.type === 'review' ? '⭐' : '💰'} ${gt(n.title)}</div>
+      <p>${gt(n.message)}</p>
       <div class="notif-date">${n.createdAt?.toDate?.()?.toLocaleDateString?.('fr-FR') || t('today')}</div>
       ${!n.read ? `<span style="color:var(--gold); font-size:0.75rem; font-weight:700;">● ${t('new') || 'Nouveau'}</span>` : ''}
     </div>`).join('');
@@ -1352,10 +1382,10 @@ function productCardHTML(product) {
     <div class="product-card" data-id="${product.id}">
       ${hasPromo ? `<div class="product-badge">🔥 ${t('specialPrice')}</div>` : ''}
       <button class="wishlist-btn ${favorites.includes(product.id) ? 'active' : ''}" onclick="toggleFavorite('${product.id}')">❤️</button>
-      <img src="${product.image || 'logo.jpeg'}" alt="${product.name}" class="product-img" onerror="this.src='logo.jpeg'">
+      <img src="${product.image || 'logo.jpeg'}" alt="${gt(product.name)}" class="product-img" onerror="this.src='logo.jpeg'">
       <div class="product-info">
-        <div class="product-title">${product.name}</div>
-        ${product.description ? `<div class="product-description">${product.description.substring(0, 60)}...</div>` : ''}
+        <div class="product-title">${gt(product.name)}</div>
+        ${product.description ? `<div class="product-description">${gt(product.description).substring(0, 60)}...</div>` : ''}
         <div class="product-price">${formatPrice(product.price)} ${hasPromo ? `<span class="old-price">${formatPrice(product.oldPrice)}</span>` : ''}</div>
         <div style="display:flex; gap:0.5rem;">
           <button class="btn btn-gold btn-sm add-cart-btn" data-product-id="${product.id}" style="flex:1;">🛒 ${t('addToCart')}</button>
@@ -1460,7 +1490,7 @@ async function renderAdminDashboard(app) {
           <div style="display:flex; justify-content:space-between; align-items:center; padding:1rem 0; border-bottom:1px solid #eee;">
             <div style="display:flex; align-items:center; gap:1rem;">
               <img src="${p.image || 'logo.jpeg'}" style="width:40px; height:40px; object-fit:cover; border-radius:8px;" onerror="this.src='logo.jpeg'">
-              <span><strong>${p.name}</strong> - ${formatPrice(p.price)}</span>
+              <span><strong>${gt(p.name)}</strong> - ${formatPrice(p.price)}</span>
             </div>
             <button class="btn btn-danger btn-sm delete-product" data-id="${p.id}">🗑️</button>
           </div>`).join('')}
@@ -1537,9 +1567,18 @@ async function renderAdminDashboard(app) {
     const sizes = sizesRaw ? sizesRaw.split(',').map(s => s.trim()) : [];
 
     try {
+      showMessage("Traduction automatique en cours...", "info");
+      const [nameTrans, descTrans] = await Promise.all([
+        getTranslations(name),
+        getTranslations(description)
+      ]);
+
       await db.collection('products').add({ 
-        name, price, oldPrice, category, stock, colors, sizes,
-        image: image || '', description, createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+        name: nameTrans, 
+        price, oldPrice, category, stock, colors, sizes,
+        image: image || '', 
+        description: descTrans, 
+        createdAt: firebase.firestore.FieldValue.serverTimestamp() 
       });
       showMessage(t('productAdded'), 'success');
       await loadAllData(); renderView('admin');
@@ -1622,11 +1661,24 @@ async function renderAdminDashboard(app) {
     const title = document.getElementById('notifTitle')?.value.trim();
     const message = document.getElementById('notifMessage')?.value.trim();
     if (!title || !message) { showMessage(t('fillAllFields'), 'error'); return; }
-    await db.collection('notifications').add({ title, message, type: 'promo', read: false, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-    showMessage(t('notifSent'), 'success');
-    document.getElementById('notifTitle').value = '';
-    document.getElementById('notifMessage').value = '';
-    document.getElementById('adminSendNotifForm').classList.add('hidden');
+
+    try {
+      showMessage("Traduction automatique en cours...", "info");
+      const [titleTrans, messageTrans] = await Promise.all([
+        getTranslations(title),
+        getTranslations(message)
+      ]);
+
+      await db.collection('notifications').add({ 
+        title: titleTrans, 
+        message: messageTrans, 
+        type: 'promo', read: false, createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+      });
+      showMessage(t('notifSent'), 'success');
+      document.getElementById('notifTitle').value = '';
+      document.getElementById('notifMessage').value = '';
+      document.getElementById('adminSendNotifForm').classList.add('hidden');
+    } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
   });
 }
 
@@ -1950,9 +2002,9 @@ function attachBuyButtons() {
       const product = products.find(p => p.id === e.currentTarget.dataset.productId);
       if (!product) return;
       selectedProductId = product.id;
-      document.getElementById('modalProductName').textContent = product.name;
+      document.getElementById('modalProductName').textContent = gt(product.name);
       document.getElementById('modalProductPrice').textContent = formatPrice(product.price);
-      document.getElementById('productDetailsContent').innerHTML = `<p style="margin:1rem 0; color:var(--text-soft);">${product.description || ''}</p>`;
+      document.getElementById('productDetailsContent').innerHTML = `<p style="margin:1rem 0; color:var(--text-soft);">${gt(product.description) || ''}</p>`;
       
       const variationContainer = document.getElementById('variationSelectors');
       if (variationContainer) {
