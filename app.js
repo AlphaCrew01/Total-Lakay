@@ -1886,7 +1886,11 @@ async function renderProfile(app) {
       <!-- SIDEBAR -->
       <div class="profile-sidebar">
         <div class="avatar-container">
-          <div class="avatar">${currentUser.photoURL ? `<img src="${currentUser.photoURL}">` : initials}</div>
+          <div class="avatar" id="profileAvatar" style="cursor:pointer; position:relative;" title="${t('changePhoto')}">
+            ${currentUser.photoURL ? `<img src="${currentUser.photoURL}" id="avatarImg">` : `<span id="avatarInitials">${initials}</span>`}
+            <div style="position:absolute; bottom:0; right:0; background:var(--gold); color:white; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; border:2px solid var(--white);">📷</div>
+          </div>
+          <input type="file" id="profPhotoInput" accept="image/*" style="display:none;">
           <h3 style="color:var(--blue-deep); font-size:1.1rem; margin-bottom:0.2rem;">${currentUser.displayName || t('clientLabel')}</h3>
           <p style="font-size:0.8rem; color:var(--text-soft); word-break:break-all;">${currentUser.email}</p>
         </div>
@@ -2030,8 +2034,45 @@ async function renderProfile(app) {
       showMessage(t('profileUpdated'), 'success');
       // Update UI without full reload
       document.querySelector('.avatar-container h3').textContent = name || t('clientLabel');
-      document.querySelector('.avatar').innerHTML = (name || currentUser.email || 'U').substring(0, 2).toUpperCase();
+      
+      const avatarEl = document.querySelector('.avatar');
+      if (!currentUser.photoURL) {
+        avatarEl.innerHTML = `<span id="avatarInitials">${(name || currentUser.email || 'U').substring(0, 2).toUpperCase()}</span><div style="position:absolute; bottom:0; right:0; background:var(--gold); color:white; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; border:2px solid var(--white);">📷</div>`;
+      }
     } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
+  });
+
+  // Photo Upload Logic
+  document.getElementById('profileAvatar')?.addEventListener('click', () => {
+    document.getElementById('profPhotoInput')?.click();
+  });
+
+  document.getElementById('profPhotoInput')?.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      showMessage(t('fileTooLarge') || "Fichier trop volumineux (max 2Mo)", "error");
+      return;
+    }
+
+    try {
+      showMessage(t('uploading') || "Chargement...", "info");
+      const ref = storage.ref(`profiles/${currentUser.uid}/${file.name}`);
+      await ref.put(file);
+      const url = await ref.getDownloadURL();
+
+      await currentUser.updateProfile({ photoURL: url });
+      await db.collection('users').doc(currentUser.uid).update({ photoURL: url });
+
+      const avatarEl = document.getElementById('profileAvatar');
+      avatarEl.innerHTML = `<img src="${url}" id="avatarImg"><div style="position:absolute; bottom:0; right:0; background:var(--gold); color:white; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; border:2px solid var(--white);">📷</div>`;
+      
+      showMessage(t('profileUpdated'), "success");
+    } catch (err) {
+      console.error(err);
+      showMessage(t('errorOccurred') + err.message, "error");
+    }
   });
 
   // Reset Password Logic
