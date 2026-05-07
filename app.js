@@ -782,7 +782,18 @@ function toggleFavorite(productId) {
 // ---------- NOTIFICATIONS FUNCTIONS ----------
 function listenNotifications() {
   db.collection('notifications').orderBy('createdAt', 'desc').limit(20).onSnapshot(snap => {
-    notifications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const allNotifs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    
+    if (isAdmin) {
+      notifications = allNotifs;
+    } else {
+      notifications = allNotifs.filter(n => 
+        n.targetRole === 'all' || 
+        !n.targetRole || 
+        (n.targetUserId && n.targetUserId === currentUser.uid)
+      );
+    }
+    
     updateNotifBadge();
   });
 }
@@ -1125,9 +1136,22 @@ function renderFavorites(app) {
 // NOTIFICATIONS
 // ============================================
 async function loadNotifications() {
+  if (!currentUser) { notifications = []; updateNotifBadge(); return; }
   try {
     const snap = await db.collection('notifications').orderBy('createdAt', 'desc').limit(20).get();
-    notifications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const allNotifs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    
+    // Filtre local selon le rôle
+    if (isAdmin) {
+      notifications = allNotifs;
+    } else {
+      notifications = allNotifs.filter(n => 
+        n.targetRole === 'all' || 
+        !n.targetRole || 
+        (n.targetUserId && n.targetUserId === currentUser.uid)
+      );
+    }
+    
     updateNotifBadge();
   } catch (e) { notifications = []; updateNotifBadge(); }
 }
@@ -1726,7 +1750,10 @@ async function renderAdminDashboard(app) {
       await db.collection('notifications').add({ 
         title: titleTrans, 
         message: messageTrans, 
-        type: 'promo', read: false, createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+        type: 'promo', 
+        targetRole: 'all',
+        read: false, 
+        createdAt: firebase.firestore.FieldValue.serverTimestamp() 
       });
       showMessage(t('notifSent'), 'success');
       document.getElementById('notifTitle').value = '';
@@ -2344,6 +2371,7 @@ document.getElementById('submitReviewBtn')?.addEventListener('click', async () =
       title: 'Nouvel avis',
       message: `${currentUser.displayName || 'Client'} a laissé un avis de ${currentRating} étoiles.`,
       type: 'review',
+      targetRole: 'admin',
       read: false,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
