@@ -148,7 +148,12 @@ const i18n = {
     saveConfig: "Anrejistre Konfigirasyon",
     linkMoncash: "Konekte kont MonCash ou",
     moncashPhone: "Nimewo MonCash ou",
-    moncashTerms: "Mwen aksepte kondisyon itilizasyon MonCash ak règleman konfidansyalite yo",
+    moncashTerms: "Mwen aksepte kondisyon itilizasyon MonCash ak règleman konfidansyalite nou an",
+    aiAssistant: "Asistan IA",
+    aiPageTitle: "Konvèsasyon ak IA",
+    aiPageDesc: "Poze asistan entèlijan nou an nenpòt kesyon sou platfòm lan oswa sou pwodui nou yo.",
+    aiWelcome: "Bonjou! Kouman mwen ka ede w jodi a?",
+    aiInputPlaceholder: "Ekri mesaj ou a...",
     connect: "Konekte",
     connected: "Konekte ak siksè",
     termsConsentTitle: "Kondisyon Itilizasyon",
@@ -174,8 +179,6 @@ const i18n = {
     notifBlocked: "Bloke pa navigatè a", notifGranted: "Otorize",
     notifRequest: "Otorize kounye a", notifSave: "Anrejistre preferans",
     notifPreferencesSaved: "Preferans notifikasyon anrejistre!",
-    accountInfo: "Enfòmasyon Kont", email: "Email", name: "Non", role: "Wòl", emailVerified: "Email Verifye",
-    yes: "Wi", no: "Non", resendVerifyEmail: "Voye email verifikasyon ankò",
     total: "Total", emptyCart: "Panyen ou vid",
     securePayment: "Peman Sekirize", contactUs: "Kontakte nou",
     favorites: "Favori", noFavorites: "Pa gen favori ankò",
@@ -315,6 +318,11 @@ const i18n = {
     linkMoncash: "Lier votre compte MonCash",
     moncashPhone: "Votre numéro MonCash",
     moncashTerms: "J'accepte les conditions d'utilisation et la politique de confidentialité de MonCash",
+    aiAssistant: "Assistant IA",
+    aiPageTitle: "Conversation avec l'IA",
+    aiPageDesc: "Posez à notre assistant intelligent toutes vos questions sur la plateforme ou sur nos produits.",
+    aiWelcome: "Bonjour ! Comment puis-je vous aider aujourd'hui ?",
+    aiInputPlaceholder: "Écrivez votre message...",
     connect: "Lier",
     connected: "Lié avec succès",
     termsConsentTitle: "Conditions d'Utilisation",
@@ -448,6 +456,11 @@ const i18n = {
     madeAdmin: "✅ Made admin!",
     madeClient: "✅ Made client!",
     searchPlaceholder: "🔍 Search a product...",
+    aiAssistant: "AI Assistant",
+    aiPageTitle: "Chat with AI",
+    aiPageDesc: "Ask our intelligent assistant any questions about the platform or our products.",
+    aiWelcome: "Hello! How can I help you today?",
+    aiInputPlaceholder: "Type your message...",
     allCategories: "All categories",
     priceMin: "Min price",
     priceMax: "Max price",
@@ -614,6 +627,11 @@ const i18n = {
     madeAdmin: "✅ ¡Hecho admin!",
     madeClient: "✅ ¡Hecho cliente!",
     searchPlaceholder: "🔍 Buscar un producto...",
+    aiAssistant: "Asistente IA",
+    aiPageTitle: "Chat con IA",
+    aiPageDesc: "Pregúntale a nuestro asistente inteligente cualquier cosa sobre la plataforma o nuestros productos.",
+    aiWelcome: "¡Hola! ¿Cómo puedo ayudarte hoy?",
+    aiInputPlaceholder: "Escribe tu mensaje...",
     allCategories: "Todas categorías",
     priceMin: "Precio mín",
     priceMax: "Precio máx",
@@ -665,15 +683,13 @@ const i18n = {
     updateProfile: "Actualizar perfil", profileUpdated: "¡Perfil actualizado con éxito!",
     phoneNumber: "Número de teléfono", saveProfile: "Guardar Perfil",
     addressRecommend: "Dirección (Recomendado)", phoneRecommend: "Teléfono (Recommandado)",
-    checkout: "Pagar ahora", total: "Total", emptyCart: "Tu carrito está vacío",
+    total: "Total", emptyCart: "Tu carrito está vacío",
     securePayment: "Pago Seguro", contactUs: "Contáctenos",
-    securePaymentInfo: "Pago 100% seguro",
     notifications: "Notificaciones", noNotifications: "No hay notificaciones",
     favorites: "Favoritos", noFavorites: "Aún no hay favoritos",
     reviews: "Reseñas", leaveReview: "Dejar una reseña", addReview: "Agregar una reseña", noReviews: "Aún no hay reseñas",
     rating: "Calificación", comment: "Comentario", submit: "Enviar", invalidAddress: "Dirección inválida",
     ratingError: "Elige una calificación (estrellas)", commentError: "Escribe un comentario", reviewSuccess: "¡Gracias por tu reseña!", reviewError: "Error enviando reseña",
-    servicesTitle: "Nuestros Servicios",
     servicesIntro: "Total Lakay ofrece varios servicios para facilitar su vida:",
     servicesOnline: "Ventas en línea:",
     servicesOnlineDesc: "Una gran selección de productos en varias categorías (electrónica, accesorios para el hogar, accesorios personales, etc.).",
@@ -683,7 +699,6 @@ const i18n = {
     servicesCustomerDesc: "Estamos disponibles para responder a todas sus preguntas a través de llamada directa, WhatsApp o correo electrónico.",
     servicesSecure: "Pago seguro:",
     servicesSecureDesc: "Aceptamos varios métodos de pago para su seguridad y comodidad.",
-    privacyTitle: "Política de Privacidad",
     privacyIntro: "En Total Lakay, nos tomamos su privacidad muy en serio. Aquí le mostramos cómo usamos y protegemos sus datos:",
     privacyData: "Recopilación de datos:",
     privacyDataDesc: "Solo recopilamos la información necesaria para procesar sus pedidos (nombre, dirección, correo electrónico, número de teléfono).",
@@ -693,7 +708,6 @@ const i18n = {
     privacySharingDesc: "Nunca vendemos ni compartimos su información personal con terceros sin su consentimiento, a menos que la ley lo exija.",
     privacyRights: "Sus derechos:",
     privacyRightsDesc: "Tiene derecho a modificar o eliminar su cuenta en cualquier momento en la configuración de su perfil.",
-    termsTitle: "Condiciones de Uso",
     termsIntro: "Al usar la plataforma Total Lakay, usted acepta las siguientes condiciones:",
     termsAccount: "Cuenta de usuario:",
     termsAccountDesc: "Usted es responsable de mantener la seguridad de su contraseña. Todas las actividades en su cuenta son su responsabilidad.",
@@ -706,29 +720,6 @@ const i18n = {
     termsConsentTitle: "Condiciones de Uso",
     termsConsentDesc: "Para continuar usando Total Lakay, debe aceptar nuestros términos de uso y nuestra política de privacidad.",
     accept: "Aceptar", decline: "Rechazar",
-    cancellationReason: "Motivo de cancelación", reasonPlaceholder: "¿Por qué cancela este pedido?",
-    reasonRequired: "Debe proporcionar un motivo para la cancelación.",
-    recentProducts: "Productos Recientes", categoriesTitle: "Categorías", exploreCategories: "Explore todas nuestras categorías",
-    school: "Escuela", work: "Trabajo", home: "Hogar", electronics: "Electrónica", beauty: "Belleza", clothing: "Ropa",
-    stock: "Cantidad en stock", category: "Categoría", colors: "Colores (separados por coma)", sizes: "Tallas (separadas por coma)",
-    selectColor: "Seleccionar Color", selectSize: "Seleccionar Talla", quantity: "Cantidad", outOfStock: "Agotado",
-    categoryClothingAccessories: "👕 Ropa y Accesorios",
-    categorySchoolOffice: "🎓 Escuela y Trabajo",
-    categoryHomePersonal: "🏠 Hogar y Personal",
-    categoryElectronicsTech: "📱 Electrónica",
-    notifSettings: "Ajustes de Notificaciones", notifPushEnable: "Activar notificaciones push",
-    notifNewProducts: "Nuevos Productos", notifSpecialPrices: "Precios Especiales & Promos",
-    notifUpdates: "Actualizaciones del sitio", notifStatus: "Estado de Notificaciones",
-    notifBlocked: "Bloqueado por el navegador", notifGranted: "Autorizado",
-    notifRequest: "Autorizar ahora", notifSave: "Guardar preferencias",
-    notifPreferencesSaved: "¡Preferencias de notificaciones guardadas!",
-    accountInfo: "Información de la Cuenta", email: "Correo", name: "Nombre", role: "Rol", emailVerified: "Correo Verificado",
-    yes: "Sí", no: "No", resendVerifyEmail: "Reenviar correo de verificación",
-    servicesTitle: "Nuestros Servicios", privacyTitle: "Privacidad", termsTitle: "Términos",
-    phoneRecommend: "Tu número de teléfono", addressRecommend: "Tu dirección completa", phoneRequired: "Teléfono requerido",
-    cart: "Carrito", checkout: "Pagar ahora", securePaymentInfo: "Pago 100% seguro",
-    noNotifications: "No hay notificaciones por ahora",
-    profile: "Perfil", phone: "Teléfono", phonePlaceholder: "Ex: +509 1234 5678",
   }
 };
 
@@ -885,13 +876,9 @@ function applyLanguage() {
     const key = el.getAttribute('data-i18n-placeholder');
     if (i18n[currentLang]?.[key]) el.placeholder = i18n[currentLang][key];
   });
-  // Mettre à jour les options de catégorie manuellement si elles ne sont pas gérées par data-i18n
-  // updateCategoryOptions(); // Supprimé car redondant avec data-i18n dans l'HTML
 
   if (currentView) renderView(currentView);
 }
-
-// updateCategoryOptions a été supprimé car les options ont déjà des attributs data-i18n
 
 function showMessage(message, type = 'success') {
   const existingToast = document.querySelector('.toast');
@@ -1119,6 +1106,22 @@ document.getElementById('logoutBtn')?.addEventListener('click', () => {
 // ============================================
 // MENU DROPDOWN
 // ============================================
+document.getElementById('navShop')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  renderView('shop');
+});
+
+document.getElementById('navAI')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  renderView('aiPage');
+});
+
+document.getElementById('menuAI')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  document.getElementById('dropdownMenu')?.classList.add('hidden');
+  renderView('aiPage');
+});
+
 document.getElementById('menuBtn')?.addEventListener('click', (e) => {
   e.stopPropagation();
   document.getElementById('dropdownMenu')?.classList.toggle('hidden');
@@ -1178,13 +1181,7 @@ async function loadNotifications() {
     updateNotifBadge();
   } catch (e) { notifications = []; updateNotifBadge(); }
 }
-function updateNotifBadge() {
-  const badge = document.getElementById('notifBadge');
-  if (!badge) return;
-  const unread = notifications.filter(n => !n.read).length;
-  if (unread > 0) { badge.textContent = unread > 99 ? '99+' : unread; badge.classList.remove('hidden'); }
-  else badge.classList.add('hidden');
-}
+
 document.getElementById('notifBtn')?.addEventListener('click', (e) => {
   e.stopPropagation();
   document.getElementById('notifModal').classList.remove('hidden');
@@ -1478,6 +1475,7 @@ async function renderView(view) {
     switch (view) {
       case 'home': await renderHome(app); break;
       case 'shop': await renderShop(app); break;
+      case 'aiPage': await renderAIPage(app); break;
       case 'orders': await renderProfile(app); break;
       case 'profile': await renderProfile(app); break;
       case 'specialOffers': await renderSpecialOffers(app); break;
@@ -1518,7 +1516,6 @@ async function renderAdminDashboard(app) {
   await loadMoncashConfig();
   await loadAllData();
   const onlineCount = await getOnlineUsersCount();
-  // Update online count in UI immediately if possible
   setTimeout(() => {
     const el = document.getElementById('onlineCountAdmin');
     if (el) el.textContent = onlineCount;
@@ -2078,6 +2075,108 @@ async function renderShop(app) {
   }
   attachBuyButtons();
   setupSearchAndFilters();
+}
+
+async function renderAIPage(app) {
+    if (!currentUser) {
+        app.innerHTML = `
+            <div class="card text-center" style="padding: 3rem; animation: viewFadeIn 0.3s ease;">
+                <h2 style="color:var(--blue-deep);">🔐 ${t('loginRequired')}</h2>
+                <p style="margin: 1.5rem 0; color: var(--text-soft);">${t('aiLoginRequiredDesc') || 'Ou dwe konekte pou w ka pale ak asistan entèlijan nou an.'}</p>
+                <button class="btn btn-gold" id="loginFromAI">🔐 ${t('login')}</button>
+            </div>
+        `;
+        document.getElementById('loginFromAI')?.addEventListener('click', () => document.getElementById('authBtn')?.click());
+        return;
+    }
+
+    app.innerHTML = `
+        <div class="card-premium" style="max-width: 900px; margin: 0 auto; animation: viewFadeIn 0.4s ease; padding: 2rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="display:flex; align-items:center; gap:0.8rem; color:var(--blue-deep); margin:0;">🤖 ${t('aiAssistant')}</h2>
+                    <p style="color:var(--text-soft); margin: 0.5rem 0 0 0;">${t('aiPageDesc')}</p>
+                </div>
+                <div style="background: var(--gold-pale); padding: 0.5rem 1rem; border-radius: 20px; color: var(--blue-deep); font-weight: 600; font-size: 0.85rem;">
+                    ✨ Total Lakay Intelligence
+                </div>
+            </div>
+            
+            <div class="ai-chat-interface" style="height: 550px; display: flex; flex-direction: column; background: var(--white); border-radius: 16px; border: 1px solid var(--gray-200); box-shadow: var(--shadow-md); overflow:hidden; position: relative;">
+                <div class="chatbot-messages" id="aiPageMessages" style="flex: 1; padding: 1.5rem; overflow-y:auto; background: linear-gradient(to bottom, #fdfdfd, #ffffff); display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="message bot" style="background: var(--gray-100); align-self: flex-start; border-radius: 16px 16px 16px 4px; padding: 1rem; max-width: 80%; line-height: 1.5;">
+                        👋 ${t('aiWelcome')}
+                    </div>
+                </div>
+                
+                <div style="padding: 1.2rem; background: white; border-top: 1px solid var(--gray-100);">
+                    <div class="chatbot-input" style="display: flex; gap: 0.8rem; background: #f8f9fa; padding: 0.5rem; border-radius: 30px; border: 2px solid var(--gray-100); transition: border-color 0.3s ease;">
+                        <input type="text" id="aiPageInput" placeholder="${t('aiInputPlaceholder')}" style="flex:1; border:none; background:transparent; padding: 0.8rem 1.2rem; outline:none; font-size: 1rem; margin:0 !important;">
+                        <button id="sendAiPageMsg" style="background: var(--gold); color: var(--blue-deep); width: 48px; height: 48px; border-radius: 50%; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size: 1.2rem; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 10px rgba(200,150,62,0.3);">
+                            📤
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    const input = document.getElementById('aiPageInput');
+    const btn = document.getElementById('sendAiPageMsg');
+
+    input.focus();
+
+    btn.addEventListener('click', () => sendAIPageMessage());
+    input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendAIPageMessage();
+    });
+}
+
+async function sendAIPageMessage() {
+    const input = document.getElementById('aiPageInput');
+    const messages = document.getElementById('aiPageMessages');
+    if (!input || !messages) return;
+    
+    const question = input.value.trim();
+    if (!question) return;
+    
+    // User message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'message user';
+    userMsg.style = 'background: var(--gold); color: var(--blue-deep); align-self: flex-end; border-radius: 16px 16px 4px 16px; padding: 1rem; max-width: 80%; line-height: 1.5; font-weight: 500; animation: slideUp 0.3s ease-out;';
+    userMsg.textContent = question;
+    messages.appendChild(userMsg);
+    
+    input.value = '';
+    messages.scrollTop = messages.scrollHeight;
+    
+    // Bot typing
+    const typingEl = document.createElement('div');
+    typingEl.className = 'message bot typing';
+    typingEl.style = 'background: #f0f0f0; color: #888; align-self: flex-start; border-radius: 16px 16px 16px 4px; padding: 0.8rem 1.2rem; font-style: italic; animation: fadeIn 0.3s ease;';
+    typingEl.textContent = '🤔 Analize...';
+    messages.appendChild(typingEl);
+    messages.scrollTop = messages.scrollHeight;
+    
+    try {
+        const answer = await askAIAssistant(question);
+        if (typingEl) typingEl.remove();
+        
+        const botMsg = document.createElement('div');
+        botMsg.className = 'message bot';
+        botMsg.style = 'background: var(--gray-100); color: var(--blue-deep); align-self: flex-start; border-radius: 16px 16px 16px 4px; padding: 1rem; max-width: 85%; line-height: 1.5; animation: fadeIn 0.4s ease; border-left: 4px solid var(--gold);';
+        botMsg.textContent = answer;
+        messages.appendChild(botMsg);
+    } catch (err) {
+        if (typingEl) typingEl.remove();
+        const botMsg = document.createElement('div');
+        botMsg.className = 'message bot';
+        botMsg.style = 'background: #fee; color: #c00; align-self: flex-start; border-radius: 12px; padding: 1rem;';
+        botMsg.textContent = "Mwen gen yon ti pwoblèm koneksyon. Tanpri eseye ankò.";
+        messages.appendChild(botMsg);
+    }
+    
+    messages.scrollTop = messages.scrollHeight;
 }
 
 async function renderSpecialOffers(app) {
@@ -2792,7 +2891,7 @@ function renderTerms(app) {
 
 const AIConfig = {
     provider: 'gemini', // 'gemini' | 'openai' | 'claude'
-    apiKey: 'AIzaSyB1DeWg50GnDttlYBJZsMzzBKoW4w-87uA.', // 🔒 À mettre dans Firebase Remote Config
+    apiKey: 'AIzaSyB1DeWg50GnDttlYBJZsMzzBKoW4w-87uA', // 🔒 À mettre dans Firebase Remote Config
     model: 'gemini-1.5-flash', // Modèle rapide et économique
     maxTokens: 500,
     temperature: 0.7
@@ -2847,10 +2946,10 @@ Informations boutique :
 - WhatsApp : +509 38824664
 
 Règles :
-- Réponds dans la langue ${currentLang}
-- Sois amical et concis
-- Si tu ne sais pas, propose de contacter le support WhatsApp
-- Maximum 3 phrases
+- Réponds UNIQUEMENT dans la langue ${currentLang}
+- Sois TRÈS CONCIS (max 2 phrases)
+- Utilise des emojis pour être amical
+- Si la question n'est pas claire, demande précision brièvement.
 `;
 
     const fullPrompt = `${context}\n\nClient: ${question}\nAssistant:`;
@@ -3010,19 +3109,16 @@ async function callAI(prompt) {
 // 7. INTÉGRATION DANS L'INTERFACE
 // ============================================
 
-function addChatbotToNavbar() {
-    const nav = document.querySelector('.nav-links');
-    if (!nav || document.getElementById('chatbotBtn')) return;
-    
-    const chatbotBtn = document.createElement('button');
-    chatbotBtn.id = 'chatbotBtn';
-    chatbotBtn.className = 'nav-item';
-    chatbotBtn.innerHTML = '🤖 <span>Assistant</span>';
-    chatbotBtn.addEventListener('click', toggleChatbot);
-    nav.appendChild(chatbotBtn);
-}
+// Suppression du bouton dynamique car on utilise navAI dans le HTML
+function addChatbotToNavbar() { return; }
 
 function toggleChatbot() {
+    if (!currentUser) {
+        showMessage(t('loginRequired'), 'error');
+        document.getElementById('authBtn')?.click();
+        return;
+    }
+
     let chatbot = document.getElementById('chatbotContainer');
     
     if (chatbot) {
@@ -3035,8 +3131,11 @@ function toggleChatbot() {
     chatbot.innerHTML = `
         <div class="chatbot-window">
             <div class="chatbot-header">
-                <span>🤖 Assistant Total Lakay</span>
-                <button id="closeChatbot">✕</button>
+                <span>🤖 Assistant</span>
+                <div style="display:flex; gap:10px;">
+                    <button id="openAIPageFromPop" title="Plein écran" style="background:none; border:none; color:white; cursor:pointer; font-size:1rem;">🔲</button>
+                    <button id="closeChatbot" style="background:none; border:none; color:white; cursor:pointer; font-size:1rem;">✕</button>
+                </div>
             </div>
             <div class="chatbot-messages" id="chatbotMessages">
                 <div class="message bot">
@@ -3055,6 +3154,11 @@ function toggleChatbot() {
     document.getElementById('closeChatbot').addEventListener('click', () => {
         chatbot.classList.add('hidden');
     });
+
+    document.getElementById('openAIPageFromPop').addEventListener('click', () => {
+        chatbot.classList.add('hidden');
+        renderView('aiPage');
+    });
     
     document.getElementById('sendChatbotMsg').addEventListener('click', sendChatbotMessage);
     document.getElementById('chatbotInput').addEventListener('keypress', (e) => {
@@ -3069,18 +3173,37 @@ async function sendChatbotMessage() {
     
     if (!question) return;
     
-    messages.innerHTML += `<div class="message user">${question}</div>`;
+    // Message utilisateur avec animation
+    const userDiv = document.createElement('div');
+    userDiv.className = 'message user';
+    userDiv.style.animation = 'aiSlideUp 0.3s ease-out';
+    userDiv.textContent = question;
+    messages.appendChild(userDiv);
     input.value = '';
     
-    messages.innerHTML += `<div class="message bot typing">🤔 Réflexion...</div>`;
+    // Indicateur de réflexion animé
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message bot typing';
+    typingDiv.innerHTML = '<span class="dot-flashing"></span> 🤖 Analize...';
+    messages.appendChild(typingDiv);
     messages.scrollTop = messages.scrollHeight;
     
-    const answer = await askAIAssistant(question);
-    
-    const typingEl = messages.querySelector('.typing');
-    if (typingEl) typingEl.remove();
-    
-    messages.innerHTML += `<div class="message bot">${answer}</div>`;
+    try {
+        const answer = await askAIAssistant(question);
+        if (typingDiv) typingDiv.remove();
+        
+        const botDiv = document.createElement('div');
+        botDiv.className = 'message bot';
+        botDiv.style.animation = 'fadeIn 0.3s ease';
+        botDiv.textContent = answer;
+        messages.appendChild(botDiv);
+    } catch (e) {
+        if (typingDiv) typingDiv.remove();
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'message bot';
+        errorDiv.textContent = "Mwen gen yon pwoblèm. Eseye ankò.";
+        messages.appendChild(errorDiv);
+    }
     messages.scrollTop = messages.scrollHeight;
 }
 
