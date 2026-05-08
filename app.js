@@ -137,7 +137,16 @@ const i18n = {
         categoryHome: "🏠 Kay / Maison",
         categoryBeauty: "💄 Bote / Beauté",
         categoryOther: "📦 Lòt / Autres",
-        termsConsentTitle: "Kondisyon Itilizasyon",
+        categoryClothingAccessories: "👕 Vètman ak Akseswa",
+        categorySchoolOffice: "🎓 Lekòl ak Travay",
+        categoryHomePersonal: "🏠 Kay ak Pèsonèl",
+        categoryElectronicsTech: "📱 Elektwonik",
+        balance: "Balans",
+        myBalance: "Balans ou",
+        refund: "Lajan Rembourse",
+        onlineClients: "Kliyan an liy",
+        moncashSettings: "Anviwònman MonCash (Peman Reyèl)",
+        saveConfig: "Anrejistre Konfigirasyon",
         termsConsentDesc: "Pou w ka kontinye sèvi ak Total Lakay, ou dwe aksepte kondisyon itilizasyon nou yo ak politik konfidansyalite nou an.",
         accept: "Aksepte", decline: "Refize",
         cancellationReason: "Rezon anilasyon", reasonPlaceholder: "Poukisa ou anile kòmand sa?",
@@ -301,6 +310,16 @@ const i18n = {
         categoryHome: "🏠 Maison",
         categoryBeauty: "💄 Beauté",
         categoryOther: "📦 Autres",
+        categoryClothingAccessories: "👕 Vêtements & Accessoires",
+        categorySchoolOffice: "🎓 École & Travail",
+        categoryHomePersonal: "🏠 Maison & Personnel",
+        categoryElectronicsTech: "📱 Électronique",
+        balance: "Solde",
+        myBalance: "Votre solde",
+        refund: "Argent Remboursé",
+        onlineClients: "Clients en ligne",
+        moncashSettings: "Paramètres MonCash (Paiement Réel)",
+        saveConfig: "Enregistrer la Configuration",
         termsConsentTitle: "Conditions d'Utilisation",
         termsConsentDesc: "Pour continuer à utiliser Total Lakay, vous devez accepter nos conditions d'utilisation et notre politique de confidentialité.",
         accept: "Accepter", decline: "Refuser",
@@ -464,6 +483,16 @@ const i18n = {
         categoryHome: "🏠 Home",
         categoryBeauty: "💄 Beauty",
         categoryOther: "📦 Other",
+        categoryClothingAccessories: "👕 Clothing & Accessories",
+        categorySchoolOffice: "🎓 School & Work",
+        categoryHomePersonal: "🏠 Home & Personal",
+        categoryElectronicsTech: "📱 Electronics",
+        balance: "Balance",
+        myBalance: "Your balance",
+        refund: "Money Refunded",
+        onlineClients: "Online Clients",
+        moncashSettings: "MonCash Settings (Real Payment)",
+        saveConfig: "Save Configuration",
         termsConsentTitle: "Terms of Use",
         termsConsentDesc: "To continue using Total Lakay, you must accept our terms of use and our privacy policy.",
         accept: "Accept", decline: "Decline",
@@ -632,6 +661,16 @@ const i18n = {
         categoryHome: "🏠 Hogar",
         categoryBeauty: "💄 Belleza",
         categoryOther: "📦 Otros",
+        categoryClothingAccessories: "👕 Ropa y Accesorios",
+        categorySchoolOffice: "🎓 Escuela y Trabajo",
+        categoryHomePersonal: "🏠 Hogar y Personal",
+        categoryElectronicsTech: "📱 Electrónica",
+        balance: "Saldo",
+        myBalance: "Tu saldo",
+        refund: "Dinero Reembolsado",
+        onlineClients: "Clientes en línea",
+        moncashSettings: "Ajustes de MonCash (Pago Real)",
+        saveConfig: "Guardar Configuración",
         profile: "Perfil", phone: "Teléfono", phonePlaceholder: "Ej: +509 1234 5678",
         updateProfile: "Actualizar perfil", profileUpdated: "¡Perfil actualizado con éxito!",
         phoneNumber: "Número de teléfono", saveProfile: "Guardar Perfil",
@@ -857,24 +896,13 @@ function applyLanguage() {
         const key = el.getAttribute('data-i18n-placeholder');
         if (i18n[currentLang]?.[key]) el.placeholder = i18n[currentLang][key];
     });
-    // Mettre à jour les options de catégorie
-    updateCategoryOptions();
+    // Mettre à jour les options de catégorie manuellement si elles ne sont pas gérées par data-i18n
+    // updateCategoryOptions(); // Supprimé car redondant avec data-i18n dans l'HTML
+    
     if (currentView) renderView(currentView);
 }
 
-function updateCategoryOptions() {
-    const categorySelect = document.getElementById('categoryFilter');
-    if (!categorySelect) return;
-    const options = categorySelect.querySelectorAll('option');
-    const categoryKeys = ['all', 'food', 'electronics', 'clothing', 'home', 'beauty', 'other'];
-    const translationKeys = ['allCategories', 'categoryFood', 'categoryElectronics', 'categoryClothing', 'categoryHome', 'categoryBeauty', 'categoryOther'];
-
-    options.forEach((option, index) => {
-        if (translationKeys[index]) {
-            option.textContent = t(translationKeys[index]);
-        }
-    });
-}
+// updateCategoryOptions a été supprimé car les options ont déjà des attributs data-i18n
 
 function showMessage(message, type = 'success') {
     const existingToast = document.querySelector('.toast');
@@ -1534,12 +1562,12 @@ async function renderAdminDashboard(app) {
       </div>
       <div class="admin-stat-card" style="border-left-color: #3498db;">
         <div class="admin-stat-val" id="onlineCountAdmin">...</div>
-        <div class="admin-stat-label">👥 Kliyan an liy</div>
+        <div class="admin-stat-label">👥 ${t('onlineClients')}</div>
       </div>
     </div>
 
     <div class="card-premium" style="margin-bottom:2rem;">
-      <h3>💳 Anviwònman MonCash (Peman Reyèl)</h3>
+      <h3>💳 ${t('moncashSettings')}</h3>
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-top:1rem;">
         <div>
           <label>Client ID</label>
@@ -1557,7 +1585,7 @@ async function renderAdminDashboard(app) {
           <option value="live" ${moncashConfig.mode==='live'?'selected':''}>Live (Reyèl)</option>
         </select>
       </div>
-      <button id="saveMcConfig" class="btn btn-blue" style="width:100%;">💾 Anrejistre Konfigirasyon MonCash</button>
+      <button id="saveMcConfig" class="btn btn-blue" style="width:100%;">💾 ${t('saveConfig')}</button>
     </div>
 
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2rem;">
@@ -1855,8 +1883,8 @@ async function refundUser(userId, amount, orderId) {
             const currentBalance = userDoc.data().balance || 0;
             transaction.update(userRef, { balance: currentBalance + amount, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
             transaction.set(db.collection('notifications').doc(), {
-                targetUserId: userId, title: 'Lajan Rembourse',
-                message: `Nou remèt ou $${amount} pou kòmand #${orderId.substring(0, 6)} ki anile a.`,
+                targetUserId: userId, title: t('refund'),
+                message: `Nou remèt ou ${formatPrice(amount)} pou kòmand #${orderId.substring(0, 6)} ki anile a.`,
                 type: 'refund', read: false, createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
         });
@@ -2032,7 +2060,7 @@ async function renderProfile(app) {
           <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:1.5rem; margin-bottom:2rem;">
             <div class="profile-stat-box" style="background:var(--blue-deep); color:white;">
               <div class="profile-stat-val" style="color:var(--gold);">${formatPrice(currentUserData?.balance || 0)}</div>
-              <div style="font-size:0.9rem; opacity:0.8; font-weight:600;">Balans ou</div>
+              <div style="font-size:0.9rem; opacity:0.8; font-weight:600;">${t('myBalance')}</div>
             </div>
             <div class="profile-stat-box">
               <div class="profile-stat-val">${totalOrders}</div>
