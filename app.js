@@ -4,6 +4,12 @@
    Recherche & Filtres - Toutes traductions
    ============================================ */
 
+// ---------- GESTION DES ERREURS GLOBALE ----------
+window.onerror = function (msg, url, lineNo, columnNo, error) {
+  console.error('Total Lakay Error:', msg, url, lineNo);
+  return false;
+};
+
 // ---------- CONFIGURATION FIREBASE ----------
 const firebaseConfig = {
   apiKey: "AIzaSyBA_cEX_pHmlUZ4xv10GIOLVOv9g_-iolQ",
@@ -772,7 +778,7 @@ function renderCart() {
     total += item.price;
     return `
       <div class="cart-item" style="display:flex; align-items:center; gap:1rem; padding:0.8rem; border-bottom:1px solid #eee;">
-        <img src="${item.image || 'logo.jpeg'}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; border-radius:8px;" onerror="this.src='logo.jpeg'">
+        <img src="${item.image || 'logo.jpeg'}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; border-radius:8px;" loading="lazy" onerror="this.src='logo.jpeg'">
         <div style="flex:1;">
           <div style="font-weight:700; color:var(--blue-deep);">${item.name}</div>
           <div style="color:var(--gold); font-weight:600;">${formatPrice(item.price)}</div>
@@ -1507,7 +1513,7 @@ function productCardHTML(product) {
     <div class="product-card" data-id="${product.id}">
       ${hasPromo ? `<div class="product-badge">🔥 ${t('specialPrice')}</div>` : ''}
       <button class="wishlist-btn ${favorites.includes(product.id) ? 'active' : ''}" onclick="toggleFavorite('${product.id}')">❤️</button>
-      <img src="${product.image || 'logo.jpeg'}" alt="${gt(product.name)}" class="product-img" onerror="this.src='logo.jpeg'">
+      <img src="${product.image || 'logo.jpeg'}" alt="${gt(product.name)}" class="product-img" loading="lazy" onerror="this.src='logo.jpeg'">
       <div class="product-info">
         <div class="product-title">${gt(product.name)}</div>
         ${product.description ? `<div class="product-description">${gt(product.description).substring(0, 60)}...</div>` : ''}
@@ -1538,7 +1544,7 @@ async function renderAdminDashboard(app) {
   const totalClients = allUsers.filter(u => u.role === 'client').length;
   const pendingCount = orders.filter(o => o.status === 'pending').length;
   const confirmedCount = orders.filter(o => o.status === 'confirmed').length;
-  const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
+  const totalRevenue = orders.filter(o => o.status === 'confirmed' || o.status === 'delivered').reduce((sum, o) => sum + (o.price || 0), 0);
 
   app.innerHTML = `
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
