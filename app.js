@@ -1560,7 +1560,7 @@ async function renderAdminDashboard(app) {
         <div class="admin-stat-val">${formatPrice(totalRevenue)}</div>
         <div class="admin-stat-label">💰 ${t('revenue')}</div>
       </div>
-      <div class="admin-stat-card" style="border-left-color: #3498db;">
+      <div class="admin-stat-card" style="border-left-color: #3498db; cursor:pointer;" id="onlineStatsCard">
         <div class="admin-stat-val" id="onlineCountAdmin">...</div>
         <div class="admin-stat-label">👥 ${t('onlineClients')}</div>
       </div>
@@ -1864,6 +1864,17 @@ async function renderAdminDashboard(app) {
             }
         });
     });
+
+    // Stats Card Presence Click
+    document.getElementById('onlineStatsCard')?.addEventListener('click', () => {
+        document.getElementById('presenceModal')?.classList.remove('hidden');
+        renderPresenceList();
+    });
+
+    // Close Presence Modal
+    document.getElementById('closePresenceModal')?.addEventListener('click', () => {
+        document.getElementById('presenceModal')?.classList.add('hidden');
+    });
 }
 
 // ---------- NEW ADMIN FUNCTIONS ----------
@@ -1909,6 +1920,45 @@ async function getOnlineUsersCount() {
         return snap.size;
     } catch (e) { return 0; }
 }
+
+async function renderPresenceList() {
+    const list = document.getElementById('presenceList');
+    if (!list) return;
+    list.innerHTML = `<p class="text-center" style="padding:2rem;">⏳ ${t('loading')}</p>`;
+    try {
+        const snap = await db.collection('users').orderBy('lastSeen', 'desc').limit(50).get();
+        const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000);
+
+        list.innerHTML = users.map(u => {
+            const isOnline = u.lastSeen?.toDate?.() >= fiveMinsAgo;
+            return `
+            <div class="user-presence-item">
+                <div style="display:flex; align-items:center;">
+                    <span class="presence-status-dot ${isOnline ? 'status-online' : 'status-offline'}"></span>
+                    <div>
+                        <div style="font-weight:700; color:var(--blue-deep);">${u.displayName || u.email}</div>
+                        <div style="font-size:0.75rem; color:var(--text-soft);">${u.role}</div>
+                    </div>
+                </div>
+                <div style="font-size:0.7rem; color:var(--text-soft);">
+                    ${u.lastSeen?.toDate?.()?.toLocaleTimeString() || '---'}
+                </div>
+            </div>`;
+        }).join('');
+    } catch (e) { list.innerHTML = `<p class="text-center">${t('errorOccurred')}</p>`; }
+}
+
+// ---------- SCROLL LISTENER FOR NAVBAR ----------
+window.addEventListener('scroll', () => {
+    const nav = document.querySelector('.navbar');
+    if (!nav) return;
+    if (window.scrollY > 40) {
+        nav.classList.add('scrolled');
+    } else {
+        nav.classList.remove('scrolled');
+    }
+});
 
 // ============================================
 // PAGES CLIENT
