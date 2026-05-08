@@ -159,23 +159,36 @@ body {
   top: 0;
   z-index: 100;
   border-bottom: 2px solid var(--gold);
-  transition: padding 0.3s ease, background 0.3s ease;
+  transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease, height 0.3s ease;
+  will-change: padding, background;
 }
 
 .navbar.scrolled {
-  padding: 0.4rem 2rem;
+  padding: 0.3rem 1.5rem;
   background: var(--blue-deep);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  border-bottom-width: 1px;
 }
 
-.navbar.scrolled .logo-text small {
-  display: none;
+.navbar.scrolled .logo-text small,
+.navbar.scrolled .lang-select,
+.navbar.scrolled #currencySwitch {
+  display: none !important;
 }
 
 .navbar.scrolled .logo-img {
-  width: 35px !important;
-  height: 35px !important;
+  width: 32px !important;
+  height: 32px !important;
   border-width: 1px;
+}
+
+.navbar.scrolled .logo-text {
+  font-size: 1.1rem;
+}
+
+.navbar.scrolled .nav-item {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.8rem;
 }
 
 .logo-area {
@@ -231,6 +244,16 @@ body {
   color: var(--white) !important;
   background: rgba(200, 150, 62, 0.2);
   border: 1px solid rgba(200, 150, 62, 0.4);
+}
+
+/* Hide non-essential nav items when scrolled on small screens */
+@media (max-width: 900px) {
+  .navbar.scrolled .nav-item span {
+    display: none;
+  }
+  .navbar.scrolled .nav-links {
+    gap: 0.2rem;
+  }
 }
 
 /* ============================================
@@ -1945,132 +1968,211 @@ input:focus+.slider {
 input:checked+.slider:before {
   transform: translateX(24px);
 }
+
 /* ============================================
    MODULE IA - CHATBOT & RECOMMENDATIONS
    ============================================ */
 
 /* Chatbot Window */
 .chatbot-window {
-    position: fixed;
-    bottom: 20px;
-    right: 90px;
-    width: 350px;
-    height: 500px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    z-index: 999;
-    display: flex;
-    flex-direction: column;
-    animation: aiSlideUp 0.3s ease;
-    border: 2px solid var(--gold);
+  position: fixed;
+  bottom: 20px;
+  right: 90px;
+  width: 350px;
+  height: 500px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  animation: aiSlideUp 0.3s ease;
+  border: 2px solid var(--gold);
 }
 
 .chatbot-header {
-    background: linear-gradient(135deg, var(--blue-deep), var(--blue-dark));
-    color: white;
-    padding: 1rem;
-    border-radius: 14px 14px 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 700;
+  background: linear-gradient(135deg, var(--blue-deep), var(--blue-dark));
+  color: white;
+  padding: 1rem;
+  border-radius: 14px 14px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
 }
 
 .chatbot-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
 }
 
 .message {
-    padding: 0.8rem 1rem;
-    border-radius: 16px;
-    max-width: 85%;
-    font-size: 0.9rem;
-    line-height: 1.4;
-    animation: fadeIn 0.3s ease;
+  padding: 0.8rem 1rem;
+  border-radius: 16px;
+  max-width: 85%;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  animation: fadeIn 0.3s ease;
 }
 
 .message.bot {
-    background: var(--gray-100);
-    align-self: flex-start;
-    border-bottom-left-radius: 4px;
+  background: var(--gray-100);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
 }
 
 .message.user {
-    background: var(--gold);
-    color: var(--blue-deep);
-    align-self: flex-end;
-    border-bottom-right-radius: 4px;
-    font-weight: 500;
+  background: var(--gold);
+  color: var(--blue-deep);
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+  font-weight: 500;
 }
 
 .message.typing {
-    background: #f0f0f0;
-    color: #999;
-    font-style: italic;
+  background: #f0f0f0;
+  color: #999;
+  font-style: italic;
 }
 
 .chatbot-input {
-    padding: 0.8rem;
-    border-top: 1px solid var(--gray-200);
-    display: flex;
-    gap: 0.5rem;
+  padding: 0.8rem;
+  border-top: 1px solid var(--gray-200);
+  display: flex;
+  gap: 0.5rem;
 }
 
 .chatbot-input input {
-    flex: 1;
-    border: 2px solid var(--gray-200);
-    border-radius: 25px;
-    padding: 0.6rem 1rem;
-    margin: 0;
+  flex: 1;
+  border: 2px solid var(--gray-200);
+  border-radius: 25px;
+  padding: 0.6rem 1rem;
+  margin: 0;
 }
 
 .chatbot-input button {
-    background: var(--gold);
-    color: var(--blue-deep);
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    font-size: 1.2rem;
-    transition: var(--transition);
+  background: var(--gold);
+  color: var(--blue-deep);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: var(--transition);
 }
 
 .chatbot-input button:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 /* AI Recommendations Section */
 .ai-section {
-    margin: 3rem 0;
-    padding: 2rem;
-    background: linear-gradient(135deg, rgba(200,150,62,0.05), rgba(10,25,47,0.02));
-    border-radius: var(--radius);
-    border: 2px dashed var(--gold-pale);
+  margin: 3rem 0;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(200, 150, 62, 0.05), rgba(10, 25, 47, 0.02));
+  border-radius: var(--radius);
+  border: 2px dashed var(--gold-pale);
 }
 
 .ai-section h3 {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
 }
 
 @media (max-width: 768px) {
-    .chatbot-window {
-        width: 100%;
-        height: 100%;
-        bottom: 0;
-        right: 0;
-        border-radius: 0;
-    }
+  .chatbot-window {
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    right: 0;
+    border-radius: 0;
+  }
 }
 
-@keyframes aiSlideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } } @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-.dot-flashing { position: relative; width: 10px; height: 10px; border-radius: 5px; background-color: var(--gold); color: var(--gold); animation: dotFlashing 1s infinite linear alternate; animation-delay: .5s; } .dot-flashing::before, .dot-flashing::after { content: ''; display: inline-block; position: absolute; top: 0; } .dot-flashing::before { left: -15px; width: 10px; height: 10px; border-radius: 5px; background-color: var(--gold); color: var(--gold); animation: dotFlashing 1s infinite alternate; animation-delay: 0s; } .dot-flashing::after { left: 15px; width: 10px; height: 10px; border-radius: 5px; background-color: var(--gold); color: var(--gold); animation: dotFlashing 1s infinite alternate; animation-delay: 1s; } @keyframes dotFlashing { 0% { background-color: var(--gold); } 50%, 100% { background-color: #ebe6ff; } } .ai-bubble:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 15px 35px rgba(200,150,62,0.4); }
+@keyframes aiSlideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.dot-flashing {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: var(--gold);
+  color: var(--gold);
+  animation: dotFlashing 1s infinite linear alternate;
+  animation-delay: .5s;
+}
+
+.dot-flashing::before,
+.dot-flashing::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+
+.dot-flashing::before {
+  left: -15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: var(--gold);
+  color: var(--gold);
+  animation: dotFlashing 1s infinite alternate;
+  animation-delay: 0s;
+}
+
+.dot-flashing::after {
+  left: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: var(--gold);
+  color: var(--gold);
+  animation: dotFlashing 1s infinite alternate;
+  animation-delay: 1s;
+}
+
+@keyframes dotFlashing {
+  0% {
+    background-color: var(--gold);
+  }
+
+  50%,
+  100% {
+    background-color: #ebe6ff;
+  }
+}
+
+.ai-bubble:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 15px 35px rgba(200, 150, 62, 0.4);
+}
