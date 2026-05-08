@@ -154,6 +154,9 @@ const i18n = {
     aiPageDesc: "Poze asistan entèlijan nou an nenpòt kesyon sou platfòm lan oswa sou pwodui nou yo.",
     aiWelcome: "Bonjou! Kouman mwen ka ede w jodi a?",
     aiInputPlaceholder: "Ekri mesaj ou a...",
+    aiError: "Mwen gen yon ti pwoblèm koneksyon. Tanpri eseye ankò.",
+    aiTyping: "🤔 Analize...",
+    aiLoginRequiredDesc: "Ou dwe konekte pou w ka pale ak asistan entèlijan nou an.",
     connect: "Konekte",
     connected: "Konekte ak siksè",
     termsConsentTitle: "Kondisyon Itilizasyon",
@@ -323,6 +326,9 @@ const i18n = {
     aiPageDesc: "Posez à notre assistant intelligent toutes vos questions sur la plateforme ou sur nos produits.",
     aiWelcome: "Bonjour ! Comment puis-je vous aider aujourd'hui ?",
     aiInputPlaceholder: "Écrivez votre message...",
+    aiError: "J'ai un petit problème de connexion. Veuillez réessayer.",
+    aiTyping: "🤔 Analyse...",
+    aiLoginRequiredDesc: "Vous devez être connecté pour discuter avec notre assistant intelligent.",
     connect: "Lier",
     connected: "Lié avec succès",
     termsConsentTitle: "Conditions d'Utilisation",
@@ -461,6 +467,9 @@ const i18n = {
     aiPageDesc: "Ask our intelligent assistant any questions about the platform or our products.",
     aiWelcome: "Hello! How can I help you today?",
     aiInputPlaceholder: "Type your message...",
+    aiError: "I have a connection problem. Please try again.",
+    aiTyping: "🤔 Analyzing...",
+    aiLoginRequiredDesc: "You must be logged in to chat with our intelligent assistant.",
     allCategories: "All categories",
     priceMin: "Min price",
     priceMax: "Max price",
@@ -632,6 +641,9 @@ const i18n = {
     aiPageDesc: "Pregúntale a nuestro asistente inteligente cualquier cosa sobre la plataforma o nuestros productos.",
     aiWelcome: "¡Hola! ¿Cómo puedo ayudarte hoy?",
     aiInputPlaceholder: "Escribe tu mensaje...",
+    aiError: "Tengo un pequeño problema de conexión. Inténtalo de nuevo.",
+    aiTyping: "🤔 Analizando...",
+    aiLoginRequiredDesc: "Debes iniciar sesión para chatear con nuestro asistente inteligente.",
     allCategories: "Todas categorías",
     priceMin: "Precio mín",
     priceMax: "Precio máx",
@@ -2078,19 +2090,19 @@ async function renderShop(app) {
 }
 
 async function renderAIPage(app) {
-    if (!currentUser) {
-        app.innerHTML = `
+  if (!currentUser) {
+    app.innerHTML = `
             <div class="card text-center" style="padding: 3rem; animation: viewFadeIn 0.3s ease;">
                 <h2 style="color:var(--blue-deep);">🔐 ${t('loginRequired')}</h2>
                 <p style="margin: 1.5rem 0; color: var(--text-soft);">${t('aiLoginRequiredDesc') || 'Ou dwe konekte pou w ka pale ak asistan entèlijan nou an.'}</p>
                 <button class="btn btn-gold" id="loginFromAI">🔐 ${t('login')}</button>
             </div>
         `;
-        document.getElementById('loginFromAI')?.addEventListener('click', () => document.getElementById('authBtn')?.click());
-        return;
-    }
+    document.getElementById('loginFromAI')?.addEventListener('click', () => document.getElementById('authBtn')?.click());
+    return;
+  }
 
-    app.innerHTML = `
+  app.innerHTML = `
         <div class="card-premium" style="max-width: 900px; margin: 0 auto; animation: viewFadeIn 0.4s ease; padding: 2rem;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
                 <div>
@@ -2121,62 +2133,62 @@ async function renderAIPage(app) {
         </div>
     `;
 
-    const input = document.getElementById('aiPageInput');
-    const btn = document.getElementById('sendAiPageMsg');
+  const input = document.getElementById('aiPageInput');
+  const btn = document.getElementById('sendAiPageMsg');
 
-    input.focus();
+  input.focus();
 
-    btn.addEventListener('click', () => sendAIPageMessage());
-    input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendAIPageMessage();
-    });
+  btn.addEventListener('click', () => sendAIPageMessage());
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendAIPageMessage();
+  });
 }
 
 async function sendAIPageMessage() {
-    const input = document.getElementById('aiPageInput');
-    const messages = document.getElementById('aiPageMessages');
-    if (!input || !messages) return;
-    
-    const question = input.value.trim();
-    if (!question) return;
-    
-    // User message
-    const userMsg = document.createElement('div');
-    userMsg.className = 'message user';
-    userMsg.style = 'background: var(--gold); color: var(--blue-deep); align-self: flex-end; border-radius: 16px 16px 4px 16px; padding: 1rem; max-width: 80%; line-height: 1.5; font-weight: 500; animation: slideUp 0.3s ease-out;';
-    userMsg.textContent = question;
-    messages.appendChild(userMsg);
-    
-    input.value = '';
-    messages.scrollTop = messages.scrollHeight;
-    
-    // Bot typing
-    const typingEl = document.createElement('div');
-    typingEl.className = 'message bot typing';
-    typingEl.style = 'background: #f0f0f0; color: #888; align-self: flex-start; border-radius: 16px 16px 16px 4px; padding: 0.8rem 1.2rem; font-style: italic; animation: fadeIn 0.3s ease;';
-    typingEl.textContent = '🤔 Analize...';
-    messages.appendChild(typingEl);
-    messages.scrollTop = messages.scrollHeight;
-    
-    try {
-        const answer = await askAIAssistant(question);
-        if (typingEl) typingEl.remove();
-        
-        const botMsg = document.createElement('div');
-        botMsg.className = 'message bot';
-        botMsg.style = 'background: var(--gray-100); color: var(--blue-deep); align-self: flex-start; border-radius: 16px 16px 16px 4px; padding: 1rem; max-width: 85%; line-height: 1.5; animation: fadeIn 0.4s ease; border-left: 4px solid var(--gold);';
-        botMsg.textContent = answer;
-        messages.appendChild(botMsg);
-    } catch (err) {
-        if (typingEl) typingEl.remove();
-        const botMsg = document.createElement('div');
-        botMsg.className = 'message bot';
-        botMsg.style = 'background: #fee; color: #c00; align-self: flex-start; border-radius: 12px; padding: 1rem;';
-        botMsg.textContent = "Mwen gen yon ti pwoblèm koneksyon. Tanpri eseye ankò.";
-        messages.appendChild(botMsg);
-    }
-    
-    messages.scrollTop = messages.scrollHeight;
+  const input = document.getElementById('aiPageInput');
+  const messages = document.getElementById('aiPageMessages');
+  if (!input || !messages) return;
+
+  const question = input.value.trim();
+  if (!question) return;
+
+  // User message
+  const userMsg = document.createElement('div');
+  userMsg.className = 'message user';
+  userMsg.style = 'background: var(--gold); color: var(--blue-deep); align-self: flex-end; border-radius: 16px 16px 4px 16px; padding: 1rem; max-width: 80%; line-height: 1.5; font-weight: 500; animation: slideUp 0.3s ease-out;';
+  userMsg.textContent = question;
+  messages.appendChild(userMsg);
+
+  input.value = '';
+  messages.scrollTop = messages.scrollHeight;
+
+  // Bot typing
+  const typingEl = document.createElement('div');
+  typingEl.className = 'message bot typing';
+  typingEl.style = 'background: #f0f0f0; color: #888; align-self: flex-start; border-radius: 16px 16px 16px 4px; padding: 0.8rem 1.2rem; font-style: italic; animation: fadeIn 0.3s ease;';
+  typingEl.textContent = t('aiTyping');
+  messages.appendChild(typingEl);
+  messages.scrollTop = messages.scrollHeight;
+
+  try {
+    const answer = await askAIAssistant(question);
+    if (typingEl) typingEl.remove();
+
+    const botMsg = document.createElement('div');
+    botMsg.className = 'message bot';
+    botMsg.style = 'background: var(--gray-100); color: var(--blue-deep); align-self: flex-start; border-radius: 16px 16px 16px 4px; padding: 1rem; max-width: 85%; line-height: 1.5; animation: fadeIn 0.4s ease; border-left: 4px solid var(--gold);';
+    botMsg.textContent = answer;
+    messages.appendChild(botMsg);
+  } catch (err) {
+    if (typingEl) typingEl.remove();
+    const botMsg = document.createElement('div');
+    botMsg.className = 'message bot';
+    botMsg.style = 'background: #fee; color: #c00; align-self: flex-start; border-radius: 12px; padding: 1rem;';
+    botMsg.textContent = t('aiError');
+    messages.appendChild(botMsg);
+  }
+
+  messages.scrollTop = messages.scrollHeight;
 }
 
 async function renderSpecialOffers(app) {
@@ -2890,26 +2902,26 @@ function renderTerms(app) {
 // ============================================
 
 const AIConfig = {
-    provider: 'gemini', // 'gemini' | 'openai' | 'claude'
-    apiKey: 'AIzaSyB1DeWg50GnDttlYBJZsMzzBKoW4w-87uA', // 🔒 À mettre dans Firebase Remote Config
-    model: 'gemini-1.5-flash', // Modèle rapide et économique
-    maxTokens: 500,
-    temperature: 0.7
+  provider: 'gemini', // 'gemini' | 'openai' | 'claude'
+  apiKey: 'AIzaSyB1DeWg50GnDttlYBJZsMzzBKoW4w-87uA', // 🔒 À mettre dans Firebase Remote Config
+  model: 'gemini-1.5-flash', // Modèle rapide et économique
+  maxTokens: 500,
+  temperature: 0.7
 };
 
 // ============================================
 // 1. RECOMMANDATIONS PERSONNALISÉES
 // ============================================
 async function getAIRecommendations() {
-    if (!currentUser) return products.slice(0, 4); // Fallback
-    
-    const userHistory = orders.map(o => o.productName).join(', ');
-    const userFavorites = favorites.map(id => {
-        const p = products.find(pr => pr.id === id);
-        return p ? p.name : '';
-    }).filter(Boolean).join(', ');
-    
-    const prompt = `
+  if (!currentUser) return products.slice(0, 4); // Fallback
+
+  const userHistory = orders.map(o => o.productName).join(', ');
+  const userFavorites = favorites.map(id => {
+    const p = products.find(pr => pr.id === id);
+    return p ? p.name : '';
+  }).filter(Boolean).join(', ');
+
+  const prompt = `
 En tant qu'expert e-commerce pour Total Lakay en Haïti, analyse :
 - Historique d'achats : ${userHistory || 'Aucun'}
 - Favoris : ${userFavorites || 'Aucun'}
@@ -2919,23 +2931,23 @@ Recommande 4 produits que ce client devrait acheter. Réponds UNIQUEMENT en JSON
 {"recommendations": ["id_produit_1", "id_produit_2", "id_produit_3", "id_produit_4"]}
 `;
 
-    try {
-        const response = await callAI(prompt);
-        // Nettoyage de la réponse au cas où le markdown JSON est inclus
-        const cleanedResponse = response.replace(/```json|```/g, '').trim();
-        const { recommendations } = JSON.parse(cleanedResponse);
-        return recommendations.map(id => products.find(p => p.id === id)).filter(Boolean);
-    } catch (e) {
-        console.error('Erreur IA recommandations:', e);
-        return products.slice(0, 4); // Fallback
-    }
+  try {
+    const response = await callAI(prompt);
+    // Nettoyage de la réponse au cas où le markdown JSON est inclus
+    const cleanedResponse = response.replace(/```json|```/g, '').trim();
+    const { recommendations } = JSON.parse(cleanedResponse);
+    return recommendations.map(id => products.find(p => p.id === id)).filter(Boolean);
+  } catch (e) {
+    console.error('Erreur IA recommandations:', e);
+    return products.slice(0, 4); // Fallback
+  }
 }
 
 // ============================================
 // 2. CHATBOT ASSISTANT CLIENT
 // ============================================
 async function askAIAssistant(question) {
-    const context = `
+  const context = `
 Tu es l'assistant virtuel de Total Lakay, la boutique en ligne #1 en Haïti.
 Langue actuelle : ${currentLang}
 Devise : ${currentCurrency}
@@ -2952,15 +2964,15 @@ Règles :
 - Si la question n'est pas claire, demande précision brièvement.
 `;
 
-    const fullPrompt = `${context}\n\nClient: ${question}\nAssistant:`;
-    return await callAI(fullPrompt);
+  const fullPrompt = `${context}\n\nClient: ${question}\nAssistant:`;
+  return await callAI(fullPrompt);
 }
 
 // ============================================
 // 3. GÉNÉRATION DE DESCRIPTIONS PRODUITS
 // ============================================
 async function generateProductDescription(productName, category, features) {
-    const prompt = `
+  const prompt = `
 En tant que copywriter e-commerce expert, crée une description de produit pour Total Lakay.
 Produit : ${productName}
 Catégorie : ${category}
@@ -2981,20 +2993,20 @@ Format JSON UNIQUEMENT :
 }
 `;
 
-    try {
-        const response = await callAI(prompt);
-        const cleanedResponse = response.replace(/```json|```/g, '').trim();
-        return JSON.parse(cleanedResponse);
-    } catch (e) {
-        return null;
-    }
+  try {
+    const response = await callAI(prompt);
+    const cleanedResponse = response.replace(/```json|```/g, '').trim();
+    return JSON.parse(cleanedResponse);
+  } catch (e) {
+    return null;
+  }
 }
 
 // ============================================
 // 4. ANALYSE DE SENTIMENT DES AVIS
 // ============================================
 async function analyzeReviewSentiment(review) {
-    const prompt = `
+  const prompt = `
 Analyse cet avis client pour Total Lakay :
 "${review}"
 
@@ -3007,20 +3019,20 @@ Retourne UNIQUEMENT un JSON :
 }
 `;
 
-    try {
-        const response = await callAI(prompt);
-        const cleanedResponse = response.replace(/```json|```/g, '').trim();
-        return JSON.parse(cleanedResponse);
-    } catch (e) {
-        return { sentiment: 'neutre', score: 0.5, tags: [], summary: review };
-    }
+  try {
+    const response = await callAI(prompt);
+    const cleanedResponse = response.replace(/```json|```/g, '').trim();
+    return JSON.parse(cleanedResponse);
+  } catch (e) {
+    return { sentiment: 'neutre', score: 0.5, tags: [], summary: review };
+  }
 }
 
 // ============================================
 // 5. DÉTECTION DE FRAUDE
 // ============================================
 async function detectFraudulentOrder(order) {
-    const prompt = `
+  const prompt = `
 Analyse cette commande suspecte sur Total Lakay :
 - Client : ${order.userName || order.userEmail}
 - Produit : ${order.productName}
@@ -3039,70 +3051,86 @@ Est-ce une commande frauduleuse ? Réponds UNIQUEMENT en JSON :
 }
 `;
 
-    try {
-        const response = await callAI(prompt);
-        const cleanedResponse = response.replace(/```json|```/g, '').trim();
-        const { isFraudulent, riskScore } = JSON.parse(cleanedResponse);
-        
-        if (isFraudulent && riskScore > 0.8) {
-            await db.collection('notifications').add({
-                title: '🚨 Commande Suspecte',
-                message: `Commande #${order.id?.substring(0,6)} risque ${Math.round(riskScore*100)}%`,
-                type: 'fraud',
-                targetRole: 'admin',
-                read: false,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        }
-        
-        return { isFraudulent, riskScore };
-    } catch (e) {
-        return { isFraudulent: false, riskScore: 0 };
+  try {
+    const response = await callAI(prompt);
+    const cleanedResponse = response.replace(/```json|```/g, '').trim();
+    const { isFraudulent, riskScore } = JSON.parse(cleanedResponse);
+
+    if (isFraudulent && riskScore > 0.8) {
+      await db.collection('notifications').add({
+        title: '🚨 Commande Suspecte',
+        message: `Commande #${order.id?.substring(0, 6)} risque ${Math.round(riskScore * 100)}%`,
+        type: 'fraud',
+        targetRole: 'admin',
+        read: false,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
     }
+
+    return { isFraudulent, riskScore };
+  } catch (e) {
+    return { isFraudulent: false, riskScore: 0 };
+  }
 }
 
 // ============================================
 // 6. MOTEUR D'APPEL IA (ADAPTABLE)
 // ============================================
 async function callAI(prompt) {
-    if (AIConfig.provider === 'gemini') {
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${AIConfig.model}:generateContent?key=${AIConfig.apiKey}`,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: {
-                        maxOutputTokens: AIConfig.maxTokens,
-                        temperature: AIConfig.temperature
-                    }
-                })
+  if (AIConfig.provider === 'gemini') {
+    try {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${AIConfig.model}:generateContent?key=${AIConfig.apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              maxOutputTokens: AIConfig.maxTokens,
+              temperature: AIConfig.temperature
             }
-        );
-        const data = await response.json();
-        return data.candidates[0].content.parts[0].text;
+          })
+        }
+      );
+      
+      if (!response.ok) {
+        const errData = await response.json();
+        console.error('Gemini API Error:', errData);
+        throw new Error(errData.error?.message || 'Gemini API Error');
+      }
+
+      const data = await response.json();
+      if (!data.candidates || !data.candidates[0].content) {
+          console.error('Unexpected Gemini Response:', data);
+          throw new Error('No candidates found');
+      }
+      return data.candidates[0].content.parts[0].text;
+    } catch (e) {
+      console.error('AI Call Failed:', e);
+      throw e;
     }
-    
-    if (AIConfig.provider === 'openai') {
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${AIConfig.apiKey}`
-            },
-            body: JSON.stringify({
-                model: 'gpt-3.5-turbo',
-                messages: [{ role: 'user', content: prompt }],
-                max_tokens: AIConfig.maxTokens,
-                temperature: AIConfig.temperature
-            })
-        });
-        const data = await response.json();
-        return data.choices[0].message.content;
-    }
-    
-    return '{"error": "Aucun fournisseur IA configuré"}';
+  }
+
+  if (AIConfig.provider === 'openai') {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${AIConfig.apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: AIConfig.maxTokens,
+        temperature: AIConfig.temperature
+      })
+    });
+    const data = await response.json();
+    return data.choices[0].message.content;
+  }
+
+  return '{"error": "Aucun fournisseur IA configuré"}';
 }
 
 // ============================================
@@ -3113,22 +3141,22 @@ async function callAI(prompt) {
 function addChatbotToNavbar() { return; }
 
 function toggleChatbot() {
-    if (!currentUser) {
-        showMessage(t('loginRequired'), 'error');
-        document.getElementById('authBtn')?.click();
-        return;
-    }
+  if (!currentUser) {
+    showMessage(t('loginRequired'), 'error');
+    document.getElementById('authBtn')?.click();
+    return;
+  }
 
-    let chatbot = document.getElementById('chatbotContainer');
-    
-    if (chatbot) {
-        chatbot.classList.toggle('hidden');
-        return;
-    }
-    
-    chatbot = document.createElement('div');
-    chatbot.id = 'chatbotContainer';
-    chatbot.innerHTML = `
+  let chatbot = document.getElementById('chatbotContainer');
+
+  if (chatbot) {
+    chatbot.classList.toggle('hidden');
+    return;
+  }
+
+  chatbot = document.createElement('div');
+  chatbot.id = 'chatbotContainer';
+  chatbot.innerHTML = `
         <div class="chatbot-window">
             <div class="chatbot-header">
                 <span>🤖 Assistant</span>
@@ -3148,81 +3176,81 @@ function toggleChatbot() {
             </div>
         </div>
     `;
-    
-    document.body.appendChild(chatbot);
-    
-    document.getElementById('closeChatbot').addEventListener('click', () => {
-        chatbot.classList.add('hidden');
-    });
 
-    document.getElementById('openAIPageFromPop').addEventListener('click', () => {
-        chatbot.classList.add('hidden');
-        renderView('aiPage');
-    });
-    
-    document.getElementById('sendChatbotMsg').addEventListener('click', sendChatbotMessage);
-    document.getElementById('chatbotInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendChatbotMessage();
-    });
+  document.body.appendChild(chatbot);
+
+  document.getElementById('closeChatbot').addEventListener('click', () => {
+    chatbot.classList.add('hidden');
+  });
+
+  document.getElementById('openAIPageFromPop').addEventListener('click', () => {
+    chatbot.classList.add('hidden');
+    renderView('aiPage');
+  });
+
+  document.getElementById('sendChatbotMsg').addEventListener('click', sendChatbotMessage);
+  document.getElementById('chatbotInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendChatbotMessage();
+  });
 }
 
 async function sendChatbotMessage() {
-    const input = document.getElementById('chatbotInput');
-    const messages = document.getElementById('chatbotMessages');
-    const question = input.value.trim();
-    
-    if (!question) return;
-    
-    // Message utilisateur avec animation
-    const userDiv = document.createElement('div');
-    userDiv.className = 'message user';
-    userDiv.style.animation = 'aiSlideUp 0.3s ease-out';
-    userDiv.textContent = question;
-    messages.appendChild(userDiv);
-    input.value = '';
-    
-    // Indicateur de réflexion animé
-    const typingDiv = document.createElement('div');
-    typingDiv.className = 'message bot typing';
-    typingDiv.innerHTML = '<span class="dot-flashing"></span> 🤖 Analize...';
-    messages.appendChild(typingDiv);
-    messages.scrollTop = messages.scrollHeight;
-    
-    try {
-        const answer = await askAIAssistant(question);
-        if (typingDiv) typingDiv.remove();
-        
-        const botDiv = document.createElement('div');
-        botDiv.className = 'message bot';
-        botDiv.style.animation = 'fadeIn 0.3s ease';
-        botDiv.textContent = answer;
-        messages.appendChild(botDiv);
-    } catch (e) {
-        if (typingDiv) typingDiv.remove();
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'message bot';
-        errorDiv.textContent = "Mwen gen yon pwoblèm. Eseye ankò.";
-        messages.appendChild(errorDiv);
-    }
-    messages.scrollTop = messages.scrollHeight;
+  const input = document.getElementById('chatbotInput');
+  const messages = document.getElementById('chatbotMessages');
+  const question = input.value.trim();
+
+  if (!question) return;
+
+  // Message utilisateur avec animation
+  const userDiv = document.createElement('div');
+  userDiv.className = 'message user';
+  userDiv.style.animation = 'aiSlideUp 0.3s ease-out';
+  userDiv.textContent = question;
+  messages.appendChild(userDiv);
+  input.value = '';
+
+  // Indicateur de réflexion animé
+  const typingDiv = document.createElement('div');
+  typingDiv.className = 'message bot typing';
+  typingDiv.innerHTML = `<span class="dot-flashing"></span> ${t('aiTyping')}`;
+  messages.appendChild(typingDiv);
+  messages.scrollTop = messages.scrollHeight;
+
+  try {
+    const answer = await askAIAssistant(question);
+    if (typingDiv) typingDiv.remove();
+
+    const botDiv = document.createElement('div');
+    botDiv.className = 'message bot';
+    botDiv.style.animation = 'fadeIn 0.3s ease';
+    botDiv.textContent = answer;
+    messages.appendChild(botDiv);
+  } catch (e) {
+    if (typingDiv) typingDiv.remove();
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'message bot';
+    errorDiv.textContent = t('aiError');
+    messages.appendChild(errorDiv);
+  }
+  messages.scrollTop = messages.scrollHeight;
 }
 
 async function renderAIRecommendations() {
-    const container = document.getElementById('aiRecommendations');
-    if (!container) return;
-    
-    container.innerHTML = '<div class="spinner"></div>';
-    
-    const recommendations = await getAIRecommendations();
-    
-    container.innerHTML = `
+  const container = document.getElementById('aiRecommendations');
+  if (!container) return;
+
+  container.innerHTML = '<div class="spinner"></div>';
+
+  const recommendations = await getAIRecommendations();
+
+  container.innerHTML = `
         <h3>🤖 ${currentLang === 'ht' ? 'Rekòmandasyon Entèlijan' : 'Recommandations Intelligentes'}</h3>
         <div class="grid">
             ${recommendations.map(p => productCardHTML(p)).join('')}
         </div>
     `;
-    
-    attachBuyButtons();
+
+  attachBuyButtons();
 }
 
 // ============================================
@@ -3273,6 +3301,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialisation IA
   addChatbotToNavbar();
   if (currentView === 'home') {
-      setTimeout(renderAIRecommendations, 2000);
+    setTimeout(renderAIRecommendations, 2000);
   }
 });
