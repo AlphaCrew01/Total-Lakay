@@ -2910,16 +2910,58 @@ function renderTerms(app) {
 }
 
 // ============================================
-// MODULE IA - TOTAL LAKAY INTELLIGENT
+// MODULE IA - TOTAL LAKAY INTELLIGENT (SÉCURISÉ)
 // ============================================
 
-const AIConfig = {
-  provider: 'gemini', // 'gemini' | 'openai' | 'claude'
-  apiKey: 'AIzaSyB1DeWg50GnDttlYBJZsMzzBKoW4w-87uA', // 🔒 À mettre dans Firebase Remote Config
-  model: 'gemini-1.5-flash', // Modèle rapide et économique
+// Configuration par défaut (sera écrasée par Remote Config)
+let AIConfig = {
+  provider: 'gemini',
+  apiKey: '', // 🔒 Chargé depuis Firebase Remote Config
+  model: 'gemini-1.5-flash',
   maxTokens: 500,
-  temperature: 0.7
+  temperature: 0.7,
+  enabled: true
 };
+
+// Initialisation sécurisée depuis Firebase Remote Config
+async function initAIConfig() {
+  try {
+    const remoteConfig = firebase.remoteConfig();
+    
+    // Configuration pour le développement
+    remoteConfig.settings = {
+      minimumFetchIntervalMillis: 3600000, // 1 heure en production
+      fetchTimeoutMillis: 10000
+    };
+    
+    // Pour le développement : intervalle plus court
+    if (window.location.hostname === 'localhost') {
+      remoteConfig.settings.minimumFetchIntervalMillis = 0;
+    }
+    
+    // Fetch et activation
+    await remoteConfig.fetchAndActivate();
+    
+    // Récupération des valeurs
+    AIConfig.apiKey = remoteConfig.getString('gemini_api_key');
+    AIConfig.model = remoteConfig.getString('gemini_model');
+    AIConfig.maxTokens = remoteConfig.getNumber('gemini_max_tokens');
+    AIConfig.enabled = remoteConfig.getBoolean('ai_enabled');
+    
+    console.log('✅ Configuration IA chargée avec succès');
+    
+    // Valeurs par défaut si Remote Config échoue
+    if (!AIConfig.apiKey) {
+      console.warn('⚠️ Clé API non trouvée dans Remote Config, utilisation des valeurs par défaut');
+      AIConfig.apiKey = 'AIzaSyB1DeWg50GnDttlYBJZsMzzBKoW4w-87uA'; // Fallback
+    }
+    
+  } catch (e) {
+    console.error('❌ Erreur chargement Remote Config:', e);
+    // Fallback en cas d'erreur
+    AIConfig.apiKey = 'AIzaSyB1DeWg50GnDttlYBJZsMzzBKoW4w-87uA';
+  }
+}
 
 // ============================================
 // 1. RECOMMANDATIONS PERSONNALISÉES
@@ -3086,9 +3128,20 @@ Est-ce une commande frauduleuse ? Réponds UNIQUEMENT en JSON :
 }
 
 // ============================================
-// 6. MOTEUR D'APPEL IA (ADAPTABLE)
+// 6. MOTEUR D'APPEL IA (SÉCURISÉ)
 // ============================================
 async function callAI(prompt) {
+  if (!AIConfig.enabled) {
+    throw new Error('IA désactivée temporairement');
+  }
+  
+  if (!AIConfig.apiKey) {
+    await initAIConfig(); // Réessayer de charger la config
+    if (!AIConfig.apiKey) {
+      throw new Error('Configuration IA manquante');
+    }
+  }
+  
   if (AIConfig.provider === 'gemini') {
     try {
       const response = await fetch(
@@ -3109,40 +3162,31 @@ async function callAI(prompt) {
       if (!response.ok) {
         const errData = await response.json();
         console.error('Gemini API Error:', errData);
-        throw new Error(errData.error?.message || 'Gemini API Error');
+        
+        // Si quota dépassé, désactiver temporairement
+        if (response.status === 429) {
+          AIConfig.enabled = false;
+          setTimeout(() => { AIConfig.enabled = true; }, 60000); // Réactiver après 1 min
+          throw new Error('Service IA momentanément indisponible. Réessayez dans une minute.');
+        }
+        
+        throw new Error(errData.error?.message || 'Erreur API Gemini');
       }
 
       const data = await response.json();
-      if (!data.candidates || !data.candidates[0].content) {
-          console.error('Unexpected Gemini Response:', data);
-          throw new Error('No candidates found');
+      if (!data.candidates || !data.candidates[0]?.content?.parts?.[0]?.text) {
+        console.error('Réponse Gemini inattendue:', data);
+        throw new Error('Réponse IA invalide');
       }
       return data.candidates[0].content.parts[0].text;
+      
     } catch (e) {
-      console.error('AI Call Failed:', e);
+      console.error('Erreur appel IA:', e);
       throw e;
     }
   }
 
-  if (AIConfig.provider === 'openai') {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${AIConfig.apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: AIConfig.maxTokens,
-        temperature: AIConfig.temperature
-      })
-    });
-    const data = await response.json();
-    return data.choices[0].message.content;
-  }
-
-  return '{"error": "Aucun fournisseur IA configuré"}';
+  throw new Error('Fournisseur IA non supporté');
 }
 
 // ============================================
@@ -3268,8 +3312,12 @@ async function renderAIRecommendations() {
 // ============================================
 // DÉMARRAGE
 // ============================================
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 Total Lakay - Version Ultime avec Recherche & Filtres');
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log('🚀 Total Lakay - Version Ultime avec IA Sécurisée');
+  
+  // Charger la configuration IA AVANT tout
+  await initAIConfig();
+  
   applyLanguage();
 
   // Navigation Links (Menu & Footer)
@@ -3312,7 +3360,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialisation IA
   addChatbotToNavbar();
-  if (currentView === 'home') {
-    setTimeout(renderAIRecommendations, 2000);
+  if (AIConfig.enabled && AIConfig.apiKey) {
+    if (currentView === 'home') {
+      setTimeout(renderAIRecommendations, 2000);
+    }
+  } else {
+    console.warn('⚠️ IA désactivée ou non configurée');
   }
 });
