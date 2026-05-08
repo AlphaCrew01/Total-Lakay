@@ -115,7 +115,6 @@ const i18n = {
         roleChanged: "✅ Wòl modifye!",
         madeAdmin: "✅ Fè admin!",
         madeClient: "✅ Fè kliyan!",
-        // Recherche & Filtres
         searchPlaceholder: "🔍 Rechèche yon pwodui...",
         allCategories: "Tout kategori",
         priceMin: "Pri min",
@@ -132,11 +131,11 @@ const i18n = {
         noResultsFound: "Pa gen rezilta. Eseye ak lòt mo.",
         categoryElectronics: "📱 Elektwonik",
         categoryClothing: "👕 Vètman ak Akseswa",
-        categorySchool: "🎓 Lekòl / École",
-        categoryWork: "💼 Travay / Travail",
-        categoryHome: "🏠 Kay / Maison",
-        categoryBeauty: "💄 Bote / Beauté",
-        categoryOther: "📦 Lòt / Autres",
+        categorySchool: "🎓 Lekòl",
+        categoryWork: "💼 Travay",
+        categoryHome: "🏠 Kay",
+        categoryBeauty: "💄 Bote",
+        categoryOther: "📦 Lòt",
         categoryClothingAccessories: "👕 Vètman ak Akseswa",
         categorySchoolOffice: "🎓 Lekòl ak Travay",
         categoryHomePersonal: "🏠 Kay ak Pèsonèl",
@@ -147,6 +146,12 @@ const i18n = {
         onlineClients: "Kliyan an liy",
         moncashSettings: "Anviwònman MonCash (Peman Reyèl)",
         saveConfig: "Anrejistre Konfigirasyon",
+        linkMoncash: "Konekte kont MonCash ou",
+        moncashPhone: "Nimewo MonCash ou",
+        moncashTerms: "Mwen aksepte kondisyon itilizasyon MonCash ak règleman konfidansyalite yo",
+        connect: "Konekte",
+        connected: "Konekte ak siksè",
+        termsConsentTitle: "Kondisyon Itilizasyon",
         termsConsentDesc: "Pou w ka kontinye sèvi ak Total Lakay, ou dwe aksepte kondisyon itilizasyon nou yo ak politik konfidansyalite nou an.",
         accept: "Aksepte", decline: "Refize",
         cancellationReason: "Rezon anilasyon", reasonPlaceholder: "Poukisa ou anile kòmand sa?",
@@ -155,19 +160,14 @@ const i18n = {
         school: "Lekòl", work: "Travay", home: "Kay", electronics: "Elektwonik", beauty: "Bote", clothing: "Vètman",
         stock: "Kantite nan stòk", category: "Kategori", colors: "Koulè (separe ak vigil)", sizes: "Gwosè / Size (separe ak vigil)",
         selectColor: "Chwazi Koulè", selectSize: "Chwazi Gwosè", quantity: "Kantite", outOfStock: "Pa gen nan stòk ankò",
-        categoryClothingAccessories: "👕 Vètman ak Akseswa",
-        categorySchoolOffice: "🎓 Lekòl ak Travay",
-        categoryHomePersonal: "🏠 Kay ak Pèsonèl",
-        categoryElectronicsTech: "📱 Elektwonik",
         servicesTitle: "Sèvis nou yo", privacyTitle: "Konfidansyalite", termsTitle: "Kondisyon yo",
         phoneRecommend: "Nimewo telefòn ou", addressRecommend: "Adrès ou konplè", phoneRequired: "Telefòn obligatwa",
         cart: "Panyen", checkout: "Peye kounye a", securePaymentInfo: "Peman 100% sekirize",
-        noNotifications: "Pa gen notifikasyon pou kounye a",
         profile: "Profil", phone: "Telefòn", phonePlaceholder: "Ex: +509 1234 5678",
         updateProfile: "Mete ajou profil", profileUpdated: "Profil mete ajou ak siksè!",
         phoneNumber: "Nimewo telefòn", saveProfile: "Anrejistre Profil",
         addressRecommend: "Adrès (Rekòmande)", phoneRecommend: "Telefòn (Rekòmande)",
-        cart: "Panyen", addToCart: "Ajoute nan panyen", removeFromCart: "Retire",
+        addToCart: "Ajoute nan panyen", removeFromCart: "Retire",
         notifSettings: "Paramèt Notifikasyon", notifPushEnable: "Aktive notifikasyon sou telefòn",
         notifNewProducts: "Nouvo Pwodui", notifSpecialPrices: "Pri Spesyal & Pwomo",
         notifUpdates: "Mizajou sou sit la", notifStatus: "Estati Notifikasyon",
@@ -176,15 +176,12 @@ const i18n = {
         notifPreferencesSaved: "Preferans notifikasyon anrejistre!",
         accountInfo: "Enfòmasyon Kont", email: "Email", name: "Non", role: "Wòl", emailVerified: "Email Verifye",
         yes: "Wi", no: "Non", resendVerifyEmail: "Voye email verifikasyon ankò",
-        checkout: "Peye kounye a", total: "Total", emptyCart: "Panyen ou vid",
+        total: "Total", emptyCart: "Panyen ou vid",
         securePayment: "Peman Sekirize", contactUs: "Kontakte nou",
-        securePaymentInfo: "Peman 100% sekirize",
-        notifications: "Notifikasyon", noNotifications: "Pa gen notifikasyon",
         favorites: "Favori", noFavorites: "Pa gen favori ankò",
         reviews: "Avi", leaveReview: "Kite yon avi", addReview: "Ajoute yon avi", noReviews: "Pa gen avi ankò",
         rating: "Nòt", comment: "Kòmantè", submit: "Voye", invalidAddress: "Adrès ou antre a pa valab",
         ratingError: "Chwazi yon nòt (zetwal)", commentError: "Ekri yon kòmantè", reviewSuccess: "Mèsi pou avi ou!", reviewError: "Erè voye avi",
-        servicesTitle: "Sèvis nou yo",
         servicesIntro: "Total Lakay ofri plizyè sèvis pou fasilite lavi w :",
         servicesOnline: "Vant an liy :",
         servicesOnlineDesc: "Yon gran chwa pwodwi nan plizyè kategori (elektwonik, akseswa pou kay, akseswa pèsonel, elatriye).",
@@ -194,7 +191,6 @@ const i18n = {
         servicesCustomerDesc: "Nou disponib pou reponn tout kesyon w via apèl dirèk, WhatsApp oswa imèl.",
         servicesSecure: "Peman sekirize :",
         servicesSecureDesc: "Nou aksepte plizyè mwayen peman pou sekirite w ak konfò w.",
-        privacyTitle: "Politik Konfidansyalite",
         privacyIntro: "Nan Total Lakay, nou pran vi prive w trè oserye. Men kijan nou itilize ak pwoteje done ou yo :",
         privacyData: "Kolek done :",
         privacyDataDesc: "Nou sèlman kolekte enfòmasyon ki nesesè pou trete komand ou yo (non, adrès, imèl, nimewo telefòn).",
@@ -204,7 +200,6 @@ const i18n = {
         privacySharingDesc: "Nou pa janm vann oswa pataje enfòmasyon pèsonèl ou ak twazyèm pati san konsantman w, sof si lalwa mande sa.",
         privacyRights: "Dwa w yo :",
         privacyRightsDesc: "Ou gen dwa pou w modifye oswa efase kont ou nenpòt kilè nan paramèt pwofil ou.",
-        termsTitle: "Kondisyon Itilizasyon",
         termsIntro: "Lè w itilize platfòm Total Lakay la, ou asepte kondisyon sa yo :",
         termsAccount: "Kont itilizatè :",
         termsAccountDesc: "Ou responsab pou kenbe modpas ou an sekirite. Tout aktivite sou kont ou se responsablite w.",
@@ -214,7 +209,6 @@ const i18n = {
         termsPriceDesc: "Pri yo ka chanje san avètisman alavans. Nou fè efò pou n gen deskripsyon egzak pou cada pwodwi.",
         termsMod: "Modifikasyon :",
         termsModDesc: "Total Lakay ka modifye kondisyon sa yo nenpòt moman. N ap fè itilizatè yo konnen via notifikasyon.",
-        school: "Lekòl", work: "Travay", home: "Kay", electronics: "Elektwonik", beauty: "Bote", clothing: "Vètman",
     },
     fr: {
         home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -233,8 +227,7 @@ const i18n = {
         address: "Votre adresse", addressPlaceholder: "Rue, Ville, Code postal",
         payment: "Moyen de paiement", orderNow: "Commander",
         orderSuccess: "Commande enregistrée avec succès !",
-        loginRequired: "Vous devez être connecté pour acheter",
-        fillAllFields: "Remplissez tous les champs",
+        loginRequired: "Vous devez être connecté pour acheter", fillAllFields: "Remplissez tous les champs",
         myOrders: "Mes commandes", status: "Statut", delivery: "Délai de livraison",
         noOrders: "Aucune commande", pending: "En attente", confirmed: "Confirmé",
         cancelled: "Annulé", delivered: "Livré", waiting: "En attente...",
@@ -250,28 +243,28 @@ const i18n = {
         delayPlaceholder: "Ex: 3 jours", updateStatus: "Mettre à jour le statut",
         clients: "Clients", client: "Client", clientName: "Nom client",
         clientEmail: "Email client", clientSince: "Client depuis",
-        role: "Rôle", makeAdmin: "Passer admin", makeClient: "Passer client",
-        loginTitle: "Connectez-vous pour acheter", createAccount: "Créer un compte",
-        createAccountTitle: "Créer votre compte", noAccount: "Pas de compte ?",
+        role: "Rôle", makeAdmin: "Faire admin", makeClient: "Faire client",
+        loginTitle: "Connexion pour acheter", createAccount: "Créer un compte",
+        createAccountTitle: "Créez votre compte", noAccount: "Pas de compte ?",
         alreadyAccount: "Déjà un compte ?", or: "ou",
         continueGoogle: "Continuer avec Google", emailPlaceholder: "Email",
         passwordPlaceholder: "Mot de passe", namePlaceholder: "Votre nom",
-        passwordMin: "Mot de passe (min 6 caractères)", selectRole: "Choisissez votre rôle (défaut: Client)",
+        passwordMin: "Mot de passe (min 6 caractères)", selectRole: "Choisissez votre rôle (défaut : Client)",
         notifications: "Notifications", specialOffers: "Offres spéciales",
         settings: "Paramètres", history: "Historique",
         specialPrice: "Prix spécial !", promo: "Promotion !",
-        noSpecialOffers: "Pas d'offres spéciales pour le moment", offer: "OFFRE",
+        noSpecialOffers: "Aucune offre spéciale pour le moment", offer: "OFFRE",
         noNotifications: "Aucune notification", today: "Aujourd'hui",
         sendNotification: "Envoyer notification", notificationTitle: "Titre notification",
         notificationMessage: "Message notification",
-        language: "Langue / Language", accountInfo: "Informations du compte",
+        language: "Langue", accountInfo: "Informations du compte",
         email: "Email", name: "Nom", emailVerified: "Email vérifié",
         yes: "Oui", no: "Non", resendVerifyEmail: "Renvoyer l'email de vérification",
         welcomeBack: "Bienvenue !", welcomeAdmin: "Bienvenue Admin !",
-        accountCreated: "Compte créé avec succès !", loggedOut: "Vous êtes déconnecté",
-        productAdded: "Produit ajouté !", productUpdated: "Produit modifié !",
-        productDeleted: "Produit supprimé", delayUpdated: "Délai mis à jour !",
-        statusUpdated: "Statut modifié !", delayRequired: "Entrez un délai",
+        accountCreated: "Compte créé avec succès !", loggedOut: "Déconnexion réussie",
+        productAdded: "Produit ajouté !", productUpdated: "Produit mis à jour !",
+        productDeleted: "Produit supprimé", delayUpdated: "Délai de livraison mis à jour !",
+        statusUpdated: "Statut mis à jour !", delayRequired: "Entrez un délai de livraison",
         accountNotFound: "Ce compte n'existe pas. Créez un compte.",
         passwordError: "Le mot de passe doit avoir au moins 6 caractères",
         confirmDelete: "Êtes-vous sûr de vouloir supprimer ?",
@@ -288,7 +281,6 @@ const i18n = {
         roleChanged: "✅ Rôle modifié !",
         madeAdmin: "✅ Passé admin !",
         madeClient: "✅ Passé client !",
-        // Recherche & Filtres
         searchPlaceholder: "🔍 Rechercher un produit...",
         allCategories: "Toutes catégories",
         priceMin: "Prix min",
@@ -320,6 +312,11 @@ const i18n = {
         onlineClients: "Clients en ligne",
         moncashSettings: "Paramètres MonCash (Paiement Réel)",
         saveConfig: "Enregistrer la Configuration",
+        linkMoncash: "Lier votre compte MonCash",
+        moncashPhone: "Votre numéro MonCash",
+        moncashTerms: "J'accepte les conditions d'utilisation et la politique de confidentialité de MonCash",
+        connect: "Lier",
+        connected: "Lié avec succès",
         termsConsentTitle: "Conditions d'Utilisation",
         termsConsentDesc: "Pour continuer à utiliser Total Lakay, vous devez accepter nos conditions d'utilisation et notre politique de confidentialité.",
         accept: "Accepter", decline: "Refuser",
@@ -329,10 +326,14 @@ const i18n = {
         school: "École", work: "Travail", home: "Maison", electronics: "Électronique", beauty: "Beauté", clothing: "Vêtements",
         stock: "Quantité en stock", category: "Catégorie", colors: "Couleurs (séparées par virgule)", sizes: "Tailles / Sizes (séparées par virgule)",
         selectColor: "Choisir Couleur", selectSize: "Choisir Taille", quantity: "Quantité", outOfStock: "Rupture de stock",
-        categoryClothingAccessories: "👕 Vêtements & Accessoires",
-        categorySchoolOffice: "🎓 École & Travail",
-        categoryHomePersonal: "🏠 Maison & Personnel",
-        categoryElectronicsTech: "📱 Électronique",
+        servicesTitle: "Nos Services", privacyTitle: "Confidentialité", termsTitle: "Conditions",
+        phoneRecommend: "Votre numéro de téléphone", addressRecommend: "Votre adresse complète", phoneRequired: "Téléphone requis",
+        cart: "Panier", checkout: "Payer maintenant", securePaymentInfo: "Paiement 100% sécurisé",
+        profile: "Profil", phone: "Téléphone", phonePlaceholder: "Ex : +509 1234 5678",
+        updateProfile: "Mettre à jour le profil", profileUpdated: "Profil mis à jour avec succès !",
+        phoneNumber: "Numéro de téléphone", saveProfile: "Enregistrer le Profil",
+        addressRecommend: "Adresse (Recommandé)", phoneRecommend: "Téléphone (Recommandé)",
+        addToCart: "Ajouter au panier", removeFromCart: "Retirer",
         notifSettings: "Paramètres de Notifications", notifPushEnable: "Activer les notifications push",
         notifNewProducts: "Nouveaux Produits", notifSpecialPrices: "Prix Spéciaux & Promos",
         notifUpdates: "Mises à jour du site", notifStatus: "Statut des Notifications",
@@ -341,24 +342,12 @@ const i18n = {
         notifPreferencesSaved: "Préférences de notifications enregistrées !",
         accountInfo: "Informations du Compte", email: "Email", name: "Nom", role: "Rôle", emailVerified: "Email Vérifié",
         yes: "Oui", no: "Non", resendVerifyEmail: "Renvoyer l'email de vérification",
-        servicesTitle: "Nos Services", privacyTitle: "Confidentialité", termsTitle: "Conditions",
-        phoneRecommend: "Votre numéro de téléphone", addressRecommend: "Votre adresse complète", phoneRequired: "Téléphone requis",
-        cart: "Panier", checkout: "Payer maintenant", securePaymentInfo: "Paiement 100% sécurisé",
-        noNotifications: "Pas de notifications pour le moment",
-        profile: "Profil", phone: "Téléphone", phonePlaceholder: "Ex: +509 1234 5678",
-        updateProfile: "Mettre à jour le profil", profileUpdated: "Profil mis à jour avec succès !",
-        phoneNumber: "Numéro de téléphone", saveProfile: "Enregistrer le Profil",
-        addressRecommend: "Adresse (Recommandé)", phoneRecommend: "Téléphone (Recommandé)",
-        cart: "Panier", addToCart: "Ajouter au panier", removeFromCart: "Retirer",
-        checkout: "Payer maintenant", total: "Total", emptyCart: "Votre panier est vide",
+        total: "Total", emptyCart: "Votre panier est vide",
         securePayment: "Paiement Sécurisé", contactUs: "Contactez-nous",
-        securePaymentInfo: "Paiement 100% sécurisé",
-        notifications: "Notifications", noNotifications: "Pas de notifications",
         favorites: "Favoris", noFavorites: "Pas encore de favoris",
         reviews: "Avis", leaveReview: "Laisser un avis", addReview: "Ajouter un avis", noReviews: "Pas encore d'avis",
         rating: "Note", comment: "Commentaire", submit: "Envoyer", invalidAddress: "Adresse invalide",
         ratingError: "Choisissez une note (étoiles)", commentError: "Écrivez un commentaire", reviewSuccess: "Merci pour votre avis !", reviewError: "Erreur d'envoi",
-        servicesTitle: "Nos Services",
         servicesIntro: "Total Lakay offre plusieurs services pour vous faciliter la vie :",
         servicesOnline: "Vente en ligne :",
         servicesOnlineDesc: "Un grand choix de produits dans plusieurs catégories (électronique, accessoires pour la maison, accessoires personnels, etc.).",
@@ -368,7 +357,6 @@ const i18n = {
         servicesCustomerDesc: "Nous sommes disponibles pour répondre à toutes vos questions via appel direct, WhatsApp ou e-mail.",
         servicesSecure: "Paiement sécurisé :",
         servicesSecureDesc: "Nous acceptons plusieurs moyens de paiement pour votre sécurité et votre confort.",
-        privacyTitle: "Politique de Confidentialité",
         privacyIntro: "Chez Total Lakay, nous prenons votre vie privée très au sérieux. Voici comment nous utilisons et protégeons vos données :",
         privacyData: "Collecte de données :",
         privacyDataDesc: "Nous ne collectons que les informations nécessaires au traitement de vos commandes (nom, adresse, e-mail, numéro de téléphone).",
@@ -378,7 +366,6 @@ const i18n = {
         privacySharingDesc: "Nous ne vendons ni ne partageons jamais vos informations personnelles avec des tiers sans votre consentement, sauf si la loi l'exige.",
         privacyRights: "Vos droits :",
         privacyRightsDesc: "Vous avez le droit de modifier ou de supprimer votre compte à tout moment dans vos paramètres de profil.",
-        termsTitle: "Conditions d'Utilisation",
         termsIntro: "En utilisant la plateforme Total Lakay, vous acceptez les conditions suivantes :",
         termsAccount: "Compte utilisateur :",
         termsAccountDesc: "Vous êtes responsable du maintien de la sécurité de votre mot de passe. Toutes les activités sur votre compte sont sous votre responsabilité.",
@@ -388,7 +375,6 @@ const i18n = {
         termsPriceDesc: "Les prix sont sujets à changement sans préavis. Nous nous efforçons d'avoir des descriptions exactes pour chaque produit.",
         termsMod: "Modifications :",
         termsModDesc: "Total Lakay peut modifier ces conditions à tout moment. Nous en informerons les utilisateurs via des notifications.",
-        school: "École", work: "Travail", home: "Maison", electronics: "Électronique", beauty: "Beauté", clothing: "Vêtements",
     },
     en: {
         home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -461,7 +447,6 @@ const i18n = {
         roleChanged: "✅ Role changed!",
         madeAdmin: "✅ Made admin!",
         madeClient: "✅ Made client!",
-        // Search & Filters
         searchPlaceholder: "🔍 Search a product...",
         allCategories: "All categories",
         priceMin: "Min price",
@@ -493,6 +478,11 @@ const i18n = {
         onlineClients: "Online Clients",
         moncashSettings: "MonCash Settings (Real Payment)",
         saveConfig: "Save Configuration",
+        linkMoncash: "Link your MonCash account",
+        moncashPhone: "Your MonCash number",
+        moncashTerms: "I accept the MonCash terms of use and privacy policy",
+        connect: "Link",
+        connected: "Linked successfully",
         termsConsentTitle: "Terms of Use",
         termsConsentDesc: "To continue using Total Lakay, you must accept our terms of use and our privacy policy.",
         accept: "Accept", decline: "Decline",
@@ -502,10 +492,14 @@ const i18n = {
         school: "School", work: "Work", home: "Home", electronics: "Electronics", beauty: "Beauty", clothing: "Clothing",
         stock: "Stock Quantity", category: "Category", colors: "Colors (comma separated)", sizes: "Sizes (comma separated)",
         selectColor: "Select Color", selectSize: "Select Size", quantity: "Quantity", outOfStock: "Out of stock",
-        categoryClothingAccessories: "👕 Clothing & Accessories",
-        categorySchoolOffice: "🎓 School & Work",
-        categoryHomePersonal: "🏠 Home & Personal",
-        categoryElectronicsTech: "📱 Electronics",
+        servicesTitle: "Our Services", privacyTitle: "Privacy Policy", termsTitle: "Terms of Use",
+        phoneRecommend: "Your phone number", addressRecommend: "Your full address", phoneRequired: "Phone is required",
+        cart: "Cart", checkout: "Checkout now", securePaymentInfo: "100% Secure Payment",
+        profile: "Profile", phone: "Phone", phonePlaceholder: "Ex: +509 1234 5678",
+        updateProfile: "Update Profile", profileUpdated: "Profile updated successfully!",
+        phoneNumber: "Phone Number", saveProfile: "Save Profile",
+        addressRecommend: "Address (Recommended)", phoneRecommend: "Phone (Recommended)",
+        addToCart: "Add to cart", removeFromCart: "Remove",
         notifSettings: "Notification Settings", notifPushEnable: "Enable Push Notifications",
         notifNewProducts: "New Products", notifSpecialPrices: "Special Prices & Promos",
         notifUpdates: "Site Updates", notifStatus: "Notification Status",
@@ -514,24 +508,12 @@ const i18n = {
         notifPreferencesSaved: "Notification preferences saved!",
         accountInfo: "Account Info", email: "Email", name: "Name", role: "Role", emailVerified: "Email Verified",
         yes: "Yes", no: "No", resendVerifyEmail: "Resend verification email",
-        servicesTitle: "Our Services", privacyTitle: "Privacy Policy", termsTitle: "Terms of Use",
-        phoneRecommend: "Your phone number", addressRecommend: "Your full address", phoneRequired: "Phone is required",
-        cart: "Cart", checkout: "Checkout now", securePaymentInfo: "100% Secure Payment",
-        noNotifications: "No notifications at the moment",
-        profile: "Profile", phone: "Phone", phonePlaceholder: "Ex: +509 1234 5678",
-        updateProfile: "Update Profile", profileUpdated: "Profile updated successfully!",
-        phoneNumber: "Phone Number", saveProfile: "Save Profile",
-        addressRecommend: "Address (Recommended)", phoneRecommend: "Phone (Recommended)",
-        cart: "Cart", addToCart: "Add to cart", removeFromCart: "Remove",
-        checkout: "Checkout now", total: "Total", emptyCart: "Your cart is empty",
+        total: "Total", emptyCart: "Your cart is empty",
         securePayment: "Secure Payment", contactUs: "Contact Us",
-        securePaymentInfo: "100% Secure Payment",
-        notifications: "Notifications", noNotifications: "No notifications",
         favorites: "Favorites", noFavorites: "No favorites yet",
         reviews: "Reviews", leaveReview: "Leave a review", addReview: "Add a review", noReviews: "No reviews yet",
         rating: "Rating", comment: "Comment", submit: "Submit", invalidAddress: "Invalid address",
         ratingError: "Choose a rating (stars)", commentError: "Write a comment", reviewSuccess: "Thank you for your review!", reviewError: "Error sending review",
-        servicesTitle: "Our Services",
         servicesIntro: "Total Lakay offers several services to make your life easier:",
         servicesOnline: "Online sales:",
         servicesOnlineDesc: "A wide choice of products in several categories (electronics, home accessories, personal accessories, etc.).",
@@ -541,7 +523,6 @@ const i18n = {
         servicesCustomerDesc: "We are available to answer all your questions via direct call, WhatsApp or email.",
         servicesSecure: "Secure payment:",
         servicesSecureDesc: "We accept several payment methods for your security and comfort.",
-        privacyTitle: "Privacy Policy",
         privacyIntro: "At Total Lakay, we take your privacy very seriously. Here is how we use and protect your data:",
         privacyData: "Data collection:",
         privacyDataDesc: "We only collect the information necessary to process your orders (name, address, email, phone number).",
@@ -551,7 +532,6 @@ const i18n = {
         privacySharingDesc: "We never sell or share your personal information with third parties without your consent, unless required by law.",
         privacyRights: "Your rights:",
         privacyRightsDesc: "You have the right to modify or delete your account at any time in your profile settings.",
-        termsTitle: "Terms of Use",
         termsIntro: "By using the Total Lakay platform, you accept the following conditions:",
         termsAccount: "User account:",
         termsAccountDesc: "You are responsible for maintaining the security of your password. All activities on your account are your responsibility.",
@@ -561,13 +541,6 @@ const i18n = {
         termsPriceDesc: "Prices are subject to change without notice. We strive to have accurate descriptions for each product.",
         termsMod: "Modifications:",
         termsModDesc: "Total Lakay may modify these conditions at any time. We will notify users via notifications.",
-        termsConsentTitle: "Terms of Use",
-        termsConsentDesc: "To continue using Total Lakay, you must accept our terms of use and our privacy policy.",
-        accept: "Accept", decline: "Decline",
-        cancellationReason: "Cancellation Reason", reasonPlaceholder: "Why are you cancelling this order?",
-        reasonRequired: "You must provide a reason for the cancellation.",
-        recentProducts: "Recent Products", categoriesTitle: "Categories", exploreCategories: "Explore all our categories",
-        school: "School", work: "Work", home: "Home", electronics: "Electronics", beauty: "Beauty", clothing: "Clothing",
     },
     es: {
         home: "Inicio", shop: "Tienda", orders: "Pedidos", admin: "Admin",
@@ -586,8 +559,7 @@ const i18n = {
         address: "Tu dirección", addressPlaceholder: "Calle, Ciudad, Código postal",
         payment: "Método de pago", orderNow: "Ordenar ahora",
         orderSuccess: "¡Pedido registrado con éxito!",
-        loginRequired: "Debes iniciar sesión para comprar",
-        fillAllFields: "Completa todos los campos",
+        loginRequired: "Debes iniciar sesión para comprar", fillAllFields: "Completa todos los campos",
         myOrders: "Mis pedidos", status: "Estado", delivery: "Tiempo de entrega",
         noOrders: "No hay pedidos", pending: "Pendiente", confirmed: "Confirmado",
         cancelled: "Cancelado", delivered: "Entregado", waiting: "Esperando...",
@@ -641,7 +613,6 @@ const i18n = {
         roleChanged: "✅ ¡Rol cambiado!",
         madeAdmin: "✅ ¡Hecho admin!",
         madeClient: "✅ ¡Hecho cliente!",
-        // Búsqueda y Filtros
         searchPlaceholder: "🔍 Buscar un producto...",
         allCategories: "Todas categorías",
         priceMin: "Precio mín",
@@ -658,6 +629,8 @@ const i18n = {
         noResultsFound: "Sin resultados. Prueba otras palabras.",
         categoryElectronics: "📱 Electrónica",
         categoryClothing: "👕 Ropa y Accesorios",
+        categorySchool: "🎓 Escuela",
+        categoryWork: "💼 Trabajo",
         categoryHome: "🏠 Hogar",
         categoryBeauty: "💄 Belleza",
         categoryOther: "📦 Otros",
@@ -671,11 +644,27 @@ const i18n = {
         onlineClients: "Clientes en línea",
         moncashSettings: "Ajustes de MonCash (Pago Real)",
         saveConfig: "Guardar Configuración",
+        linkMoncash: "Vincular tu cuenta MonCash",
+        moncashPhone: "Tu número MonCash",
+        moncashTerms: "Acepto los términos de uso y la política de privacidad de MonCash",
+        connect: "Vincular",
+        connected: "Vinculado con éxito",
+        termsConsentTitle: "Términos de Uso",
+        termsConsentDesc: "Para continuar usando Total Lakay, debe aceptar nuestros términos de uso y nuestra política de privacidad.",
+        accept: "Aceptar", decline: "Rechazar",
+        cancellationReason: "Razón de cancelación", reasonPlaceholder: "¿Por qué cancela este pedido?",
+        reasonRequired: "Debe proporcionar una razón para la cancelación.",
+        recentProducts: "Productos Recientes", categoriesTitle: "Categorías", exploreCategories: "Explora todas nuestras categorías",
+        school: "Escuela", work: "Trabajo", home: "Hogar", electronics: "Electrónica", beauty: "Belleza", clothing: "Ropa",
+        stock: "Cantidad en stock", category: "Categoría", colors: "Colores (separados por comas)", sizes: "Tallas (separadas por comas)",
+        selectColor: "Seleccionar Color", selectSize: "Seleccionar Talla", quantity: "Cantidad", outOfStock: "Sin stock",
+        servicesTitle: "Nuestros Servicios", privacyTitle: "Privacidad", termsTitle: "Condiciones",
+        phoneRecommend: "Tu número de teléfono", addressRecommend: "Tu dirección completa", phoneRequired: "Teléfono requerido",
+        cart: "Carrito", checkout: "Pagar ahora", securePaymentInfo: "Pago 100% seguro",
         profile: "Perfil", phone: "Teléfono", phonePlaceholder: "Ej: +509 1234 5678",
         updateProfile: "Actualizar perfil", profileUpdated: "¡Perfil actualizado con éxito!",
         phoneNumber: "Número de teléfono", saveProfile: "Guardar Perfil",
         addressRecommend: "Dirección (Recomendado)", phoneRecommend: "Teléfono (Recommandado)",
-        cart: "Carrito", addToCart: "Añadir al carrito", removeFromCart: "Eliminar",
         checkout: "Pagar ahora", total: "Total", emptyCart: "Tu carrito está vacío",
         securePayment: "Pago Seguro", contactUs: "Contáctenos",
         securePaymentInfo: "Pago 100% seguro",
@@ -1214,11 +1203,16 @@ function renderNotifList() {
         list.innerHTML = `<p class="text-center" style="padding:2rem;">🔔 ${t('noNotifications')}</p>`; return;
     }
     list.innerHTML = notifications.map(n => `
-    <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markNotifAsRead('${n.id}')" style="cursor:pointer;">
-      <div class="notif-title">${n.type === 'promo' ? '🎉' : n.type === 'new' ? '🆕' : n.type === 'review' ? '⭐' : '💰'} ${gt(n.title)}</div>
-      <p>${gt(n.message)}</p>
-      <div class="notif-date">${n.createdAt?.toDate?.()?.toLocaleDateString?.('fr-FR') || t('today')}</div>
-      ${!n.read ? `<span style="color:var(--gold); font-size:0.75rem; font-weight:700;">● ${t('new') || 'Nouveau'}</span>` : ''}
+    <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markNotifAsRead('${n.id}')" style="cursor:pointer; border-left:4px solid ${n.type === 'promo' ? 'var(--gold)' : 'var(--blue-light)'};">
+      <div class="notif-title" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>${n.type === 'promo' ? '🎉' : n.type === 'refund' ? '💸' : '🔔'} ${gt(n.title)}</span>
+        ${n.reason ? `<span class="badge" style="font-size:0.65rem; background:rgba(200, 150, 62, 0.1); color:var(--gold); border:1px solid var(--gold);">${gt(n.reason)}</span>` : ''}
+      </div>
+      <p style="margin:0.4rem 0; font-size:0.9rem;">${gt(n.message)}</p>
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:var(--text-soft);">
+        <div class="notif-date">${n.createdAt?.toDate?.()?.toLocaleDateString?.('fr-FR') || t('today')}</div>
+        ${!n.read ? `<span style="color:var(--gold); font-weight:700;">● ${t('new')}</span>` : ''}
+      </div>
     </div>`).join('');
 }
 
@@ -1682,7 +1676,21 @@ async function renderAdminDashboard(app) {
       </div>
     </div>
     <div id="adminClientsList" class="card mt-2 hidden"><h3>👥 ${t('manageClients')} (${allUsers.length})</h3>${allUsers.map(u => `<div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid #eee;"><div><strong>${u.displayName || u.email}</strong><span class="badge ${u.role === 'admin' ? 'badge-success' : ''}" style="margin-left:0.5rem;">${u.role}</span></div><button class="btn btn-sm ${u.role === 'admin' ? 'btn-danger' : 'btn-gold'} toggle-role" data-uid="${u.id}" data-role="${u.role}">${u.role === 'admin' ? t('makeClient') : t('makeAdmin')}</button></div>`).join('')}</div>
-    <div id="adminSendNotifForm" class="card mt-2 hidden"><h3>🔔 ${t('sendNotification')}</h3><input id="notifTitle" placeholder="${t('notificationTitle')}"><textarea id="notifMessage" placeholder="${t('notificationMessage')}"></textarea><button id="sendNotifBtn" class="btn btn-gold mt-2">📤 ${t('sendNotification')}</button></div>
+    <div id="adminSendNotifForm" class="card mt-2 hidden">
+        <h3>🔔 ${t('sendNotification')}</h3>
+        <label>🎯 Vise ki moun (Mention)</label>
+        <select id="notifTarget" style="margin-bottom:1rem; width:100%;">
+            <option value="all">📢 Tout moun (Tout Utilisateur)</option>
+            ${allUsers.map(u => `<option value="${u.id}">${u.displayName || u.email}</option>`).join('')}
+        </select>
+        <label>🏷️ Tit</label>
+        <input id="notifTitle" placeholder="${t('notificationTitle')}">
+        <label>💡 Rezon / Kòz</label>
+        <input id="notifReason" placeholder="Ex: Pwomosyon, Mizajou, Enfòmasyon">
+        <label>✉️ Mesaj</label>
+        <textarea id="notifMessage" placeholder="${t('notificationMessage')}"></textarea>
+        <button id="sendNotifBtn" class="btn btn-gold mt-2" style="width:100%;">📤 ${t('sendNotification')}</button>
+    </div>
   `;
 
     // Events Admin
@@ -1813,27 +1821,47 @@ async function renderAdminDashboard(app) {
     });
 
     document.getElementById('sendNotifBtn')?.addEventListener('click', async () => {
+        const target = document.getElementById('notifTarget')?.value;
         const title = document.getElementById('notifTitle')?.value.trim();
+        const reason = document.getElementById('notifReason')?.value.trim();
         const message = document.getElementById('notifMessage')?.value.trim();
+
         if (!title || !message) { showMessage(t('fillAllFields'), 'error'); return; }
 
         try {
-            showMessage("Traduction automatique en cours...", "info");
-            const [titleTrans, messageTrans] = await Promise.all([
+            showMessage("Tradiksyon ak Voye nan kou...", "info");
+            
+            // Traduction automatique pour tous les champs
+            const [titleTrans, reasonTrans, messageTrans] = await Promise.all([
                 getTranslations(title),
+                getTranslations(reason),
                 getTranslations(message)
             ]);
 
-            await db.collection('notifications').add({
+            const notifData = {
                 title: titleTrans,
+                reason: reasonTrans,
                 message: messageTrans,
-                type: 'promo',
-                targetRole: 'all',
+                type: reason.toLowerCase().includes('promo') ? 'promo' : 'info',
+                targetUserId: target === 'all' ? null : target,
+                targetRole: target === 'all' ? 'all' : null,
                 read: false,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+            };
+
+            await db.collection('notifications').add(notifData);
+            
+            // Simulation Notification Push (Navigateur)
+            if (Notification.permission === "granted") {
+                new Notification(gt(titleTrans), {
+                    body: (reason ? gt(reasonTrans) + ": " : "") + gt(messageTrans),
+                    icon: 'logo.jpeg'
+                });
+            }
+
             showMessage(t('notifSent'), 'success');
             document.getElementById('notifTitle').value = '';
+            document.getElementById('notifReason').value = '';
             document.getElementById('notifMessage').value = '';
             document.getElementById('adminSendNotifForm').classList.add('hidden');
         } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
@@ -2111,6 +2139,9 @@ async function renderProfile(app) {
             <div class="profile-stat-box" style="background:var(--blue-deep); color:white;">
               <div class="profile-stat-val" style="color:var(--gold);">${formatPrice(currentUserData?.balance || 0)}</div>
               <div style="font-size:0.9rem; opacity:0.8; font-weight:600;">${t('myBalance')}</div>
+              <div style="font-size:0.7rem; margin-top:0.5rem; opacity:0.7;">
+                ${currentUserData?.moncashPhone ? `🔗 Linked: ${currentUserData.moncashPhone}` : `❌ Not Linked to MonCash`}
+              </div>
             </div>
             <div class="profile-stat-box">
               <div class="profile-stat-val">${totalOrders}</div>
@@ -2132,6 +2163,20 @@ async function renderProfile(app) {
               ${orders[0].deliveryEstimate ? `<div style="margin-top:0.5rem; font-size:0.85rem; font-weight:600; color:var(--success);">🚚 ${t('delivery')}: ${orders[0].deliveryEstimate}</div>` : `<div style="margin-top:0.5rem; font-size:0.85rem; color:#f39c12;">⏳ ${t('waiting')}</div>`}
             </div>
           ` : `<p class="text-center" style="padding:2rem; background:var(--gray-100); border-radius:12px; color:var(--text-soft);">Vous n'avez pas encore passé de commande.</p>`}
+          
+          <div class="card-premium mt-2" style="background:rgba(200, 150, 62, 0.03); border:1px solid var(--gold-pale);">
+            <h3 style="color:var(--blue-deep); margin-bottom:1rem;">💳 ${t('linkMoncash')}</h3>
+            <div style="margin-bottom:1rem;">
+                <label>${t('moncashPhone')}</label>
+                <input type="text" id="userMoncashPhone" value="${currentUserData?.moncashPhone || ''}" placeholder="+509 3XXX XXXX" style="background:white;">
+            </div>
+            <div style="display:flex; align-items:flex-start; gap:0.8rem; margin-bottom:1.5rem; background:white; padding:1rem; border-radius:12px; border:1px solid #eee;">
+                <input type="checkbox" id="userMoncashConsent" ${currentUserData?.moncashConsent ? 'checked' : ''} style="width:22px; height:22px; margin:0; cursor:pointer; flex-shrink:0;">
+                <label for="userMoncashConsent" style="margin:0; font-weight:400; font-size:0.85rem; cursor:pointer; line-height:1.4;">${t('moncashTerms')}</label>
+            </div>
+            <button id="linkMoncashBtn" class="btn btn-gold" style="width:100%;">${currentUserData?.moncashPhone ? t('save') : t('connect')}</button>
+            ${currentUserData?.moncashPhone ? `<p style="color:var(--success); font-size:0.8rem; margin-top:0.8rem; text-align:center; font-weight:600;">✅ ${t('connected')}</p>` : ''}
+          </div>
         </div>
 
         <!-- TAB: INFO -->
@@ -2243,6 +2288,25 @@ async function renderProfile(app) {
                 avatarEl.innerHTML = `<span id="avatarInitials">${(name || currentUser.email || 'U').substring(0, 2).toUpperCase()}</span><div style="position:absolute; bottom:0; right:0; background:var(--gold); color:white; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; border:2px solid var(--white);">📷</div>`;
             }
         } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
+    });
+
+    // Link MonCash Logic
+    document.getElementById('linkMoncashBtn')?.addEventListener('click', async () => {
+        const phone = document.getElementById('userMoncashPhone').value.trim();
+        const consent = document.getElementById('userMoncashConsent').checked;
+
+        if (!phone) { showMessage(t('phoneRequired') || "Telefòn obligatwa", 'error'); return; }
+        if (!consent) { showMessage("Ou dwe aksepte kondisyon yo", 'error'); return; }
+
+        try {
+            await db.collection('users').doc(currentUser.uid).update({
+                moncashPhone: phone,
+                moncashConsent: consent,
+                moncashLinkedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            showMessage("✅ MonCash konekte ak siksè!", 'success');
+            renderView('profile');
+        } catch (e) { showMessage('Erreur: ' + e.message, 'error'); }
     });
 
     // Photo Upload Logic
