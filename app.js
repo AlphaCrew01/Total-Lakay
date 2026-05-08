@@ -6,13 +6,13 @@
 
 // ---------- CONFIGURATION FIREBASE ----------
 const firebaseConfig = {
-  apiKey: "AIzaSyBA_cEX_pHmlUZ4xv10GIOLVOv9g_-iolQ",
-  authDomain: "total-lakay.firebaseapp.com",
-  projectId: "total-lakay",
-  storageBucket: "total-lakay.firebasestorage.app",
-  messagingSenderId: "37969355540",
-  appId: "1:37969355540:web:514e3869a9422e3681d801",
-  measurementId: "G-HC09M5HTVZ"
+    apiKey: "AIzaSyBA_cEX_pHmlUZ4xv10GIOLVOv9g_-iolQ",
+    authDomain: "total-lakay.firebaseapp.com",
+    projectId: "total-lakay",
+    storageBucket: "total-lakay.firebasestorage.app",
+    messagingSenderId: "37969355540",
+    appId: "1:37969355540:web:514e3869a9422e3681d801",
+    measurementId: "G-HC09M5HTVZ"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -34,711 +34,712 @@ let notifications = [];
 let cart = JSON.parse(localStorage.getItem('totalLakayCart') || '[]');
 let favorites = JSON.parse(localStorage.getItem('totalLakayFavorites') || '[]');
 let selectedProductId = null;
+let moncashConfig = { clientId: '', clientSecret: '', mode: 'sandbox' };
 
 const exchangeRates = {
-  HTG: 1,
-  USD: 1 / 135,
-  EUR: 1 / 140
+    HTG: 1,
+    USD: 1 / 135,
+    EUR: 1 / 140
 };
 
 // ---------- TRADUCTIONS COMPLÈTES ----------
 const i18n = {
-  ht: {
-    home: "Akèy", shop: "Boutik", orders: "Kòmand", admin: "Admin",
-    login: "Konekte", logout: "Dekonekte",
-    dashboard: "Tablodbò", totalProducts: "Total Pwodui",
-    totalOrders: "Total Kòmand", totalClients: "Total Kliyan",
-    pendingOrders: "Kòmand An Atant", confirmedOrders: "Kòmand Konfime",
-    revenue: "Revni Total", recentOrders: "Dènye Kòmand",
-    manageProducts: "Jere Pwodui", manageOrders: "Jere Kòmand",
-    manageClients: "Jere Kliyan", statistics: "Estatistik",
-    quickActions: "Aksyon Rapid",
-    welcome: "Byenveni nan Total Lakay", slogan: "Tout bagay lakay ou nan yon sèl klike.",
-    featured: "Pwodui rekòmande", goShop: "Ale nan boutik",
-    buy: "Achte", price: "Pri", noProducts: "Pa gen pwodui ankò",
-    loading: "Chajman...",
-    address: "Adrès ou", addressPlaceholder: "Rue, Ville, Kòd postal",
-    payment: "Mwayen peman", orderNow: "Kòmande",
-    orderSuccess: "Kòmand anrejistre ak siksè !",
-    loginRequired: "Ou dwe konekte pou achte", fillAllFields: "Ranpli tout chan yo",
-    myOrders: "Kòmand mwen yo", status: "Estati", delivery: "Délai livrezon",
-    noOrders: "Pa gen kòmand ankò", pending: "An atant", confirmed: "Konfime",
-    cancelled: "Anile", delivered: "Livre", waiting: "An atant...",
-    addProduct: "Ajoute yon pwodui", productName: "Non pwodui",
-    productNamePlaceholder: "Ex: Diri blan", productPrice: "Pri",
-    productPricePlaceholder: "25.00", productImage: "URL imaj",
-    productImagePlaceholder: "https://...", productDesc: "Deskripsyon",
-    productDescPlaceholder: "Deskripsyon pwodui a...",
-    oldPrice: "Ansyen pri (si genyen)", oldPricePlaceholder: "30.00",
-    save: "Anrejistre", delete: "Efase", edit: "Modifye",
-    existingProducts: "Pwodui ki deja egziste", customerOrders: "Kòmand kliyan yo",
-    noOrdersAdmin: "Pa gen kòmand", noProductsAdmin: "Pa gen pwodui",
-    delayPlaceholder: "Ex: 3 jou", updateStatus: "Mete ajou estati",
-    clients: "Kliyan", client: "Kliyan", clientName: "Non kliyan",
-    clientEmail: "Email kliyan", clientSince: "Kliyan depi",
-    role: "Wòl", makeAdmin: "Fè admin", makeClient: "Fè kliyan",
-    loginTitle: "Konekte pou achte", createAccount: "Kreye yon kont",
-    createAccountTitle: "Kreye kont ou", noAccount: "Pa gen kont?",
-    alreadyAccount: "Deja gen yon kont?", or: "oubyen",
-    continueGoogle: "Kontinye ak Google", emailPlaceholder: "Email",
-    passwordPlaceholder: "Modpas", namePlaceholder: "Non ou",
-    passwordMin: "Modpas (min 6 karaktè)", selectRole: "Chwazi wòl ou (default: Kliyan)",
-    notifications: "Notifikasyon", specialOffers: "Òf espesyal",
-    settings: "Paramèt", history: "Istwa",
-    specialPrice: "Pri espesyal!", promo: "Promosyon!",
-    noSpecialOffers: "Pa gen òf espesyal pou kounye a", offer: "ÒFÈ",
-    noNotifications: "Pa gen notifikasyon", today: "Jodi a",
-    sendNotification: "Voye notifikasyon", notificationTitle: "Tit notifikasyon",
-    notificationMessage: "Mesaj notifikasyon",
-    language: "Langue / Language", accountInfo: "Enfòmasyon kont",
-    email: "Email", name: "Non", emailVerified: "Email verifye",
-    yes: "Wi", no: "Non", resendVerifyEmail: "Renvwaye email verifikasyon",
-    welcomeBack: "Byenveni!", welcomeAdmin: "Byenveni Admin!",
-    accountCreated: "Kont kreye ak siksè!", loggedOut: "Ou dekonekte",
-    productAdded: "Pwodui ajoute!", productUpdated: "Pwodui modifye!",
-    productDeleted: "Pwodui efase", delayUpdated: "Délai mete!",
-    statusUpdated: "Estati modifye!", delayRequired: "Antre yon délai",
-    accountNotFound: "Kont sa a pa egziste. Kreye yon kont.",
-    passwordError: "Modpas dwe gen omwen 6 karaktè",
-    confirmDelete: "Eske w sèten ou vle efase sa a?",
-    adminOnly: "Admin sèlman",
-    emailVerifySent: "📩 Tcheke email ou pou verifye kont lan!",
-    emailNotVerified: "❌ Verifye email ou avan ou konekte!",
-    emailVerifyWarning: "⚠️ Verifye email ou pou kontinye",
-    resendEmail: "⏳ Si w poko wè email la, tcheke spam ou...",
-    errorOccurred: "Erè: ", clientLabel: "Kliyan", date: "Dat",
-    footerRights: "Total Lakay © 2026", footerContact: "Kontakte nou",
-    footerServices: "Sèvis", footerPrivacy: "Konfidansyalite",
-    footerTerms: "Kondisyon Itilizasyon",
-    notifSent: "✅ Notifikasyon voye!",
-    roleChanged: "✅ Wòl modifye!",
-    madeAdmin: "✅ Fè admin!",
-    madeClient: "✅ Fè kliyan!",
-    // Recherche & Filtres
-    searchPlaceholder: "🔍 Rechèche yon pwodui...",
-    allCategories: "Tout kategori",
-    priceMin: "Pri min",
-    priceMax: "Pri max",
-    applyFilters: "Filtre",
-    resetFilters: "Reinisyalize",
-    sortDateDesc: "Pi resan",
-    sortDateAsc: "Pi ansyen",
-    sortPriceAsc: "Pri: Ba → Wo",
-    sortPriceDesc: "Pri: Wo → Ba",
-    sortNameAsc: "Non: A → Z",
-    sortNameDesc: "Non: Z → A",
-    resultsFound: "rezilta jwenn",
-    noResultsFound: "Pa gen rezilta. Eseye ak lòt mo.",
-    categoryElectronics: "📱 Elektwonik",
-    categoryClothing: "👕 Vètman ak Akseswa",
-    categorySchool: "🎓 Lekòl / École",
-    categoryWork: "💼 Travay / Travail",
-    categoryHome: "🏠 Kay / Maison",
-    categoryBeauty: "💄 Bote / Beauté",
-    categoryOther: "📦 Lòt / Autres",
-    termsConsentTitle: "Kondisyon Itilizasyon",
-    termsConsentDesc: "Pou w ka kontinye sèvi ak Total Lakay, ou dwe aksepte kondisyon itilizasyon nou yo ak politik konfidansyalite nou an.",
-    accept: "Aksepte", decline: "Refize",
-    cancellationReason: "Rezon anilasyon", reasonPlaceholder: "Poukisa ou anile kòmand sa?",
-    reasonRequired: "Ou dwe bay yon rezon pou anilasyon an.",
-    recentProducts: "Pwodui Resan", categoriesTitle: "Kategori yo", exploreCategories: "Eksplore tout kategori nou yo",
-    school: "Lekòl", work: "Travay", home: "Kay", electronics: "Elektwonik", beauty: "Bote", clothing: "Vètman",
-    stock: "Kantite nan stòk", category: "Kategori", colors: "Koulè (separe ak vigil)", sizes: "Gwosè / Size (separe ak vigil)",
-    selectColor: "Chwazi Koulè", selectSize: "Chwazi Gwosè", quantity: "Kantite", outOfStock: "Pa gen nan stòk ankò",
-    categoryClothingAccessories: "👕 Vètman ak Akseswa",
-    categorySchoolOffice: "🎓 Lekòl ak Travay",
-    categoryHomePersonal: "🏠 Kay ak Pèsonèl",
-    categoryElectronicsTech: "📱 Elektwonik",
-    servicesTitle: "Sèvis nou yo", privacyTitle: "Konfidansyalite", termsTitle: "Kondisyon yo",
-    phoneRecommend: "Nimewo telefòn ou", addressRecommend: "Adrès ou konplè", phoneRequired: "Telefòn obligatwa",
-    cart: "Panyen", checkout: "Peye kounye a", securePaymentInfo: "Peman 100% sekirize",
-    noNotifications: "Pa gen notifikasyon pou kounye a",
-    profile: "Profil", phone: "Telefòn", phonePlaceholder: "Ex: +509 1234 5678",
-    updateProfile: "Mete ajou profil", profileUpdated: "Profil mete ajou ak siksè!",
-    phoneNumber: "Nimewo telefòn", saveProfile: "Anrejistre Profil",
-    addressRecommend: "Adrès (Rekòmande)", phoneRecommend: "Telefòn (Rekòmande)",
-    cart: "Panyen", addToCart: "Ajoute nan panyen", removeFromCart: "Retire",
-    notifSettings: "Paramèt Notifikasyon", notifPushEnable: "Aktive notifikasyon sou telefòn",
-    notifNewProducts: "Nouvo Pwodui", notifSpecialPrices: "Pri Spesyal & Pwomo",
-    notifUpdates: "Mizajou sou sit la", notifStatus: "Estati Notifikasyon",
-    notifBlocked: "Bloke pa navigatè a", notifGranted: "Otorize",
-    notifRequest: "Otorize kounye a", notifSave: "Anrejistre preferans",
-    notifPreferencesSaved: "Preferans notifikasyon anrejistre!",
-    accountInfo: "Enfòmasyon Kont", email: "Email", name: "Non", role: "Wòl", emailVerified: "Email Verifye",
-    yes: "Wi", no: "Non", resendVerifyEmail: "Voye email verifikasyon ankò",
-    checkout: "Peye kounye a", total: "Total", emptyCart: "Panyen ou vid",
-    securePayment: "Peman Sekirize", contactUs: "Kontakte nou",
-    securePaymentInfo: "Peman 100% sekirize",
-    notifications: "Notifikasyon", noNotifications: "Pa gen notifikasyon",
-    favorites: "Favori", noFavorites: "Pa gen favori ankò",
-    reviews: "Avi", leaveReview: "Kite yon avi", addReview: "Ajoute yon avi", noReviews: "Pa gen avi ankò",
-    rating: "Nòt", comment: "Kòmantè", submit: "Voye", invalidAddress: "Adrès ou antre a pa valab",
-    ratingError: "Chwazi yon nòt (zetwal)", commentError: "Ekri yon kòmantè", reviewSuccess: "Mèsi pou avi ou!", reviewError: "Erè voye avi",
-    servicesTitle: "Sèvis nou yo",
-    servicesIntro: "Total Lakay ofri plizyè sèvis pou fasilite lavi w :",
-    servicesOnline: "Vant an liy :",
-    servicesOnlineDesc: "Yon gran chwa pwodwi nan plizyè kategori (elektwonik, akseswa pou kay, akseswa pèsonel, elatriye).",
-    servicesDelivery: "Livrezon rapid :",
-    servicesDeliveryDesc: "Nou asire nou ke ou jwenn komand ou nan pi bon delè yo.",
-    servicesCustomer: "Sèvis kliyan :",
-    servicesCustomerDesc: "Nou disponib pou reponn tout kesyon w via apèl dirèk, WhatsApp oswa imèl.",
-    servicesSecure: "Peman sekirize :",
-    servicesSecureDesc: "Nou aksepte plizyè mwayen peman pou sekirite w ak konfò w.",
-    privacyTitle: "Politik Konfidansyalite",
-    privacyIntro: "Nan Total Lakay, nou pran vi prive w trè oserye. Men kijan nou itilize ak pwoteje done ou yo :",
-    privacyData: "Kolek done :",
-    privacyDataDesc: "Nou sèlman kolekte enfòmasyon ki nesesè pou trete komand ou yo (non, adrès, imèl, nimewo telefòn).",
-    privacySecurity: "Sekirite :",
-    privacySecurityDesc: "Tout done pèsonèl ou yo chiffres epi estoke sou sèvè ki an sekirite (Firebase).",
-    privacySharing: "Pataj done :",
-    privacySharingDesc: "Nou pa janm vann oswa pataje enfòmasyon pèsonèl ou ak twazyèm pati san konsantman w, sof si lalwa mande sa.",
-    privacyRights: "Dwa w yo :",
-    privacyRightsDesc: "Ou gen dwa pou w modifye oswa efase kont ou nenpòt kilè nan paramèt pwofil ou.",
-    termsTitle: "Kondisyon Itilizasyon",
-    termsIntro: "Lè w itilize platfòm Total Lakay la, ou asepte kondisyon sa yo :",
-    termsAccount: "Kont itilizatè :",
-    termsAccountDesc: "Ou responsab pou kenbe modpas ou an sekirite. Tout aktivite sou kont ou se responsablite w.",
-    termsPurchase: "Acha :",
-    termsPurchaseDesc: "Tout acha fèt final sof nan ka kote pwodwi a domaje nan livrezon. Nou rezève dwa pou n anile nenpòt komand sispèk.",
-    termsPrice: "Pri ak Pwodwi :",
-    termsPriceDesc: "Pri yo ka chanje san avètisman alavans. Nou fè efò pou n gen deskripsyon egzak pou cada pwodwi.",
-    termsMod: "Modifikasyon :",
-    termsModDesc: "Total Lakay ka modifye kondisyon sa yo nenpòt moman. N ap fè itilizatè yo konnen via notifikasyon.",
-    school: "Lekòl", work: "Travay", home: "Kay", electronics: "Elektwonik", beauty: "Bote", clothing: "Vètman",
-  },
-  fr: {
-    home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
-    login: "Connexion", logout: "Déconnexion",
-    dashboard: "Tableau de bord", totalProducts: "Total Produits",
-    totalOrders: "Total Commandes", totalClients: "Total Clients",
-    pendingOrders: "Commandes En Attente", confirmedOrders: "Commandes Confirmées",
-    revenue: "Revenu Total", recentOrders: "Dernières Commandes",
-    manageProducts: "Gérer Produits", manageOrders: "Gérer Commandes",
-    manageClients: "Gérer Clients", statistics: "Statistiques",
-    quickActions: "Actions Rapides",
-    welcome: "Bienvenue sur Total Lakay", slogan: "Tout ce qu'il vous faut, en un clic.",
-    featured: "Produits recommandés", goShop: "Aller à la boutique",
-    buy: "Acheter", price: "Prix", noProducts: "Aucun produit",
-    loading: "Chargement...",
-    address: "Votre adresse", addressPlaceholder: "Rue, Ville, Code postal",
-    payment: "Moyen de paiement", orderNow: "Commander",
-    orderSuccess: "Commande enregistrée avec succès !",
-    loginRequired: "Vous devez être connecté pour acheter",
-    fillAllFields: "Remplissez tous les champs",
-    myOrders: "Mes commandes", status: "Statut", delivery: "Délai de livraison",
-    noOrders: "Aucune commande", pending: "En attente", confirmed: "Confirmé",
-    cancelled: "Annulé", delivered: "Livré", waiting: "En attente...",
-    addProduct: "Ajouter un produit", productName: "Nom du produit",
-    productNamePlaceholder: "Ex: Riz blanc", productPrice: "Prix",
-    productPricePlaceholder: "25.00", productImage: "URL de l'image",
-    productImagePlaceholder: "https://...", productDesc: "Description",
-    productDescPlaceholder: "Description du produit...",
-    oldPrice: "Ancien prix (si applicable)", oldPricePlaceholder: "30.00",
-    save: "Enregistrer", delete: "Supprimer", edit: "Modifier",
-    existingProducts: "Produits existants", customerOrders: "Commandes clients",
-    noOrdersAdmin: "Aucune commande", noProductsAdmin: "Aucun produit",
-    delayPlaceholder: "Ex: 3 jours", updateStatus: "Mettre à jour le statut",
-    clients: "Clients", client: "Client", clientName: "Nom client",
-    clientEmail: "Email client", clientSince: "Client depuis",
-    role: "Rôle", makeAdmin: "Passer admin", makeClient: "Passer client",
-    loginTitle: "Connectez-vous pour acheter", createAccount: "Créer un compte",
-    createAccountTitle: "Créer votre compte", noAccount: "Pas de compte ?",
-    alreadyAccount: "Déjà un compte ?", or: "ou",
-    continueGoogle: "Continuer avec Google", emailPlaceholder: "Email",
-    passwordPlaceholder: "Mot de passe", namePlaceholder: "Votre nom",
-    passwordMin: "Mot de passe (min 6 caractères)", selectRole: "Choisissez votre rôle (défaut: Client)",
-    notifications: "Notifications", specialOffers: "Offres spéciales",
-    settings: "Paramètres", history: "Historique",
-    specialPrice: "Prix spécial !", promo: "Promotion !",
-    noSpecialOffers: "Pas d'offres spéciales pour le moment", offer: "OFFRE",
-    noNotifications: "Aucune notification", today: "Aujourd'hui",
-    sendNotification: "Envoyer notification", notificationTitle: "Titre notification",
-    notificationMessage: "Message notification",
-    language: "Langue / Language", accountInfo: "Informations du compte",
-    email: "Email", name: "Nom", emailVerified: "Email vérifié",
-    yes: "Oui", no: "Non", resendVerifyEmail: "Renvoyer l'email de vérification",
-    welcomeBack: "Bienvenue !", welcomeAdmin: "Bienvenue Admin !",
-    accountCreated: "Compte créé avec succès !", loggedOut: "Vous êtes déconnecté",
-    productAdded: "Produit ajouté !", productUpdated: "Produit modifié !",
-    productDeleted: "Produit supprimé", delayUpdated: "Délai mis à jour !",
-    statusUpdated: "Statut modifié !", delayRequired: "Entrez un délai",
-    accountNotFound: "Ce compte n'existe pas. Créez un compte.",
-    passwordError: "Le mot de passe doit avoir au moins 6 caractères",
-    confirmDelete: "Êtes-vous sûr de vouloir supprimer ?",
-    adminOnly: "Admin seulement",
-    emailVerifySent: "📩 Vérifiez votre email pour activer votre compte !",
-    emailNotVerified: "❌ Vérifiez votre email avant de vous connecter !",
-    emailVerifyWarning: "⚠️ Vérifiez votre email pour continuer",
-    resendEmail: "⏳ Si vous ne voyez pas l'email, vérifiez vos spams...",
-    errorOccurred: "Erreur : ", clientLabel: "Client", date: "Date",
-    footerRights: "Total Lakay © 2026", footerContact: "Contactez-nous",
-    footerServices: "Services", footerPrivacy: "Confidentialité",
-    footerTerms: "Conditions d'Utilisation",
-    notifSent: "✅ Notification envoyée !",
-    roleChanged: "✅ Rôle modifié !",
-    madeAdmin: "✅ Passé admin !",
-    madeClient: "✅ Passé client !",
-    // Recherche & Filtres
-    searchPlaceholder: "🔍 Rechercher un produit...",
-    allCategories: "Toutes catégories",
-    priceMin: "Prix min",
-    priceMax: "Prix max",
-    applyFilters: "Filtrer",
-    resetFilters: "Réinitialiser",
-    sortDateDesc: "Plus récent",
-    sortDateAsc: "Plus ancien",
-    sortPriceAsc: "Prix: Bas → Haut",
-    sortPriceDesc: "Prix: Haut → Bas",
-    sortNameAsc: "Nom: A → Z",
-    sortNameDesc: "Nom: Z → A",
-    resultsFound: "résultats trouvés",
-    noResultsFound: "Aucun résultat. Essayez d'autres mots.",
-    categoryElectronics: "📱 Électronique",
-    categoryClothing: "👕 Vêtements & Accessoires",
-    categorySchool: "🎓 École",
-    categoryWork: "💼 Travail",
-    categoryHome: "🏠 Maison",
-    categoryBeauty: "💄 Beauté",
-    categoryOther: "📦 Autres",
-    termsConsentTitle: "Conditions d'Utilisation",
-    termsConsentDesc: "Pour continuer à utiliser Total Lakay, vous devez accepter nos conditions d'utilisation et notre politique de confidentialité.",
-    accept: "Accepter", decline: "Refuser",
-    cancellationReason: "Raison de l'annulation", reasonPlaceholder: "Pourquoi annulez-vous cette commande ?",
-    reasonRequired: "Vous devez fournir une raison pour l'annulation.",
-    recentProducts: "Produits Récents", categoriesTitle: "Catégories", exploreCategories: "Explorez toutes nos catégories",
-    school: "École", work: "Travail", home: "Maison", electronics: "Électronique", beauty: "Beauté", clothing: "Vêtements",
-    stock: "Quantité en stock", category: "Catégorie", colors: "Couleurs (séparées par virgule)", sizes: "Tailles / Sizes (séparées par virgule)",
-    selectColor: "Choisir Couleur", selectSize: "Choisir Taille", quantity: "Quantité", outOfStock: "Rupture de stock",
-    categoryClothingAccessories: "👕 Vêtements & Accessoires",
-    categorySchoolOffice: "🎓 École & Travail",
-    categoryHomePersonal: "🏠 Maison & Personnel",
-    categoryElectronicsTech: "📱 Électronique",
-    notifSettings: "Paramètres de Notifications", notifPushEnable: "Activer les notifications push",
-    notifNewProducts: "Nouveaux Produits", notifSpecialPrices: "Prix Spéciaux & Promos",
-    notifUpdates: "Mises à jour du site", notifStatus: "Statut des Notifications",
-    notifBlocked: "Bloqué par le navigateur", notifGranted: "Autorisé",
-    notifRequest: "Autoriser maintenant", notifSave: "Enregistrer les préférences",
-    notifPreferencesSaved: "Préférences de notifications enregistrées !",
-    accountInfo: "Informations du Compte", email: "Email", name: "Nom", role: "Rôle", emailVerified: "Email Vérifié",
-    yes: "Oui", no: "Non", resendVerifyEmail: "Renvoyer l'email de vérification",
-    servicesTitle: "Nos Services", privacyTitle: "Confidentialité", termsTitle: "Conditions",
-    phoneRecommend: "Votre numéro de téléphone", addressRecommend: "Votre adresse complète", phoneRequired: "Téléphone requis",
-    cart: "Panier", checkout: "Payer maintenant", securePaymentInfo: "Paiement 100% sécurisé",
-    noNotifications: "Pas de notifications pour le moment",
-    profile: "Profil", phone: "Téléphone", phonePlaceholder: "Ex: +509 1234 5678",
-    updateProfile: "Mettre à jour le profil", profileUpdated: "Profil mis à jour avec succès !",
-    phoneNumber: "Numéro de téléphone", saveProfile: "Enregistrer le Profil",
-    addressRecommend: "Adresse (Recommandé)", phoneRecommend: "Téléphone (Recommandé)",
-    cart: "Panier", addToCart: "Ajouter au panier", removeFromCart: "Retirer",
-    checkout: "Payer maintenant", total: "Total", emptyCart: "Votre panier est vide",
-    securePayment: "Paiement Sécurisé", contactUs: "Contactez-nous",
-    securePaymentInfo: "Paiement 100% sécurisé",
-    notifications: "Notifications", noNotifications: "Pas de notifications",
-    favorites: "Favoris", noFavorites: "Pas encore de favoris",
-    reviews: "Avis", leaveReview: "Laisser un avis", addReview: "Ajouter un avis", noReviews: "Pas encore d'avis",
-    rating: "Note", comment: "Commentaire", submit: "Envoyer", invalidAddress: "Adresse invalide",
-    ratingError: "Choisissez une note (étoiles)", commentError: "Écrivez un commentaire", reviewSuccess: "Merci pour votre avis !", reviewError: "Erreur d'envoi",
-    servicesTitle: "Nos Services",
-    servicesIntro: "Total Lakay offre plusieurs services pour vous faciliter la vie :",
-    servicesOnline: "Vente en ligne :",
-    servicesOnlineDesc: "Un grand choix de produits dans plusieurs catégories (électronique, accessoires pour la maison, accessoires personnels, etc.).",
-    servicesDelivery: "Livraison rapide :",
-    servicesDeliveryDesc: "Nous nous assurons que vous recevez votre commande dans les meilleurs délais.",
-    servicesCustomer: "Service client :",
-    servicesCustomerDesc: "Nous sommes disponibles pour répondre à toutes vos questions via appel direct, WhatsApp ou e-mail.",
-    servicesSecure: "Paiement sécurisé :",
-    servicesSecureDesc: "Nous acceptons plusieurs moyens de paiement pour votre sécurité et votre confort.",
-    privacyTitle: "Politique de Confidentialité",
-    privacyIntro: "Chez Total Lakay, nous prenons votre vie privée très au sérieux. Voici comment nous utilisons et protégeons vos données :",
-    privacyData: "Collecte de données :",
-    privacyDataDesc: "Nous ne collectons que les informations nécessaires au traitement de vos commandes (nom, adresse, e-mail, numéro de téléphone).",
-    privacySecurity: "Sécurité :",
-    privacySecurityDesc: "Toutes vos données personnelles sont cryptées et stockées sur des serveurs sécurisés (Firebase).",
-    privacySharing: "Partage de données :",
-    privacySharingDesc: "Nous ne vendons ni ne partageons jamais vos informations personnelles avec des tiers sans votre consentement, sauf si la loi l'exige.",
-    privacyRights: "Vos droits :",
-    privacyRightsDesc: "Vous avez le droit de modifier ou de supprimer votre compte à tout moment dans vos paramètres de profil.",
-    termsTitle: "Conditions d'Utilisation",
-    termsIntro: "En utilisant la plateforme Total Lakay, vous acceptez les conditions suivantes :",
-    termsAccount: "Compte utilisateur :",
-    termsAccountDesc: "Vous êtes responsable du maintien de la sécurité de votre mot de passe. Toutes les activités sur votre compte sont sous votre responsabilité.",
-    termsPurchase: "Achat :",
-    termsPurchaseDesc: "Tous les achats sont définitifs sauf si le produit est endommagé lors de la livraison. Nous nous réservons le droit d'annuler toute commande suspecte.",
-    termsPrice: "Prix et Produits :",
-    termsPriceDesc: "Les prix sont sujets à changement sans préavis. Nous nous efforçons d'avoir des descriptions exactes pour chaque produit.",
-    termsMod: "Modifications :",
-    termsModDesc: "Total Lakay peut modifier ces conditions à tout moment. Nous en informerons les utilisateurs via des notifications.",
-    school: "École", work: "Travail", home: "Maison", electronics: "Électronique", beauty: "Beauté", clothing: "Vêtements",
-  },
-  en: {
-    home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
-    login: "Login", logout: "Logout",
-    dashboard: "Dashboard", totalProducts: "Total Products",
-    totalOrders: "Total Orders", totalClients: "Total Clients",
-    pendingOrders: "Pending Orders", confirmedOrders: "Confirmed Orders",
-    revenue: "Total Revenue", recentOrders: "Recent Orders",
-    manageProducts: "Manage Products", manageOrders: "Manage Orders",
-    manageClients: "Manage Clients", statistics: "Statistics",
-    quickActions: "Quick Actions",
-    welcome: "Welcome to Total Lakay", slogan: "Everything you need, one click away.",
-    featured: "Featured products", goShop: "Go to shop",
-    buy: "Buy", price: "Price", noProducts: "No products yet",
-    loading: "Loading...",
-    address: "Your address", addressPlaceholder: "Street, City, Zip code",
-    payment: "Payment method", orderNow: "Order Now",
-    orderSuccess: "Order successfully placed!",
-    loginRequired: "You must login to purchase", fillAllFields: "Please fill all fields",
-    myOrders: "My Orders", status: "Status", delivery: "Delivery estimate",
-    noOrders: "No orders yet", pending: "Pending", confirmed: "Confirmed",
-    cancelled: "Cancelled", delivered: "Delivered", waiting: "Waiting...",
-    addProduct: "Add a product", productName: "Product name",
-    productNamePlaceholder: "Ex: White rice", productPrice: "Price",
-    productPricePlaceholder: "25.00", productImage: "Image URL",
-    productImagePlaceholder: "https://...", productDesc: "Description",
-    productDescPlaceholder: "Product description...",
-    oldPrice: "Old price (if any)", oldPricePlaceholder: "30.00",
-    save: "Save", delete: "Delete", edit: "Edit",
-    existingProducts: "Existing products", customerOrders: "Customer orders",
-    noOrdersAdmin: "No orders", noProductsAdmin: "No products",
-    delayPlaceholder: "Ex: 3 days", updateStatus: "Update status",
-    clients: "Clients", client: "Client", clientName: "Client name",
-    clientEmail: "Client email", clientSince: "Client since",
-    role: "Role", makeAdmin: "Make admin", makeClient: "Make client",
-    loginTitle: "Login to purchase", createAccount: "Create account",
-    createAccountTitle: "Create your account", noAccount: "No account?",
-    alreadyAccount: "Already have an account?", or: "or",
-    continueGoogle: "Continue with Google", emailPlaceholder: "Email",
-    passwordPlaceholder: "Password", namePlaceholder: "Your name",
-    passwordMin: "Password (min 6 characters)", selectRole: "Select your role (default: Client)",
-    notifications: "Notifications", specialOffers: "Special Offers",
-    settings: "Settings", history: "History",
-    specialPrice: "Special price!", promo: "Promotion!",
-    noSpecialOffers: "No special offers at the moment", offer: "OFFER",
-    noNotifications: "No notifications", today: "Today",
-    sendNotification: "Send notification", notificationTitle: "Notification title",
-    notificationMessage: "Notification message",
-    language: "Language", accountInfo: "Account info",
-    email: "Email", name: "Name", emailVerified: "Email verified",
-    yes: "Yes", no: "No", resendVerifyEmail: "Resend verification email",
-    welcomeBack: "Welcome!", welcomeAdmin: "Welcome Admin!",
-    accountCreated: "Account created successfully!", loggedOut: "You are logged out",
-    productAdded: "Product added!", productUpdated: "Product updated!",
-    productDeleted: "Product deleted", delayUpdated: "Delivery time updated!",
-    statusUpdated: "Status updated!", delayRequired: "Enter a delivery time",
-    accountNotFound: "This account doesn't exist. Create an account.",
-    passwordError: "Password must be at least 6 characters",
-    confirmDelete: "Are you sure you want to delete?",
-    adminOnly: "Admin only",
-    emailVerifySent: "📩 Check your email to verify your account!",
-    emailNotVerified: "❌ Verify your email before logging in!",
-    emailVerifyWarning: "⚠️ Verify your email to continue",
-    resendEmail: "⏳ If you don't see the email, check your spam folder...",
-    errorOccurred: "Error: ", clientLabel: "Client", date: "Date",
-    footerRights: "Total Lakay © 2026", footerContact: "Contact us",
-    footerServices: "Services", footerPrivacy: "Privacy",
-    footerTerms: "Terms of Use",
-    notifSent: "✅ Notification sent!",
-    roleChanged: "✅ Role changed!",
-    madeAdmin: "✅ Made admin!",
-    madeClient: "✅ Made client!",
-    // Search & Filters
-    searchPlaceholder: "🔍 Search a product...",
-    allCategories: "All categories",
-    priceMin: "Min price",
-    priceMax: "Max price",
-    applyFilters: "Filter",
-    resetFilters: "Reset",
-    sortDateDesc: "Newest",
-    sortDateAsc: "Oldest",
-    sortPriceAsc: "Price: Low → High",
-    sortPriceDesc: "Price: High → Low",
-    sortNameAsc: "Name: A → Z",
-    sortNameDesc: "Name: Z → A",
-    resultsFound: "results found",
-    noResultsFound: "No results. Try other words.",
-    categoryElectronics: "📱 Electronics",
-    categoryClothing: "👕 Clothing & Accessories",
-    categorySchool: "🎓 School",
-    categoryWork: "💼 Work",
-    categoryHome: "🏠 Home",
-    categoryBeauty: "💄 Beauty",
-    categoryOther: "📦 Other",
-    termsConsentTitle: "Terms of Use",
-    termsConsentDesc: "To continue using Total Lakay, you must accept our terms of use and our privacy policy.",
-    accept: "Accept", decline: "Decline",
-    cancellationReason: "Cancellation Reason", reasonPlaceholder: "Why are you cancelling this order?",
-    reasonRequired: "You must provide a reason for the cancellation.",
-    recentProducts: "Recent Products", categoriesTitle: "Categories", exploreCategories: "Explore all our categories",
-    school: "School", work: "Work", home: "Home", electronics: "Electronics", beauty: "Beauty", clothing: "Clothing",
-    stock: "Stock Quantity", category: "Category", colors: "Colors (comma separated)", sizes: "Sizes (comma separated)",
-    selectColor: "Select Color", selectSize: "Select Size", quantity: "Quantity", outOfStock: "Out of stock",
-    categoryClothingAccessories: "👕 Clothing & Accessories",
-    categorySchoolOffice: "🎓 School & Work",
-    categoryHomePersonal: "🏠 Home & Personal",
-    categoryElectronicsTech: "📱 Electronics",
-    notifSettings: "Notification Settings", notifPushEnable: "Enable Push Notifications",
-    notifNewProducts: "New Products", notifSpecialPrices: "Special Prices & Promos",
-    notifUpdates: "Site Updates", notifStatus: "Notification Status",
-    notifBlocked: "Blocked by browser", notifGranted: "Authorized",
-    notifRequest: "Authorize Now", notifSave: "Save Preferences",
-    notifPreferencesSaved: "Notification preferences saved!",
-    accountInfo: "Account Info", email: "Email", name: "Name", role: "Role", emailVerified: "Email Verified",
-    yes: "Yes", no: "No", resendVerifyEmail: "Resend verification email",
-    servicesTitle: "Our Services", privacyTitle: "Privacy Policy", termsTitle: "Terms of Use",
-    phoneRecommend: "Your phone number", addressRecommend: "Your full address", phoneRequired: "Phone is required",
-    cart: "Cart", checkout: "Checkout now", securePaymentInfo: "100% Secure Payment",
-    noNotifications: "No notifications at the moment",
-    profile: "Profile", phone: "Phone", phonePlaceholder: "Ex: +509 1234 5678",
-    updateProfile: "Update Profile", profileUpdated: "Profile updated successfully!",
-    phoneNumber: "Phone Number", saveProfile: "Save Profile",
-    addressRecommend: "Address (Recommended)", phoneRecommend: "Phone (Recommended)",
-    cart: "Cart", addToCart: "Add to cart", removeFromCart: "Remove",
-    checkout: "Checkout now", total: "Total", emptyCart: "Your cart is empty",
-    securePayment: "Secure Payment", contactUs: "Contact Us",
-    securePaymentInfo: "100% Secure Payment",
-    notifications: "Notifications", noNotifications: "No notifications",
-    favorites: "Favorites", noFavorites: "No favorites yet",
-    reviews: "Reviews", leaveReview: "Leave a review", addReview: "Add a review", noReviews: "No reviews yet",
-    rating: "Rating", comment: "Comment", submit: "Submit", invalidAddress: "Invalid address",
-    ratingError: "Choose a rating (stars)", commentError: "Write a comment", reviewSuccess: "Thank you for your review!", reviewError: "Error sending review",
-    servicesTitle: "Our Services",
-    servicesIntro: "Total Lakay offers several services to make your life easier:",
-    servicesOnline: "Online sales:",
-    servicesOnlineDesc: "A wide choice of products in several categories (electronics, home accessories, personal accessories, etc.).",
-    servicesDelivery: "Fast delivery:",
-    servicesDeliveryDesc: "We ensure that you receive your order in the best possible time.",
-    servicesCustomer: "Customer service:",
-    servicesCustomerDesc: "We are available to answer all your questions via direct call, WhatsApp or email.",
-    servicesSecure: "Secure payment:",
-    servicesSecureDesc: "We accept several payment methods for your security and comfort.",
-    privacyTitle: "Privacy Policy",
-    privacyIntro: "At Total Lakay, we take your privacy very seriously. Here is how we use and protect your data:",
-    privacyData: "Data collection:",
-    privacyDataDesc: "We only collect the information necessary to process your orders (name, address, email, phone number).",
-    privacySecurity: "Security:",
-    privacySecurityDesc: "All your personal data is encrypted and stored on secure servers (Firebase).",
-    privacySharing: "Data sharing:",
-    privacySharingDesc: "We never sell or share your personal information with third parties without your consent, unless required by law.",
-    privacyRights: "Your rights:",
-    privacyRightsDesc: "You have the right to modify or delete your account at any time in your profile settings.",
-    termsTitle: "Terms of Use",
-    termsIntro: "By using the Total Lakay platform, you accept the following conditions:",
-    termsAccount: "User account:",
-    termsAccountDesc: "You are responsible for maintaining the security of your password. All activities on your account are your responsibility.",
-    termsPurchase: "Purchase:",
-    termsPurchaseDesc: "All purchases are final unless the product is damaged during delivery. We reserve the right to cancel any suspicious order.",
-    termsPrice: "Price and Products:",
-    termsPriceDesc: "Prices are subject to change without notice. We strive to have accurate descriptions for each product.",
-    termsMod: "Modifications:",
-    termsModDesc: "Total Lakay may modify these conditions at any time. We will notify users via notifications.",
-    termsConsentTitle: "Terms of Use",
-    termsConsentDesc: "To continue using Total Lakay, you must accept our terms of use and our privacy policy.",
-    accept: "Accept", decline: "Decline",
-    cancellationReason: "Cancellation Reason", reasonPlaceholder: "Why are you cancelling this order?",
-    reasonRequired: "You must provide a reason for the cancellation.",
-    recentProducts: "Recent Products", categoriesTitle: "Categories", exploreCategories: "Explore all our categories",
-    school: "School", work: "Work", home: "Home", electronics: "Electronics", beauty: "Beauty", clothing: "Clothing",
-  },
-  es: {
-    home: "Inicio", shop: "Tienda", orders: "Pedidos", admin: "Admin",
-    login: "Iniciar sesión", logout: "Cerrar sesión",
-    dashboard: "Panel de control", totalProducts: "Total Productos",
-    totalOrders: "Total Pedidos", totalClients: "Total Clientes",
-    pendingOrders: "Pedidos Pendientes", confirmedOrders: "Pedidos Confirmados",
-    revenue: "Ingresos Totales", recentOrders: "Pedidos Recientes",
-    manageProducts: "Gestionar Productos", manageOrders: "Gestionar Pedidos",
-    manageClients: "Gestionar Clientes", statistics: "Estadísticas",
-    quickActions: "Acciones Rápidas",
-    welcome: "Bienvenido a Total Lakay", slogan: "Todo lo que necesitas, a un clic.",
-    featured: "Productos destacados", goShop: "Ir a la tienda",
-    buy: "Comprar", price: "Precio", noProducts: "No hay productos aún",
-    loading: "Cargando...",
-    address: "Tu dirección", addressPlaceholder: "Calle, Ciudad, Código postal",
-    payment: "Método de pago", orderNow: "Ordenar ahora",
-    orderSuccess: "¡Pedido registrado con éxito!",
-    loginRequired: "Debes iniciar sesión para comprar",
-    fillAllFields: "Completa todos los campos",
-    myOrders: "Mis pedidos", status: "Estado", delivery: "Tiempo de entrega",
-    noOrders: "No hay pedidos", pending: "Pendiente", confirmed: "Confirmado",
-    cancelled: "Cancelado", delivered: "Entregado", waiting: "Esperando...",
-    addProduct: "Añadir producto", productName: "Nombre del producto",
-    productNamePlaceholder: "Ej: Arroz blanco", productPrice: "Precio",
-    productPricePlaceholder: "25.00", productImage: "URL de imagen",
-    productImagePlaceholder: "https://...", productDesc: "Descripción",
-    productDescPlaceholder: "Descripción del producto...",
-    oldPrice: "Precio anterior (si aplica)", oldPricePlaceholder: "30.00",
-    save: "Guardar", delete: "Eliminar", edit: "Editar",
-    existingProducts: "Productos existentes", customerOrders: "Pedidos de clientes",
-    noOrdersAdmin: "No hay pedidos", noProductsAdmin: "No hay productos",
-    delayPlaceholder: "Ej: 3 días", updateStatus: "Actualizar estado",
-    clients: "Clientes", client: "Cliente", clientName: "Nombre cliente",
-    clientEmail: "Email cliente", clientSince: "Cliente desde",
-    role: "Rol", makeAdmin: "Hacer admin", makeClient: "Hacer cliente",
-    loginTitle: "Inicia sesión para comprar", createAccount: "Crear cuenta",
-    createAccountTitle: "Crea tu cuenta", noAccount: "¿No tienes cuenta?",
-    alreadyAccount: "¿Ya tienes cuenta?", or: "o",
-    continueGoogle: "Continuar con Google", emailPlaceholder: "Email",
-    passwordPlaceholder: "Contraseña", namePlaceholder: "Tu nombre",
-    passwordMin: "Contraseña (mín 6 caracteres)", selectRole: "Elige tu rol (defecto: Cliente)",
-    notifications: "Notificaciones", specialOffers: "Ofertas especiales",
-    settings: "Configuración", history: "Historial",
-    specialPrice: "¡Precio especial!", promo: "¡Promoción!",
-    noSpecialOffers: "No hay ofertas especiales ahora", offer: "OFERTA",
-    noNotifications: "No hay notificaciones", today: "Hoy",
-    sendNotification: "Enviar notificación", notificationTitle: "Título notificación",
-    notificationMessage: "Mensaje notificación",
-    language: "Idioma", accountInfo: "Información de cuenta",
-    email: "Email", name: "Nombre", emailVerified: "Email verificado",
-    yes: "Sí", no: "No", resendVerifyEmail: "Reenviar email de verificación",
-    welcomeBack: "¡Bienvenido!", welcomeAdmin: "¡Bienvenido Admin!",
-    accountCreated: "¡Cuenta creada con éxito!", loggedOut: "Has cerrado sesión",
-    productAdded: "¡Producto añadido!", productUpdated: "¡Producto actualizado!",
-    productDeleted: "Producto eliminado", delayUpdated: "¡Tiempo de entrega actualizado!",
-    statusUpdated: "¡Estado actualizado!", delayRequired: "Ingresa un tiempo de entrega",
-    accountNotFound: "Esta cuenta no existe. Crea una cuenta.",
-    passwordError: "La contraseña debe tener al menos 6 caracteres",
-    confirmDelete: "¿Estás seguro de eliminar?",
-    adminOnly: "Solo admin",
-    emailVerifySent: "📩 ¡Revisa tu email para verificar tu cuenta!",
-    emailNotVerified: "❌ ¡Verifica tu email antes de iniciar sesión!",
-    emailVerifyWarning: "⚠️ Verifica tu email para continuar",
-    resendEmail: "⏳ Si no ves el email, revisa tu carpeta de spam...",
-    errorOccurred: "Error: ", clientLabel: "Cliente", date: "Fecha",
-    footerRights: "Total Lakay © 2026", footerContact: "Contáctanos",
-    footerServices: "Servicios", footerPrivacy: "Privacidad",
-    footerTerms: "Condiciones de Uso",
-    notifSent: "✅ ¡Notificación enviada!",
-    roleChanged: "✅ ¡Rol cambiado!",
-    madeAdmin: "✅ ¡Hecho admin!",
-    madeClient: "✅ ¡Hecho cliente!",
-    // Búsqueda y Filtros
-    searchPlaceholder: "🔍 Buscar un producto...",
-    allCategories: "Todas categorías",
-    priceMin: "Precio mín",
-    priceMax: "Precio máx",
-    applyFilters: "Filtrar",
-    resetFilters: "Restablecer",
-    sortDateDesc: "Más reciente",
-    sortDateAsc: "Más antiguo",
-    sortPriceAsc: "Precio: Bajo → Alto",
-    sortPriceDesc: "Precio: Alto → Bajo",
-    sortNameAsc: "Nombre: A → Z",
-    sortNameDesc: "Nombre: Z → A",
-    resultsFound: "resultados encontrados",
-    noResultsFound: "Sin resultados. Prueba otras palabras.",
-    categoryElectronics: "📱 Electrónica",
-    categoryClothing: "👕 Ropa y Accesorios",
-    categoryHome: "🏠 Hogar",
-    categoryBeauty: "💄 Belleza",
-    categoryOther: "📦 Otros",
-    profile: "Perfil", phone: "Teléfono", phonePlaceholder: "Ej: +509 1234 5678",
-    updateProfile: "Actualizar perfil", profileUpdated: "¡Perfil actualizado con éxito!",
-    phoneNumber: "Número de teléfono", saveProfile: "Guardar Perfil",
-    addressRecommend: "Dirección (Recomendado)", phoneRecommend: "Teléfono (Recommandado)",
-    cart: "Carrito", addToCart: "Añadir al carrito", removeFromCart: "Eliminar",
-    checkout: "Pagar ahora", total: "Total", emptyCart: "Tu carrito está vacío",
-    securePayment: "Pago Seguro", contactUs: "Contáctenos",
-    securePaymentInfo: "Pago 100% seguro",
-    notifications: "Notificaciones", noNotifications: "No hay notificaciones",
-    favorites: "Favoritos", noFavorites: "Aún no hay favoritos",
-    reviews: "Reseñas", leaveReview: "Dejar una reseña", addReview: "Agregar una reseña", noReviews: "Aún no hay reseñas",
-    rating: "Calificación", comment: "Comentario", submit: "Enviar", invalidAddress: "Dirección inválida",
-    ratingError: "Elige una calificación (estrellas)", commentError: "Escribe un comentario", reviewSuccess: "¡Gracias por tu reseña!", reviewError: "Error enviando reseña",
-    servicesTitle: "Nuestros Servicios",
-    servicesIntro: "Total Lakay ofrece varios servicios para facilitar su vida:",
-    servicesOnline: "Ventas en línea:",
-    servicesOnlineDesc: "Una gran selección de productos en varias categorías (electrónica, accesorios para el hogar, accesorios personales, etc.).",
-    servicesDelivery: "Entrega rápida:",
-    servicesDeliveryDesc: "Nos aseguramos de que reciba su pedido en el mejor tiempo posible.",
-    servicesCustomer: "Servicio al cliente:",
-    servicesCustomerDesc: "Estamos disponibles para responder a todas sus preguntas a través de llamada directa, WhatsApp o correo electrónico.",
-    servicesSecure: "Pago seguro:",
-    servicesSecureDesc: "Aceptamos varios métodos de pago para su seguridad y comodidad.",
-    privacyTitle: "Política de Privacidad",
-    privacyIntro: "En Total Lakay, nos tomamos su privacidad muy en serio. Aquí le mostramos cómo usamos y protegemos sus datos:",
-    privacyData: "Recopilación de datos:",
-    privacyDataDesc: "Solo recopilamos la información necesaria para procesar sus pedidos (nombre, dirección, correo electrónico, número de teléfono).",
-    privacySecurity: "Seguridad:",
-    privacySecurityDesc: "Todos sus datos personales están cifrados y almacenados en servidores seguros (Firebase).",
-    privacySharing: "Intercambio de datos:",
-    privacySharingDesc: "Nunca vendemos ni compartimos su información personal con terceros sin su consentimiento, a menos que la ley lo exija.",
-    privacyRights: "Sus derechos:",
-    privacyRightsDesc: "Tiene derecho a modificar o eliminar su cuenta en cualquier momento en la configuración de su perfil.",
-    termsTitle: "Condiciones de Uso",
-    termsIntro: "Al usar la plataforma Total Lakay, usted acepta las siguientes condiciones:",
-    termsAccount: "Cuenta de usuario:",
-    termsAccountDesc: "Usted es responsable de mantener la seguridad de su contraseña. Todas las actividades en su cuenta son su responsabilidad.",
-    termsPurchase: "Compra:",
-    termsPurchaseDesc: "Todas las compras son finales a menos que el producto se dañe durante la entrega. Nos reservamos el derecho de cancelar cualquier pedido sospechoso.",
-    termsPrice: "Precio y Productos:",
-    termsPriceDesc: "Los precios están sujetos a cambios sin previo aviso. Nos esforzamos por tener descripciones precisas para cada producto.",
-    termsMod: "Modificaciones:",
-    termsModDesc: "Total Lakay puede modificar estas condiciones en cualquier momento. Notificaremos a los usuarios a través de notificaciones.",
-    termsConsentTitle: "Condiciones de Uso",
-    termsConsentDesc: "Para continuar usando Total Lakay, debe aceptar nuestros términos de uso y nuestra política de privacidad.",
-    accept: "Aceptar", decline: "Rechazar",
-    cancellationReason: "Motivo de cancelación", reasonPlaceholder: "¿Por qué cancela este pedido?",
-    reasonRequired: "Debe proporcionar un motivo para la cancelación.",
-    recentProducts: "Productos Recientes", categoriesTitle: "Categorías", exploreCategories: "Explore todas nuestras categorías",
-    school: "Escuela", work: "Trabajo", home: "Hogar", electronics: "Electrónica", beauty: "Belleza", clothing: "Ropa",
-    stock: "Cantidad en stock", category: "Categoría", colors: "Colores (separados por coma)", sizes: "Tallas (separadas por coma)",
-    selectColor: "Seleccionar Color", selectSize: "Seleccionar Talla", quantity: "Cantidad", outOfStock: "Agotado",
-    categoryClothingAccessories: "👕 Ropa y Accesorios",
-    categorySchoolOffice: "🎓 Escuela y Trabajo",
-    categoryHomePersonal: "🏠 Hogar y Personal",
-    categoryElectronicsTech: "📱 Electrónica",
-    notifSettings: "Ajustes de Notificaciones", notifPushEnable: "Activar notificaciones push",
-    notifNewProducts: "Nuevos Productos", notifSpecialPrices: "Precios Especiales & Promos",
-    notifUpdates: "Actualizaciones del sitio", notifStatus: "Estado de Notificaciones",
-    notifBlocked: "Bloqueado por el navegador", notifGranted: "Autorizado",
-    notifRequest: "Autorizar ahora", notifSave: "Guardar preferencias",
-    notifPreferencesSaved: "¡Preferencias de notificaciones guardadas!",
-    accountInfo: "Información de la Cuenta", email: "Correo", name: "Nombre", role: "Rol", emailVerified: "Correo Verificado",
-    yes: "Sí", no: "No", resendVerifyEmail: "Reenviar correo de verificación",
-    servicesTitle: "Nuestros Servicios", privacyTitle: "Privacidad", termsTitle: "Términos",
-    phoneRecommend: "Tu número de teléfono", addressRecommend: "Tu dirección completa", phoneRequired: "Teléfono requerido",
-    cart: "Carrito", checkout: "Pagar ahora", securePaymentInfo: "Pago 100% seguro",
-    noNotifications: "No hay notificaciones por ahora",
-    profile: "Perfil", phone: "Teléfono", phonePlaceholder: "Ex: +509 1234 5678",
-  }
+    ht: {
+        home: "Akèy", shop: "Boutik", orders: "Kòmand", admin: "Admin",
+        login: "Konekte", logout: "Dekonekte",
+        dashboard: "Tablodbò", totalProducts: "Total Pwodui",
+        totalOrders: "Total Kòmand", totalClients: "Total Kliyan",
+        pendingOrders: "Kòmand An Atant", confirmedOrders: "Kòmand Konfime",
+        revenue: "Revni Total", recentOrders: "Dènye Kòmand",
+        manageProducts: "Jere Pwodui", manageOrders: "Jere Kòmand",
+        manageClients: "Jere Kliyan", statistics: "Estatistik",
+        quickActions: "Aksyon Rapid",
+        welcome: "Byenveni nan Total Lakay", slogan: "Tout bagay lakay ou nan yon sèl klike.",
+        featured: "Pwodui rekòmande", goShop: "Ale nan boutik",
+        buy: "Achte", price: "Pri", noProducts: "Pa gen pwodui ankò",
+        loading: "Chajman...",
+        address: "Adrès ou", addressPlaceholder: "Rue, Ville, Kòd postal",
+        payment: "Mwayen peman", orderNow: "Kòmande",
+        orderSuccess: "Kòmand anrejistre ak siksè !",
+        loginRequired: "Ou dwe konekte pou achte", fillAllFields: "Ranpli tout chan yo",
+        myOrders: "Kòmand mwen yo", status: "Estati", delivery: "Délai livrezon",
+        noOrders: "Pa gen kòmand ankò", pending: "An atant", confirmed: "Konfime",
+        cancelled: "Anile", delivered: "Livre", waiting: "An atant...",
+        addProduct: "Ajoute yon pwodui", productName: "Non pwodui",
+        productNamePlaceholder: "Ex: Diri blan", productPrice: "Pri",
+        productPricePlaceholder: "25.00", productImage: "URL imaj",
+        productImagePlaceholder: "https://...", productDesc: "Deskripsyon",
+        productDescPlaceholder: "Deskripsyon pwodui a...",
+        oldPrice: "Ansyen pri (si genyen)", oldPricePlaceholder: "30.00",
+        save: "Anrejistre", delete: "Efase", edit: "Modifye",
+        existingProducts: "Pwodui ki deja egziste", customerOrders: "Kòmand kliyan yo",
+        noOrdersAdmin: "Pa gen kòmand", noProductsAdmin: "Pa gen pwodui",
+        delayPlaceholder: "Ex: 3 jou", updateStatus: "Mete ajou estati",
+        clients: "Kliyan", client: "Kliyan", clientName: "Non kliyan",
+        clientEmail: "Email kliyan", clientSince: "Kliyan depi",
+        role: "Wòl", makeAdmin: "Fè admin", makeClient: "Fè kliyan",
+        loginTitle: "Konekte pou achte", createAccount: "Kreye yon kont",
+        createAccountTitle: "Kreye kont ou", noAccount: "Pa gen kont?",
+        alreadyAccount: "Deja gen yon kont?", or: "oubyen",
+        continueGoogle: "Kontinye ak Google", emailPlaceholder: "Email",
+        passwordPlaceholder: "Modpas", namePlaceholder: "Non ou",
+        passwordMin: "Modpas (min 6 karaktè)", selectRole: "Chwazi wòl ou (default: Kliyan)",
+        notifications: "Notifikasyon", specialOffers: "Òf espesyal",
+        settings: "Paramèt", history: "Istwa",
+        specialPrice: "Pri espesyal!", promo: "Promosyon!",
+        noSpecialOffers: "Pa gen òf espesyal pou kounye a", offer: "ÒFÈ",
+        noNotifications: "Pa gen notifikasyon", today: "Jodi a",
+        sendNotification: "Voye notifikasyon", notificationTitle: "Tit notifikasyon",
+        notificationMessage: "Mesaj notifikasyon",
+        language: "Langue / Language", accountInfo: "Enfòmasyon kont",
+        email: "Email", name: "Non", emailVerified: "Email verifye",
+        yes: "Wi", no: "Non", resendVerifyEmail: "Renvwaye email verifikasyon",
+        welcomeBack: "Byenveni!", welcomeAdmin: "Byenveni Admin!",
+        accountCreated: "Kont kreye ak siksè!", loggedOut: "Ou dekonekte",
+        productAdded: "Pwodui ajoute!", productUpdated: "Pwodui modifye!",
+        productDeleted: "Pwodui efase", delayUpdated: "Délai mete!",
+        statusUpdated: "Estati modifye!", delayRequired: "Antre yon délai",
+        accountNotFound: "Kont sa a pa egziste. Kreye yon kont.",
+        passwordError: "Modpas dwe gen omwen 6 karaktè",
+        confirmDelete: "Eske w sèten ou vle efase sa a?",
+        adminOnly: "Admin sèlman",
+        emailVerifySent: "📩 Tcheke email ou pou verifye kont lan!",
+        emailNotVerified: "❌ Verifye email ou avan ou konekte!",
+        emailVerifyWarning: "⚠️ Verifye email ou pou kontinye",
+        resendEmail: "⏳ Si w poko wè email la, tcheke spam ou...",
+        errorOccurred: "Erè: ", clientLabel: "Kliyan", date: "Dat",
+        footerRights: "Total Lakay © 2026", footerContact: "Kontakte nou",
+        footerServices: "Sèvis", footerPrivacy: "Konfidansyalite",
+        footerTerms: "Kondisyon Itilizasyon",
+        notifSent: "✅ Notifikasyon voye!",
+        roleChanged: "✅ Wòl modifye!",
+        madeAdmin: "✅ Fè admin!",
+        madeClient: "✅ Fè kliyan!",
+        // Recherche & Filtres
+        searchPlaceholder: "🔍 Rechèche yon pwodui...",
+        allCategories: "Tout kategori",
+        priceMin: "Pri min",
+        priceMax: "Pri max",
+        applyFilters: "Filtre",
+        resetFilters: "Reinisyalize",
+        sortDateDesc: "Pi resan",
+        sortDateAsc: "Pi ansyen",
+        sortPriceAsc: "Pri: Ba → Wo",
+        sortPriceDesc: "Pri: Wo → Ba",
+        sortNameAsc: "Non: A → Z",
+        sortNameDesc: "Non: Z → A",
+        resultsFound: "rezilta jwenn",
+        noResultsFound: "Pa gen rezilta. Eseye ak lòt mo.",
+        categoryElectronics: "📱 Elektwonik",
+        categoryClothing: "👕 Vètman ak Akseswa",
+        categorySchool: "🎓 Lekòl / École",
+        categoryWork: "💼 Travay / Travail",
+        categoryHome: "🏠 Kay / Maison",
+        categoryBeauty: "💄 Bote / Beauté",
+        categoryOther: "📦 Lòt / Autres",
+        termsConsentTitle: "Kondisyon Itilizasyon",
+        termsConsentDesc: "Pou w ka kontinye sèvi ak Total Lakay, ou dwe aksepte kondisyon itilizasyon nou yo ak politik konfidansyalite nou an.",
+        accept: "Aksepte", decline: "Refize",
+        cancellationReason: "Rezon anilasyon", reasonPlaceholder: "Poukisa ou anile kòmand sa?",
+        reasonRequired: "Ou dwe bay yon rezon pou anilasyon an.",
+        recentProducts: "Pwodui Resan", categoriesTitle: "Kategori yo", exploreCategories: "Eksplore tout kategori nou yo",
+        school: "Lekòl", work: "Travay", home: "Kay", electronics: "Elektwonik", beauty: "Bote", clothing: "Vètman",
+        stock: "Kantite nan stòk", category: "Kategori", colors: "Koulè (separe ak vigil)", sizes: "Gwosè / Size (separe ak vigil)",
+        selectColor: "Chwazi Koulè", selectSize: "Chwazi Gwosè", quantity: "Kantite", outOfStock: "Pa gen nan stòk ankò",
+        categoryClothingAccessories: "👕 Vètman ak Akseswa",
+        categorySchoolOffice: "🎓 Lekòl ak Travay",
+        categoryHomePersonal: "🏠 Kay ak Pèsonèl",
+        categoryElectronicsTech: "📱 Elektwonik",
+        servicesTitle: "Sèvis nou yo", privacyTitle: "Konfidansyalite", termsTitle: "Kondisyon yo",
+        phoneRecommend: "Nimewo telefòn ou", addressRecommend: "Adrès ou konplè", phoneRequired: "Telefòn obligatwa",
+        cart: "Panyen", checkout: "Peye kounye a", securePaymentInfo: "Peman 100% sekirize",
+        noNotifications: "Pa gen notifikasyon pou kounye a",
+        profile: "Profil", phone: "Telefòn", phonePlaceholder: "Ex: +509 1234 5678",
+        updateProfile: "Mete ajou profil", profileUpdated: "Profil mete ajou ak siksè!",
+        phoneNumber: "Nimewo telefòn", saveProfile: "Anrejistre Profil",
+        addressRecommend: "Adrès (Rekòmande)", phoneRecommend: "Telefòn (Rekòmande)",
+        cart: "Panyen", addToCart: "Ajoute nan panyen", removeFromCart: "Retire",
+        notifSettings: "Paramèt Notifikasyon", notifPushEnable: "Aktive notifikasyon sou telefòn",
+        notifNewProducts: "Nouvo Pwodui", notifSpecialPrices: "Pri Spesyal & Pwomo",
+        notifUpdates: "Mizajou sou sit la", notifStatus: "Estati Notifikasyon",
+        notifBlocked: "Bloke pa navigatè a", notifGranted: "Otorize",
+        notifRequest: "Otorize kounye a", notifSave: "Anrejistre preferans",
+        notifPreferencesSaved: "Preferans notifikasyon anrejistre!",
+        accountInfo: "Enfòmasyon Kont", email: "Email", name: "Non", role: "Wòl", emailVerified: "Email Verifye",
+        yes: "Wi", no: "Non", resendVerifyEmail: "Voye email verifikasyon ankò",
+        checkout: "Peye kounye a", total: "Total", emptyCart: "Panyen ou vid",
+        securePayment: "Peman Sekirize", contactUs: "Kontakte nou",
+        securePaymentInfo: "Peman 100% sekirize",
+        notifications: "Notifikasyon", noNotifications: "Pa gen notifikasyon",
+        favorites: "Favori", noFavorites: "Pa gen favori ankò",
+        reviews: "Avi", leaveReview: "Kite yon avi", addReview: "Ajoute yon avi", noReviews: "Pa gen avi ankò",
+        rating: "Nòt", comment: "Kòmantè", submit: "Voye", invalidAddress: "Adrès ou antre a pa valab",
+        ratingError: "Chwazi yon nòt (zetwal)", commentError: "Ekri yon kòmantè", reviewSuccess: "Mèsi pou avi ou!", reviewError: "Erè voye avi",
+        servicesTitle: "Sèvis nou yo",
+        servicesIntro: "Total Lakay ofri plizyè sèvis pou fasilite lavi w :",
+        servicesOnline: "Vant an liy :",
+        servicesOnlineDesc: "Yon gran chwa pwodwi nan plizyè kategori (elektwonik, akseswa pou kay, akseswa pèsonel, elatriye).",
+        servicesDelivery: "Livrezon rapid :",
+        servicesDeliveryDesc: "Nou asire nou ke ou jwenn komand ou nan pi bon delè yo.",
+        servicesCustomer: "Sèvis kliyan :",
+        servicesCustomerDesc: "Nou disponib pou reponn tout kesyon w via apèl dirèk, WhatsApp oswa imèl.",
+        servicesSecure: "Peman sekirize :",
+        servicesSecureDesc: "Nou aksepte plizyè mwayen peman pou sekirite w ak konfò w.",
+        privacyTitle: "Politik Konfidansyalite",
+        privacyIntro: "Nan Total Lakay, nou pran vi prive w trè oserye. Men kijan nou itilize ak pwoteje done ou yo :",
+        privacyData: "Kolek done :",
+        privacyDataDesc: "Nou sèlman kolekte enfòmasyon ki nesesè pou trete komand ou yo (non, adrès, imèl, nimewo telefòn).",
+        privacySecurity: "Sekirite :",
+        privacySecurityDesc: "Tout done pèsonèl ou yo chiffres epi estoke sou sèvè ki an sekirite (Firebase).",
+        privacySharing: "Pataj done :",
+        privacySharingDesc: "Nou pa janm vann oswa pataje enfòmasyon pèsonèl ou ak twazyèm pati san konsantman w, sof si lalwa mande sa.",
+        privacyRights: "Dwa w yo :",
+        privacyRightsDesc: "Ou gen dwa pou w modifye oswa efase kont ou nenpòt kilè nan paramèt pwofil ou.",
+        termsTitle: "Kondisyon Itilizasyon",
+        termsIntro: "Lè w itilize platfòm Total Lakay la, ou asepte kondisyon sa yo :",
+        termsAccount: "Kont itilizatè :",
+        termsAccountDesc: "Ou responsab pou kenbe modpas ou an sekirite. Tout aktivite sou kont ou se responsablite w.",
+        termsPurchase: "Acha :",
+        termsPurchaseDesc: "Tout acha fèt final sof nan ka kote pwodwi a domaje nan livrezon. Nou rezève dwa pou n anile nenpòt komand sispèk.",
+        termsPrice: "Pri ak Pwodwi :",
+        termsPriceDesc: "Pri yo ka chanje san avètisman alavans. Nou fè efò pou n gen deskripsyon egzak pou cada pwodwi.",
+        termsMod: "Modifikasyon :",
+        termsModDesc: "Total Lakay ka modifye kondisyon sa yo nenpòt moman. N ap fè itilizatè yo konnen via notifikasyon.",
+        school: "Lekòl", work: "Travay", home: "Kay", electronics: "Elektwonik", beauty: "Bote", clothing: "Vètman",
+    },
+    fr: {
+        home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
+        login: "Connexion", logout: "Déconnexion",
+        dashboard: "Tableau de bord", totalProducts: "Total Produits",
+        totalOrders: "Total Commandes", totalClients: "Total Clients",
+        pendingOrders: "Commandes En Attente", confirmedOrders: "Commandes Confirmées",
+        revenue: "Revenu Total", recentOrders: "Dernières Commandes",
+        manageProducts: "Gérer Produits", manageOrders: "Gérer Commandes",
+        manageClients: "Gérer Clients", statistics: "Statistiques",
+        quickActions: "Actions Rapides",
+        welcome: "Bienvenue sur Total Lakay", slogan: "Tout ce qu'il vous faut, en un clic.",
+        featured: "Produits recommandés", goShop: "Aller à la boutique",
+        buy: "Acheter", price: "Prix", noProducts: "Aucun produit",
+        loading: "Chargement...",
+        address: "Votre adresse", addressPlaceholder: "Rue, Ville, Code postal",
+        payment: "Moyen de paiement", orderNow: "Commander",
+        orderSuccess: "Commande enregistrée avec succès !",
+        loginRequired: "Vous devez être connecté pour acheter",
+        fillAllFields: "Remplissez tous les champs",
+        myOrders: "Mes commandes", status: "Statut", delivery: "Délai de livraison",
+        noOrders: "Aucune commande", pending: "En attente", confirmed: "Confirmé",
+        cancelled: "Annulé", delivered: "Livré", waiting: "En attente...",
+        addProduct: "Ajouter un produit", productName: "Nom du produit",
+        productNamePlaceholder: "Ex: Riz blanc", productPrice: "Prix",
+        productPricePlaceholder: "25.00", productImage: "URL de l'image",
+        productImagePlaceholder: "https://...", productDesc: "Description",
+        productDescPlaceholder: "Description du produit...",
+        oldPrice: "Ancien prix (si applicable)", oldPricePlaceholder: "30.00",
+        save: "Enregistrer", delete: "Supprimer", edit: "Modifier",
+        existingProducts: "Produits existants", customerOrders: "Commandes clients",
+        noOrdersAdmin: "Aucune commande", noProductsAdmin: "Aucun produit",
+        delayPlaceholder: "Ex: 3 jours", updateStatus: "Mettre à jour le statut",
+        clients: "Clients", client: "Client", clientName: "Nom client",
+        clientEmail: "Email client", clientSince: "Client depuis",
+        role: "Rôle", makeAdmin: "Passer admin", makeClient: "Passer client",
+        loginTitle: "Connectez-vous pour acheter", createAccount: "Créer un compte",
+        createAccountTitle: "Créer votre compte", noAccount: "Pas de compte ?",
+        alreadyAccount: "Déjà un compte ?", or: "ou",
+        continueGoogle: "Continuer avec Google", emailPlaceholder: "Email",
+        passwordPlaceholder: "Mot de passe", namePlaceholder: "Votre nom",
+        passwordMin: "Mot de passe (min 6 caractères)", selectRole: "Choisissez votre rôle (défaut: Client)",
+        notifications: "Notifications", specialOffers: "Offres spéciales",
+        settings: "Paramètres", history: "Historique",
+        specialPrice: "Prix spécial !", promo: "Promotion !",
+        noSpecialOffers: "Pas d'offres spéciales pour le moment", offer: "OFFRE",
+        noNotifications: "Aucune notification", today: "Aujourd'hui",
+        sendNotification: "Envoyer notification", notificationTitle: "Titre notification",
+        notificationMessage: "Message notification",
+        language: "Langue / Language", accountInfo: "Informations du compte",
+        email: "Email", name: "Nom", emailVerified: "Email vérifié",
+        yes: "Oui", no: "Non", resendVerifyEmail: "Renvoyer l'email de vérification",
+        welcomeBack: "Bienvenue !", welcomeAdmin: "Bienvenue Admin !",
+        accountCreated: "Compte créé avec succès !", loggedOut: "Vous êtes déconnecté",
+        productAdded: "Produit ajouté !", productUpdated: "Produit modifié !",
+        productDeleted: "Produit supprimé", delayUpdated: "Délai mis à jour !",
+        statusUpdated: "Statut modifié !", delayRequired: "Entrez un délai",
+        accountNotFound: "Ce compte n'existe pas. Créez un compte.",
+        passwordError: "Le mot de passe doit avoir au moins 6 caractères",
+        confirmDelete: "Êtes-vous sûr de vouloir supprimer ?",
+        adminOnly: "Admin seulement",
+        emailVerifySent: "📩 Vérifiez votre email pour activer votre compte !",
+        emailNotVerified: "❌ Vérifiez votre email avant de vous connecter !",
+        emailVerifyWarning: "⚠️ Vérifiez votre email pour continuer",
+        resendEmail: "⏳ Si vous ne voyez pas l'email, vérifiez vos spams...",
+        errorOccurred: "Erreur : ", clientLabel: "Client", date: "Date",
+        footerRights: "Total Lakay © 2026", footerContact: "Contactez-nous",
+        footerServices: "Services", footerPrivacy: "Confidentialité",
+        footerTerms: "Conditions d'Utilisation",
+        notifSent: "✅ Notification envoyée !",
+        roleChanged: "✅ Rôle modifié !",
+        madeAdmin: "✅ Passé admin !",
+        madeClient: "✅ Passé client !",
+        // Recherche & Filtres
+        searchPlaceholder: "🔍 Rechercher un produit...",
+        allCategories: "Toutes catégories",
+        priceMin: "Prix min",
+        priceMax: "Prix max",
+        applyFilters: "Filtrer",
+        resetFilters: "Réinitialiser",
+        sortDateDesc: "Plus récent",
+        sortDateAsc: "Plus ancien",
+        sortPriceAsc: "Prix: Bas → Haut",
+        sortPriceDesc: "Prix: Haut → Bas",
+        sortNameAsc: "Nom: A → Z",
+        sortNameDesc: "Nom: Z → A",
+        resultsFound: "résultats trouvés",
+        noResultsFound: "Aucun résultat. Essayez d'autres mots.",
+        categoryElectronics: "📱 Électronique",
+        categoryClothing: "👕 Vêtements & Accessoires",
+        categorySchool: "🎓 École",
+        categoryWork: "💼 Travail",
+        categoryHome: "🏠 Maison",
+        categoryBeauty: "💄 Beauté",
+        categoryOther: "📦 Autres",
+        termsConsentTitle: "Conditions d'Utilisation",
+        termsConsentDesc: "Pour continuer à utiliser Total Lakay, vous devez accepter nos conditions d'utilisation et notre politique de confidentialité.",
+        accept: "Accepter", decline: "Refuser",
+        cancellationReason: "Raison de l'annulation", reasonPlaceholder: "Pourquoi annulez-vous cette commande ?",
+        reasonRequired: "Vous devez fournir une raison pour l'annulation.",
+        recentProducts: "Produits Récents", categoriesTitle: "Catégories", exploreCategories: "Explorez toutes nos catégories",
+        school: "École", work: "Travail", home: "Maison", electronics: "Électronique", beauty: "Beauté", clothing: "Vêtements",
+        stock: "Quantité en stock", category: "Catégorie", colors: "Couleurs (séparées par virgule)", sizes: "Tailles / Sizes (séparées par virgule)",
+        selectColor: "Choisir Couleur", selectSize: "Choisir Taille", quantity: "Quantité", outOfStock: "Rupture de stock",
+        categoryClothingAccessories: "👕 Vêtements & Accessoires",
+        categorySchoolOffice: "🎓 École & Travail",
+        categoryHomePersonal: "🏠 Maison & Personnel",
+        categoryElectronicsTech: "📱 Électronique",
+        notifSettings: "Paramètres de Notifications", notifPushEnable: "Activer les notifications push",
+        notifNewProducts: "Nouveaux Produits", notifSpecialPrices: "Prix Spéciaux & Promos",
+        notifUpdates: "Mises à jour du site", notifStatus: "Statut des Notifications",
+        notifBlocked: "Bloqué par le navigateur", notifGranted: "Autorisé",
+        notifRequest: "Autoriser maintenant", notifSave: "Enregistrer les préférences",
+        notifPreferencesSaved: "Préférences de notifications enregistrées !",
+        accountInfo: "Informations du Compte", email: "Email", name: "Nom", role: "Rôle", emailVerified: "Email Vérifié",
+        yes: "Oui", no: "Non", resendVerifyEmail: "Renvoyer l'email de vérification",
+        servicesTitle: "Nos Services", privacyTitle: "Confidentialité", termsTitle: "Conditions",
+        phoneRecommend: "Votre numéro de téléphone", addressRecommend: "Votre adresse complète", phoneRequired: "Téléphone requis",
+        cart: "Panier", checkout: "Payer maintenant", securePaymentInfo: "Paiement 100% sécurisé",
+        noNotifications: "Pas de notifications pour le moment",
+        profile: "Profil", phone: "Téléphone", phonePlaceholder: "Ex: +509 1234 5678",
+        updateProfile: "Mettre à jour le profil", profileUpdated: "Profil mis à jour avec succès !",
+        phoneNumber: "Numéro de téléphone", saveProfile: "Enregistrer le Profil",
+        addressRecommend: "Adresse (Recommandé)", phoneRecommend: "Téléphone (Recommandé)",
+        cart: "Panier", addToCart: "Ajouter au panier", removeFromCart: "Retirer",
+        checkout: "Payer maintenant", total: "Total", emptyCart: "Votre panier est vide",
+        securePayment: "Paiement Sécurisé", contactUs: "Contactez-nous",
+        securePaymentInfo: "Paiement 100% sécurisé",
+        notifications: "Notifications", noNotifications: "Pas de notifications",
+        favorites: "Favoris", noFavorites: "Pas encore de favoris",
+        reviews: "Avis", leaveReview: "Laisser un avis", addReview: "Ajouter un avis", noReviews: "Pas encore d'avis",
+        rating: "Note", comment: "Commentaire", submit: "Envoyer", invalidAddress: "Adresse invalide",
+        ratingError: "Choisissez une note (étoiles)", commentError: "Écrivez un commentaire", reviewSuccess: "Merci pour votre avis !", reviewError: "Erreur d'envoi",
+        servicesTitle: "Nos Services",
+        servicesIntro: "Total Lakay offre plusieurs services pour vous faciliter la vie :",
+        servicesOnline: "Vente en ligne :",
+        servicesOnlineDesc: "Un grand choix de produits dans plusieurs catégories (électronique, accessoires pour la maison, accessoires personnels, etc.).",
+        servicesDelivery: "Livraison rapide :",
+        servicesDeliveryDesc: "Nous nous assurons que vous recevez votre commande dans les meilleurs délais.",
+        servicesCustomer: "Service client :",
+        servicesCustomerDesc: "Nous sommes disponibles pour répondre à toutes vos questions via appel direct, WhatsApp ou e-mail.",
+        servicesSecure: "Paiement sécurisé :",
+        servicesSecureDesc: "Nous acceptons plusieurs moyens de paiement pour votre sécurité et votre confort.",
+        privacyTitle: "Politique de Confidentialité",
+        privacyIntro: "Chez Total Lakay, nous prenons votre vie privée très au sérieux. Voici comment nous utilisons et protégeons vos données :",
+        privacyData: "Collecte de données :",
+        privacyDataDesc: "Nous ne collectons que les informations nécessaires au traitement de vos commandes (nom, adresse, e-mail, numéro de téléphone).",
+        privacySecurity: "Sécurité :",
+        privacySecurityDesc: "Toutes vos données personnelles sont cryptées et stockées sur des serveurs sécurisés (Firebase).",
+        privacySharing: "Partage de données :",
+        privacySharingDesc: "Nous ne vendons ni ne partageons jamais vos informations personnelles avec des tiers sans votre consentement, sauf si la loi l'exige.",
+        privacyRights: "Vos droits :",
+        privacyRightsDesc: "Vous avez le droit de modifier ou de supprimer votre compte à tout moment dans vos paramètres de profil.",
+        termsTitle: "Conditions d'Utilisation",
+        termsIntro: "En utilisant la plateforme Total Lakay, vous acceptez les conditions suivantes :",
+        termsAccount: "Compte utilisateur :",
+        termsAccountDesc: "Vous êtes responsable du maintien de la sécurité de votre mot de passe. Toutes les activités sur votre compte sont sous votre responsabilité.",
+        termsPurchase: "Achat :",
+        termsPurchaseDesc: "Tous les achats sont définitifs sauf si le produit est endommagé lors de la livraison. Nous nous réservons le droit d'annuler toute commande suspecte.",
+        termsPrice: "Prix et Produits :",
+        termsPriceDesc: "Les prix sont sujets à changement sans préavis. Nous nous efforçons d'avoir des descriptions exactes pour chaque produit.",
+        termsMod: "Modifications :",
+        termsModDesc: "Total Lakay peut modifier ces conditions à tout moment. Nous en informerons les utilisateurs via des notifications.",
+        school: "École", work: "Travail", home: "Maison", electronics: "Électronique", beauty: "Beauté", clothing: "Vêtements",
+    },
+    en: {
+        home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
+        login: "Login", logout: "Logout",
+        dashboard: "Dashboard", totalProducts: "Total Products",
+        totalOrders: "Total Orders", totalClients: "Total Clients",
+        pendingOrders: "Pending Orders", confirmedOrders: "Confirmed Orders",
+        revenue: "Total Revenue", recentOrders: "Recent Orders",
+        manageProducts: "Manage Products", manageOrders: "Manage Orders",
+        manageClients: "Manage Clients", statistics: "Statistics",
+        quickActions: "Quick Actions",
+        welcome: "Welcome to Total Lakay", slogan: "Everything you need, one click away.",
+        featured: "Featured products", goShop: "Go to shop",
+        buy: "Buy", price: "Price", noProducts: "No products yet",
+        loading: "Loading...",
+        address: "Your address", addressPlaceholder: "Street, City, Zip code",
+        payment: "Payment method", orderNow: "Order Now",
+        orderSuccess: "Order successfully placed!",
+        loginRequired: "You must login to purchase", fillAllFields: "Please fill all fields",
+        myOrders: "My Orders", status: "Status", delivery: "Delivery estimate",
+        noOrders: "No orders yet", pending: "Pending", confirmed: "Confirmed",
+        cancelled: "Cancelled", delivered: "Delivered", waiting: "Waiting...",
+        addProduct: "Add a product", productName: "Product name",
+        productNamePlaceholder: "Ex: White rice", productPrice: "Price",
+        productPricePlaceholder: "25.00", productImage: "Image URL",
+        productImagePlaceholder: "https://...", productDesc: "Description",
+        productDescPlaceholder: "Product description...",
+        oldPrice: "Old price (if any)", oldPricePlaceholder: "30.00",
+        save: "Save", delete: "Delete", edit: "Edit",
+        existingProducts: "Existing products", customerOrders: "Customer orders",
+        noOrdersAdmin: "No orders", noProductsAdmin: "No products",
+        delayPlaceholder: "Ex: 3 days", updateStatus: "Update status",
+        clients: "Clients", client: "Client", clientName: "Client name",
+        clientEmail: "Client email", clientSince: "Client since",
+        role: "Role", makeAdmin: "Make admin", makeClient: "Make client",
+        loginTitle: "Login to purchase", createAccount: "Create account",
+        createAccountTitle: "Create your account", noAccount: "No account?",
+        alreadyAccount: "Already have an account?", or: "or",
+        continueGoogle: "Continue with Google", emailPlaceholder: "Email",
+        passwordPlaceholder: "Password", namePlaceholder: "Your name",
+        passwordMin: "Password (min 6 characters)", selectRole: "Select your role (default: Client)",
+        notifications: "Notifications", specialOffers: "Special Offers",
+        settings: "Settings", history: "History",
+        specialPrice: "Special price!", promo: "Promotion!",
+        noSpecialOffers: "No special offers at the moment", offer: "OFFER",
+        noNotifications: "No notifications", today: "Today",
+        sendNotification: "Send notification", notificationTitle: "Notification title",
+        notificationMessage: "Notification message",
+        language: "Language", accountInfo: "Account info",
+        email: "Email", name: "Name", emailVerified: "Email verified",
+        yes: "Yes", no: "No", resendVerifyEmail: "Resend verification email",
+        welcomeBack: "Welcome!", welcomeAdmin: "Welcome Admin!",
+        accountCreated: "Account created successfully!", loggedOut: "You are logged out",
+        productAdded: "Product added!", productUpdated: "Product updated!",
+        productDeleted: "Product deleted", delayUpdated: "Delivery time updated!",
+        statusUpdated: "Status updated!", delayRequired: "Enter a delivery time",
+        accountNotFound: "This account doesn't exist. Create an account.",
+        passwordError: "Password must be at least 6 characters",
+        confirmDelete: "Are you sure you want to delete?",
+        adminOnly: "Admin only",
+        emailVerifySent: "📩 Check your email to verify your account!",
+        emailNotVerified: "❌ Verify your email before logging in!",
+        emailVerifyWarning: "⚠️ Verify your email to continue",
+        resendEmail: "⏳ If you don't see the email, check your spam folder...",
+        errorOccurred: "Error: ", clientLabel: "Client", date: "Date",
+        footerRights: "Total Lakay © 2026", footerContact: "Contact us",
+        footerServices: "Services", footerPrivacy: "Privacy",
+        footerTerms: "Terms of Use",
+        notifSent: "✅ Notification sent!",
+        roleChanged: "✅ Role changed!",
+        madeAdmin: "✅ Made admin!",
+        madeClient: "✅ Made client!",
+        // Search & Filters
+        searchPlaceholder: "🔍 Search a product...",
+        allCategories: "All categories",
+        priceMin: "Min price",
+        priceMax: "Max price",
+        applyFilters: "Filter",
+        resetFilters: "Reset",
+        sortDateDesc: "Newest",
+        sortDateAsc: "Oldest",
+        sortPriceAsc: "Price: Low → High",
+        sortPriceDesc: "Price: High → Low",
+        sortNameAsc: "Name: A → Z",
+        sortNameDesc: "Name: Z → A",
+        resultsFound: "results found",
+        noResultsFound: "No results. Try other words.",
+        categoryElectronics: "📱 Electronics",
+        categoryClothing: "👕 Clothing & Accessories",
+        categorySchool: "🎓 School",
+        categoryWork: "💼 Work",
+        categoryHome: "🏠 Home",
+        categoryBeauty: "💄 Beauty",
+        categoryOther: "📦 Other",
+        termsConsentTitle: "Terms of Use",
+        termsConsentDesc: "To continue using Total Lakay, you must accept our terms of use and our privacy policy.",
+        accept: "Accept", decline: "Decline",
+        cancellationReason: "Cancellation Reason", reasonPlaceholder: "Why are you cancelling this order?",
+        reasonRequired: "You must provide a reason for the cancellation.",
+        recentProducts: "Recent Products", categoriesTitle: "Categories", exploreCategories: "Explore all our categories",
+        school: "School", work: "Work", home: "Home", electronics: "Electronics", beauty: "Beauty", clothing: "Clothing",
+        stock: "Stock Quantity", category: "Category", colors: "Colors (comma separated)", sizes: "Sizes (comma separated)",
+        selectColor: "Select Color", selectSize: "Select Size", quantity: "Quantity", outOfStock: "Out of stock",
+        categoryClothingAccessories: "👕 Clothing & Accessories",
+        categorySchoolOffice: "🎓 School & Work",
+        categoryHomePersonal: "🏠 Home & Personal",
+        categoryElectronicsTech: "📱 Electronics",
+        notifSettings: "Notification Settings", notifPushEnable: "Enable Push Notifications",
+        notifNewProducts: "New Products", notifSpecialPrices: "Special Prices & Promos",
+        notifUpdates: "Site Updates", notifStatus: "Notification Status",
+        notifBlocked: "Blocked by browser", notifGranted: "Authorized",
+        notifRequest: "Authorize Now", notifSave: "Save Preferences",
+        notifPreferencesSaved: "Notification preferences saved!",
+        accountInfo: "Account Info", email: "Email", name: "Name", role: "Role", emailVerified: "Email Verified",
+        yes: "Yes", no: "No", resendVerifyEmail: "Resend verification email",
+        servicesTitle: "Our Services", privacyTitle: "Privacy Policy", termsTitle: "Terms of Use",
+        phoneRecommend: "Your phone number", addressRecommend: "Your full address", phoneRequired: "Phone is required",
+        cart: "Cart", checkout: "Checkout now", securePaymentInfo: "100% Secure Payment",
+        noNotifications: "No notifications at the moment",
+        profile: "Profile", phone: "Phone", phonePlaceholder: "Ex: +509 1234 5678",
+        updateProfile: "Update Profile", profileUpdated: "Profile updated successfully!",
+        phoneNumber: "Phone Number", saveProfile: "Save Profile",
+        addressRecommend: "Address (Recommended)", phoneRecommend: "Phone (Recommended)",
+        cart: "Cart", addToCart: "Add to cart", removeFromCart: "Remove",
+        checkout: "Checkout now", total: "Total", emptyCart: "Your cart is empty",
+        securePayment: "Secure Payment", contactUs: "Contact Us",
+        securePaymentInfo: "100% Secure Payment",
+        notifications: "Notifications", noNotifications: "No notifications",
+        favorites: "Favorites", noFavorites: "No favorites yet",
+        reviews: "Reviews", leaveReview: "Leave a review", addReview: "Add a review", noReviews: "No reviews yet",
+        rating: "Rating", comment: "Comment", submit: "Submit", invalidAddress: "Invalid address",
+        ratingError: "Choose a rating (stars)", commentError: "Write a comment", reviewSuccess: "Thank you for your review!", reviewError: "Error sending review",
+        servicesTitle: "Our Services",
+        servicesIntro: "Total Lakay offers several services to make your life easier:",
+        servicesOnline: "Online sales:",
+        servicesOnlineDesc: "A wide choice of products in several categories (electronics, home accessories, personal accessories, etc.).",
+        servicesDelivery: "Fast delivery:",
+        servicesDeliveryDesc: "We ensure that you receive your order in the best possible time.",
+        servicesCustomer: "Customer service:",
+        servicesCustomerDesc: "We are available to answer all your questions via direct call, WhatsApp or email.",
+        servicesSecure: "Secure payment:",
+        servicesSecureDesc: "We accept several payment methods for your security and comfort.",
+        privacyTitle: "Privacy Policy",
+        privacyIntro: "At Total Lakay, we take your privacy very seriously. Here is how we use and protect your data:",
+        privacyData: "Data collection:",
+        privacyDataDesc: "We only collect the information necessary to process your orders (name, address, email, phone number).",
+        privacySecurity: "Security:",
+        privacySecurityDesc: "All your personal data is encrypted and stored on secure servers (Firebase).",
+        privacySharing: "Data sharing:",
+        privacySharingDesc: "We never sell or share your personal information with third parties without your consent, unless required by law.",
+        privacyRights: "Your rights:",
+        privacyRightsDesc: "You have the right to modify or delete your account at any time in your profile settings.",
+        termsTitle: "Terms of Use",
+        termsIntro: "By using the Total Lakay platform, you accept the following conditions:",
+        termsAccount: "User account:",
+        termsAccountDesc: "You are responsible for maintaining the security of your password. All activities on your account are your responsibility.",
+        termsPurchase: "Purchase:",
+        termsPurchaseDesc: "All purchases are final unless the product is damaged during delivery. We reserve the right to cancel any suspicious order.",
+        termsPrice: "Price and Products:",
+        termsPriceDesc: "Prices are subject to change without notice. We strive to have accurate descriptions for each product.",
+        termsMod: "Modifications:",
+        termsModDesc: "Total Lakay may modify these conditions at any time. We will notify users via notifications.",
+        termsConsentTitle: "Terms of Use",
+        termsConsentDesc: "To continue using Total Lakay, you must accept our terms of use and our privacy policy.",
+        accept: "Accept", decline: "Decline",
+        cancellationReason: "Cancellation Reason", reasonPlaceholder: "Why are you cancelling this order?",
+        reasonRequired: "You must provide a reason for the cancellation.",
+        recentProducts: "Recent Products", categoriesTitle: "Categories", exploreCategories: "Explore all our categories",
+        school: "School", work: "Work", home: "Home", electronics: "Electronics", beauty: "Beauty", clothing: "Clothing",
+    },
+    es: {
+        home: "Inicio", shop: "Tienda", orders: "Pedidos", admin: "Admin",
+        login: "Iniciar sesión", logout: "Cerrar sesión",
+        dashboard: "Panel de control", totalProducts: "Total Productos",
+        totalOrders: "Total Pedidos", totalClients: "Total Clientes",
+        pendingOrders: "Pedidos Pendientes", confirmedOrders: "Pedidos Confirmados",
+        revenue: "Ingresos Totales", recentOrders: "Pedidos Recientes",
+        manageProducts: "Gestionar Productos", manageOrders: "Gestionar Pedidos",
+        manageClients: "Gestionar Clientes", statistics: "Estadísticas",
+        quickActions: "Acciones Rápidas",
+        welcome: "Bienvenido a Total Lakay", slogan: "Todo lo que necesitas, a un clic.",
+        featured: "Productos destacados", goShop: "Ir a la tienda",
+        buy: "Comprar", price: "Precio", noProducts: "No hay productos aún",
+        loading: "Cargando...",
+        address: "Tu dirección", addressPlaceholder: "Calle, Ciudad, Código postal",
+        payment: "Método de pago", orderNow: "Ordenar ahora",
+        orderSuccess: "¡Pedido registrado con éxito!",
+        loginRequired: "Debes iniciar sesión para comprar",
+        fillAllFields: "Completa todos los campos",
+        myOrders: "Mis pedidos", status: "Estado", delivery: "Tiempo de entrega",
+        noOrders: "No hay pedidos", pending: "Pendiente", confirmed: "Confirmado",
+        cancelled: "Cancelado", delivered: "Entregado", waiting: "Esperando...",
+        addProduct: "Añadir producto", productName: "Nombre del producto",
+        productNamePlaceholder: "Ej: Arroz blanco", productPrice: "Precio",
+        productPricePlaceholder: "25.00", productImage: "URL de imagen",
+        productImagePlaceholder: "https://...", productDesc: "Descripción",
+        productDescPlaceholder: "Descripción del producto...",
+        oldPrice: "Precio anterior (si aplica)", oldPricePlaceholder: "30.00",
+        save: "Guardar", delete: "Eliminar", edit: "Editar",
+        existingProducts: "Productos existentes", customerOrders: "Pedidos de clientes",
+        noOrdersAdmin: "No hay pedidos", noProductsAdmin: "No hay productos",
+        delayPlaceholder: "Ej: 3 días", updateStatus: "Actualizar estado",
+        clients: "Clientes", client: "Cliente", clientName: "Nombre cliente",
+        clientEmail: "Email cliente", clientSince: "Cliente desde",
+        role: "Rol", makeAdmin: "Hacer admin", makeClient: "Hacer cliente",
+        loginTitle: "Inicia sesión para comprar", createAccount: "Crear cuenta",
+        createAccountTitle: "Crea tu cuenta", noAccount: "¿No tienes cuenta?",
+        alreadyAccount: "¿Ya tienes cuenta?", or: "o",
+        continueGoogle: "Continuar con Google", emailPlaceholder: "Email",
+        passwordPlaceholder: "Contraseña", namePlaceholder: "Tu nombre",
+        passwordMin: "Contraseña (mín 6 caracteres)", selectRole: "Elige tu rol (defecto: Cliente)",
+        notifications: "Notificaciones", specialOffers: "Ofertas especiales",
+        settings: "Configuración", history: "Historial",
+        specialPrice: "¡Precio especial!", promo: "¡Promoción!",
+        noSpecialOffers: "No hay ofertas especiales ahora", offer: "OFERTA",
+        noNotifications: "No hay notificaciones", today: "Hoy",
+        sendNotification: "Enviar notificación", notificationTitle: "Título notificación",
+        notificationMessage: "Mensaje notificación",
+        language: "Idioma", accountInfo: "Información de cuenta",
+        email: "Email", name: "Nombre", emailVerified: "Email verificado",
+        yes: "Sí", no: "No", resendVerifyEmail: "Reenviar email de verificación",
+        welcomeBack: "¡Bienvenido!", welcomeAdmin: "¡Bienvenido Admin!",
+        accountCreated: "¡Cuenta creada con éxito!", loggedOut: "Has cerrado sesión",
+        productAdded: "¡Producto añadido!", productUpdated: "¡Producto actualizado!",
+        productDeleted: "Producto eliminado", delayUpdated: "¡Tiempo de entrega actualizado!",
+        statusUpdated: "¡Estado actualizado!", delayRequired: "Ingresa un tiempo de entrega",
+        accountNotFound: "Esta cuenta no existe. Crea una cuenta.",
+        passwordError: "La contraseña debe tener al menos 6 caracteres",
+        confirmDelete: "¿Estás seguro de eliminar?",
+        adminOnly: "Solo admin",
+        emailVerifySent: "📩 ¡Revisa tu email para verificar tu cuenta!",
+        emailNotVerified: "❌ ¡Verifica tu email antes de iniciar sesión!",
+        emailVerifyWarning: "⚠️ Verifica tu email para continuar",
+        resendEmail: "⏳ Si no ves el email, revisa tu carpeta de spam...",
+        errorOccurred: "Error: ", clientLabel: "Cliente", date: "Fecha",
+        footerRights: "Total Lakay © 2026", footerContact: "Contáctanos",
+        footerServices: "Servicios", footerPrivacy: "Privacidad",
+        footerTerms: "Condiciones de Uso",
+        notifSent: "✅ ¡Notificación enviada!",
+        roleChanged: "✅ ¡Rol cambiado!",
+        madeAdmin: "✅ ¡Hecho admin!",
+        madeClient: "✅ ¡Hecho cliente!",
+        // Búsqueda y Filtros
+        searchPlaceholder: "🔍 Buscar un producto...",
+        allCategories: "Todas categorías",
+        priceMin: "Precio mín",
+        priceMax: "Precio máx",
+        applyFilters: "Filtrar",
+        resetFilters: "Restablecer",
+        sortDateDesc: "Más reciente",
+        sortDateAsc: "Más antiguo",
+        sortPriceAsc: "Precio: Bajo → Alto",
+        sortPriceDesc: "Precio: Alto → Bajo",
+        sortNameAsc: "Nombre: A → Z",
+        sortNameDesc: "Nombre: Z → A",
+        resultsFound: "resultados encontrados",
+        noResultsFound: "Sin resultados. Prueba otras palabras.",
+        categoryElectronics: "📱 Electrónica",
+        categoryClothing: "👕 Ropa y Accesorios",
+        categoryHome: "🏠 Hogar",
+        categoryBeauty: "💄 Belleza",
+        categoryOther: "📦 Otros",
+        profile: "Perfil", phone: "Teléfono", phonePlaceholder: "Ej: +509 1234 5678",
+        updateProfile: "Actualizar perfil", profileUpdated: "¡Perfil actualizado con éxito!",
+        phoneNumber: "Número de teléfono", saveProfile: "Guardar Perfil",
+        addressRecommend: "Dirección (Recomendado)", phoneRecommend: "Teléfono (Recommandado)",
+        cart: "Carrito", addToCart: "Añadir al carrito", removeFromCart: "Eliminar",
+        checkout: "Pagar ahora", total: "Total", emptyCart: "Tu carrito está vacío",
+        securePayment: "Pago Seguro", contactUs: "Contáctenos",
+        securePaymentInfo: "Pago 100% seguro",
+        notifications: "Notificaciones", noNotifications: "No hay notificaciones",
+        favorites: "Favoritos", noFavorites: "Aún no hay favoritos",
+        reviews: "Reseñas", leaveReview: "Dejar una reseña", addReview: "Agregar una reseña", noReviews: "Aún no hay reseñas",
+        rating: "Calificación", comment: "Comentario", submit: "Enviar", invalidAddress: "Dirección inválida",
+        ratingError: "Elige una calificación (estrellas)", commentError: "Escribe un comentario", reviewSuccess: "¡Gracias por tu reseña!", reviewError: "Error enviando reseña",
+        servicesTitle: "Nuestros Servicios",
+        servicesIntro: "Total Lakay ofrece varios servicios para facilitar su vida:",
+        servicesOnline: "Ventas en línea:",
+        servicesOnlineDesc: "Una gran selección de productos en varias categorías (electrónica, accesorios para el hogar, accesorios personales, etc.).",
+        servicesDelivery: "Entrega rápida:",
+        servicesDeliveryDesc: "Nos aseguramos de que reciba su pedido en el mejor tiempo posible.",
+        servicesCustomer: "Servicio al cliente:",
+        servicesCustomerDesc: "Estamos disponibles para responder a todas sus preguntas a través de llamada directa, WhatsApp o correo electrónico.",
+        servicesSecure: "Pago seguro:",
+        servicesSecureDesc: "Aceptamos varios métodos de pago para su seguridad y comodidad.",
+        privacyTitle: "Política de Privacidad",
+        privacyIntro: "En Total Lakay, nos tomamos su privacidad muy en serio. Aquí le mostramos cómo usamos y protegemos sus datos:",
+        privacyData: "Recopilación de datos:",
+        privacyDataDesc: "Solo recopilamos la información necesaria para procesar sus pedidos (nombre, dirección, correo electrónico, número de teléfono).",
+        privacySecurity: "Seguridad:",
+        privacySecurityDesc: "Todos sus datos personales están cifrados y almacenados en servidores seguros (Firebase).",
+        privacySharing: "Intercambio de datos:",
+        privacySharingDesc: "Nunca vendemos ni compartimos su información personal con terceros sin su consentimiento, a menos que la ley lo exija.",
+        privacyRights: "Sus derechos:",
+        privacyRightsDesc: "Tiene derecho a modificar o eliminar su cuenta en cualquier momento en la configuración de su perfil.",
+        termsTitle: "Condiciones de Uso",
+        termsIntro: "Al usar la plataforma Total Lakay, usted acepta las siguientes condiciones:",
+        termsAccount: "Cuenta de usuario:",
+        termsAccountDesc: "Usted es responsable de mantener la seguridad de su contraseña. Todas las actividades en su cuenta son su responsabilidad.",
+        termsPurchase: "Compra:",
+        termsPurchaseDesc: "Todas las compras son finales a menos que el producto se dañe durante la entrega. Nos reservamos el derecho de cancelar cualquier pedido sospechoso.",
+        termsPrice: "Precio y Productos:",
+        termsPriceDesc: "Los precios están sujetos a cambios sin previo aviso. Nos esforzamos por tener descripciones precisas para cada producto.",
+        termsMod: "Modificaciones:",
+        termsModDesc: "Total Lakay puede modificar estas condiciones en cualquier momento. Notificaremos a los usuarios a través de notificaciones.",
+        termsConsentTitle: "Condiciones de Uso",
+        termsConsentDesc: "Para continuar usando Total Lakay, debe aceptar nuestros términos de uso y nuestra política de privacidad.",
+        accept: "Aceptar", decline: "Rechazar",
+        cancellationReason: "Motivo de cancelación", reasonPlaceholder: "¿Por qué cancela este pedido?",
+        reasonRequired: "Debe proporcionar un motivo para la cancelación.",
+        recentProducts: "Productos Recientes", categoriesTitle: "Categorías", exploreCategories: "Explore todas nuestras categorías",
+        school: "Escuela", work: "Trabajo", home: "Hogar", electronics: "Electrónica", beauty: "Belleza", clothing: "Ropa",
+        stock: "Cantidad en stock", category: "Categoría", colors: "Colores (separados por coma)", sizes: "Tallas (separadas por coma)",
+        selectColor: "Seleccionar Color", selectSize: "Seleccionar Talla", quantity: "Cantidad", outOfStock: "Agotado",
+        categoryClothingAccessories: "👕 Ropa y Accesorios",
+        categorySchoolOffice: "🎓 Escuela y Trabajo",
+        categoryHomePersonal: "🏠 Hogar y Personal",
+        categoryElectronicsTech: "📱 Electrónica",
+        notifSettings: "Ajustes de Notificaciones", notifPushEnable: "Activar notificaciones push",
+        notifNewProducts: "Nuevos Productos", notifSpecialPrices: "Precios Especiales & Promos",
+        notifUpdates: "Actualizaciones del sitio", notifStatus: "Estado de Notificaciones",
+        notifBlocked: "Bloqueado por el navegador", notifGranted: "Autorizado",
+        notifRequest: "Autorizar ahora", notifSave: "Guardar preferencias",
+        notifPreferencesSaved: "¡Preferencias de notificaciones guardadas!",
+        accountInfo: "Información de la Cuenta", email: "Correo", name: "Nombre", role: "Rol", emailVerified: "Correo Verificado",
+        yes: "Sí", no: "No", resendVerifyEmail: "Reenviar correo de verificación",
+        servicesTitle: "Nuestros Servicios", privacyTitle: "Privacidad", termsTitle: "Términos",
+        phoneRecommend: "Tu número de teléfono", addressRecommend: "Tu dirección completa", phoneRequired: "Teléfono requerido",
+        cart: "Carrito", checkout: "Pagar ahora", securePaymentInfo: "Pago 100% seguro",
+        noNotifications: "No hay notificaciones por ahora",
+        profile: "Perfil", phone: "Teléfono", phonePlaceholder: "Ex: +509 1234 5678",
+    }
 };
 
 // ---------- CART FUNCTIONS ----------
 function addToCart(productId) {
-  const product = products.find(p => p.id === productId);
-  if (!product) return;
-  cart.push(product);
-  localStorage.setItem('totalLakayCart', JSON.stringify(cart));
-  updateCartBadge();
-  showMessage(t('addToCart') + ': ' + product.name);
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+    cart.push(product);
+    localStorage.setItem('totalLakayCart', JSON.stringify(cart));
+    updateCartBadge();
+    showMessage(t('addToCart') + ': ' + product.name);
 }
 
 function updateCartBadge() {
-  const badge = document.getElementById('cartBadge');
-  if (!badge) return;
-  if (cart.length > 0) {
-    badge.textContent = cart.length;
-    badge.classList.remove('hidden');
-  } else {
-    badge.classList.add('hidden');
-  }
+    const badge = document.getElementById('cartBadge');
+    if (!badge) return;
+    if (cart.length > 0) {
+        badge.textContent = cart.length;
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
 }
 
 function renderCart() {
-  const list = document.getElementById('cartItemsList');
-  const totalEl = document.getElementById('cartTotalAmount');
-  if (!list || !totalEl) return;
+    const list = document.getElementById('cartItemsList');
+    const totalEl = document.getElementById('cartTotalAmount');
+    if (!list || !totalEl) return;
 
-  if (cart.length === 0) {
-    list.innerHTML = `<p class="text-center" style="padding:2rem;">🛒 ${t('emptyCart')}</p>`;
-    totalEl.textContent = formatPrice(0);
-    return;
-  }
+    if (cart.length === 0) {
+        list.innerHTML = `<p class="text-center" style="padding:2rem;">🛒 ${t('emptyCart')}</p>`;
+        totalEl.textContent = formatPrice(0);
+        return;
+    }
 
-  let total = 0;
-  list.innerHTML = cart.map((item, index) => {
-    total += item.price;
-    return `
+    let total = 0;
+    list.innerHTML = cart.map((item, index) => {
+        total += item.price;
+        return `
       <div class="cart-item" style="display:flex; align-items:center; gap:1rem; padding:0.8rem; border-bottom:1px solid #eee;">
         <img src="${item.image || 'logo.jpeg'}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; border-radius:8px;" onerror="this.src='logo.jpeg'">
         <div style="flex:1;">
@@ -748,72 +749,72 @@ function renderCart() {
         <button class="btn btn-danger btn-sm remove-cart-item" data-index="${index}">🗑️</button>
       </div>
     `;
-  }).join('');
-  totalEl.textContent = formatPrice(total);
+    }).join('');
+    totalEl.textContent = formatPrice(total);
 
-  document.querySelectorAll('.remove-cart-item').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const index = parseInt(e.currentTarget.dataset.index);
-      removeFromCart(index);
+    document.querySelectorAll('.remove-cart-item').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const index = parseInt(e.currentTarget.dataset.index);
+            removeFromCart(index);
+        });
     });
-  });
 }
 
 function removeFromCart(index) {
-  cart.splice(index, 1);
-  localStorage.setItem('totalLakayCart', JSON.stringify(cart));
-  updateCartBadge();
-  renderCart();
+    cart.splice(index, 1);
+    localStorage.setItem('totalLakayCart', JSON.stringify(cart));
+    updateCartBadge();
+    renderCart();
 }
 
 function toggleFavorite(productId) {
-  const index = favorites.indexOf(productId);
-  if (index > -1) {
-    favorites.splice(index, 1);
-    showMessage('Retire nan favori');
-  } else {
-    favorites.push(productId);
-    showMessage('Ajoute nan favori');
-  }
-  localStorage.setItem('totalLakayFavorites', JSON.stringify(favorites));
-  if (currentView === 'shop' || currentView === 'home') renderView(currentView);
+    const index = favorites.indexOf(productId);
+    if (index > -1) {
+        favorites.splice(index, 1);
+        showMessage('Retire nan favori');
+    } else {
+        favorites.push(productId);
+        showMessage('Ajoute nan favori');
+    }
+    localStorage.setItem('totalLakayFavorites', JSON.stringify(favorites));
+    if (currentView === 'shop' || currentView === 'home') renderView(currentView);
 }
 
 // ---------- NOTIFICATIONS FUNCTIONS ----------
 function listenNotifications() {
-  db.collection('notifications').orderBy('createdAt', 'desc').limit(20).onSnapshot(snap => {
-    const allNotifs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    
-    if (isAdmin) {
-      notifications = allNotifs;
-    } else {
-      notifications = allNotifs.filter(n => 
-        n.targetRole === 'all' || 
-        !n.targetRole || 
-        (n.targetUserId && n.targetUserId === currentUser.uid)
-      );
-    }
-    
-    updateNotifBadge();
-  });
+    db.collection('notifications').orderBy('createdAt', 'desc').limit(20).onSnapshot(snap => {
+        const allNotifs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        if (isAdmin) {
+            notifications = allNotifs;
+        } else {
+            notifications = allNotifs.filter(n =>
+                n.targetRole === 'all' ||
+                !n.targetRole ||
+                (n.targetUserId && n.targetUserId === currentUser.uid)
+            );
+        }
+
+        updateNotifBadge();
+    });
 }
 
 function updateNotifBadge() {
-  const badge = document.getElementById('notifBadge');
-  if (!badge) return;
-  const unreadCount = notifications.filter(n => !n.read).length;
-  if (unreadCount > 0) {
-    badge.textContent = unreadCount;
-    badge.classList.remove('hidden');
-  } else {
-    badge.classList.add('hidden');
-  }
+    const badge = document.getElementById('notifBadge');
+    if (!badge) return;
+    const unreadCount = notifications.filter(n => !n.read).length;
+    if (unreadCount > 0) {
+        badge.textContent = unreadCount;
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
 }
 
 function renderNotificationsModal() {
-  const app = document.getElementById('appContent');
-  if (!app) return;
-  app.innerHTML = `
+    const app = document.getElementById('appContent');
+    if (!app) return;
+    app.innerHTML = `
     <div class="card-premium">
       <h2>🔔 ${t('notifications')}</h2>
       ${notifications.length === 0 ? `<p class="text-center" style="padding:2rem;">📭 ${t('noNotifications')}</p>` : notifications.map(n => `
@@ -826,360 +827,365 @@ function renderNotificationsModal() {
         </div>`).join('')}
     </div>
   `;
-  document.querySelectorAll('.mark-read').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const id = e.currentTarget.dataset.id;
-      await db.collection('notifications').doc(id).update({ read: true });
-      renderNotificationsModal();
+    document.querySelectorAll('.mark-read').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const id = e.currentTarget.dataset.id;
+            await db.collection('notifications').doc(id).update({ read: true });
+            renderNotificationsModal();
+        });
     });
-  });
 }
 
 function formatPrice(priceBase) {
-  const rate = exchangeRates[currentCurrency] || 1;
-  const converted = priceBase * rate;
-  if (currentCurrency === 'USD') return `$${converted.toFixed(2)}`;
-  if (currentCurrency === 'HTG') return `${Math.round(converted).toLocaleString()} G`;
-  if (currentCurrency === 'EUR') return `${converted.toFixed(2)} €`;
-  return `${converted.toFixed(2)} ${currentCurrency}`;
+    const rate = exchangeRates[currentCurrency] || 1;
+    const converted = priceBase * rate;
+    if (currentCurrency === 'USD') return `$${converted.toFixed(2)}`;
+    if (currentCurrency === 'HTG') return `${Math.round(converted).toLocaleString()} G`;
+    if (currentCurrency === 'EUR') return `${converted.toFixed(2)} €`;
+    return `${converted.toFixed(2)} ${currentCurrency}`;
 }
 
 // ---------- FONCTIONS UTILITAIRES ----------
 function t(key) { return i18n[currentLang]?.[key] || key; }
 
 function applyLanguage() {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (i18n[currentLang]?.[key]) el.textContent = i18n[currentLang][key];
-  });
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-    const key = el.getAttribute('data-i18n-placeholder');
-    if (i18n[currentLang]?.[key]) el.placeholder = i18n[currentLang][key];
-  });
-  // Mettre à jour les options de catégorie
-  updateCategoryOptions();
-  if (currentView) renderView(currentView);
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18n[currentLang]?.[key]) el.textContent = i18n[currentLang][key];
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (i18n[currentLang]?.[key]) el.placeholder = i18n[currentLang][key];
+    });
+    // Mettre à jour les options de catégorie
+    updateCategoryOptions();
+    if (currentView) renderView(currentView);
 }
 
 function updateCategoryOptions() {
-  const categorySelect = document.getElementById('categoryFilter');
-  if (!categorySelect) return;
-  const options = categorySelect.querySelectorAll('option');
-  const categoryKeys = ['all', 'food', 'electronics', 'clothing', 'home', 'beauty', 'other'];
-  const translationKeys = ['allCategories', 'categoryFood', 'categoryElectronics', 'categoryClothing', 'categoryHome', 'categoryBeauty', 'categoryOther'];
+    const categorySelect = document.getElementById('categoryFilter');
+    if (!categorySelect) return;
+    const options = categorySelect.querySelectorAll('option');
+    const categoryKeys = ['all', 'food', 'electronics', 'clothing', 'home', 'beauty', 'other'];
+    const translationKeys = ['allCategories', 'categoryFood', 'categoryElectronics', 'categoryClothing', 'categoryHome', 'categoryBeauty', 'categoryOther'];
 
-  options.forEach((option, index) => {
-    if (translationKeys[index]) {
-      option.textContent = t(translationKeys[index]);
-    }
-  });
+    options.forEach((option, index) => {
+        if (translationKeys[index]) {
+            option.textContent = t(translationKeys[index]);
+        }
+    });
 }
 
 function showMessage(message, type = 'success') {
-  const existingToast = document.querySelector('.toast');
-  if (existingToast) existingToast.remove();
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.textContent = message;
-  toast.style.cssText = `
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) existingToast.remove();
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    toast.style.cssText = `
     position:fixed; bottom:20px; right:20px;
     background:${type === 'success' ? '#1e7e5b' : type === 'info' ? '#2980b9' : '#c0392b'};
     color:white; padding:1rem 1.5rem; border-radius:30px;
     font-weight:600; z-index:3000;
     box-shadow:0 20px 40px rgba(0,0,0,0.3);
   `;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 5000);
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 5000);
 }
 
 // Translation Helpers
 async function autoTranslate(text, targetLang) {
-  if (!text) return "";
-  const sourceLang = currentLang;
-  if (sourceLang === targetLang) return text;
-  try {
-    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`);
-    const data = await res.json();
-    return data.responseData.translatedText || text;
-  } catch (e) { return text; }
+    if (!text) return "";
+    const sourceLang = currentLang;
+    if (sourceLang === targetLang) return text;
+    try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`);
+        const data = await res.json();
+        return data.responseData.translatedText || text;
+    } catch (e) { return text; }
 }
 
 async function getTranslations(text) {
-  if (!text) return "";
-  const langs = ['ht', 'fr', 'en', 'es'];
-  const results = {};
-  await Promise.all(langs.map(async (l) => {
-    results[l] = await autoTranslate(text, l);
-  }));
-  return results;
+    if (!text) return "";
+    const langs = ['ht', 'fr', 'en', 'es'];
+    const results = {};
+    await Promise.all(langs.map(async (l) => {
+        results[l] = await autoTranslate(text, l);
+    }));
+    return results;
 }
 
 function gt(field) {
-  if (!field) return "";
-  if (typeof field === 'object') {
-    return field[currentLang] || field['ht'] || field['en'] || Object.values(field)[0] || "";
-  }
-  return field;
+    if (!field) return "";
+    if (typeof field === 'object') {
+        return field[currentLang] || field['ht'] || field['en'] || Object.values(field)[0] || "";
+    }
+    return field;
 }
 
 function debounce(func, delay) {
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), delay);
-  };
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+    };
 }
 
 // ============================================
 // AUTHENTIFICATION AVEC RÔLES
 // ============================================
 auth.onAuthStateChanged(async (user) => {
-  currentUser = user;
-  const authBtn = document.getElementById('authBtn');
-  const logoutBtn = document.getElementById('logoutBtn');
-  const adminElements = document.querySelectorAll('.admin-only');
-  const userElements = document.querySelectorAll('.user-only');
+    currentUser = user;
+    const authBtn = document.getElementById('authBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const adminElements = document.querySelectorAll('.admin-only');
+    const userElements = document.querySelectorAll('.user-only');
 
-  if (user) {
-    if (!user.emailVerified) {
-      showMessage(t('emailVerifyWarning'), 'error');
-      setTimeout(() => { if (currentUser && !currentUser.emailVerified) auth.signOut(); }, 5000);
-      return;
-    }
-
-    try {
-      const userDoc = await db.collection('users').doc(user.uid).get();
-      if (userDoc.exists) {
-        userRole = userDoc.data().role || 'client';
-        isAdmin = (userRole === 'admin');
-        
-        // Vérifier consentement
-        if (!isAdmin && !userDoc.data().termsAccepted) {
-          document.getElementById('consentModal')?.classList.remove('hidden');
+    if (user) {
+        if (!user.emailVerified) {
+            showMessage(t('emailVerifyWarning'), 'error');
+            setTimeout(() => { if (currentUser && !currentUser.emailVerified) auth.signOut(); }, 5000);
+            return;
         }
-      } else {
-        userRole = 'client'; isAdmin = false;
-        await db.collection('users').doc(user.uid).set({
-          email: user.email, displayName: user.displayName || '',
-          photoURL: user.photoURL || '', role: 'client',
-          emailVerified: true, termsAccepted: false, createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        document.getElementById('consentModal')?.classList.remove('hidden');
-      }
-    } catch (e) { userRole = 'client'; isAdmin = false; }
 
-    if (authBtn) authBtn.classList.add('hidden');
-    if (logoutBtn) logoutBtn.classList.remove('hidden');
-    userElements.forEach(el => el.classList.remove('hidden'));
+        try {
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (userDoc.exists) {
+                userRole = userDoc.data().role || 'client';
+                isAdmin = (userRole === 'admin');
 
-    if (isAdmin) {
-      adminElements.forEach(el => el.classList.remove('hidden'));
+                // Vérifier consentement
+                if (!isAdmin && !userDoc.data().termsAccepted) {
+                    document.getElementById('consentModal')?.classList.remove('hidden');
+                }
+            } else {
+                userRole = 'client'; isAdmin = false;
+                await db.collection('users').doc(user.uid).set({
+                    email: user.email, displayName: user.displayName || '',
+                    photoURL: user.photoURL || '', role: 'client',
+                    emailVerified: true, termsAccepted: false, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                document.getElementById('consentModal')?.classList.remove('hidden');
+            }
+        } catch (e) { userRole = 'client'; isAdmin = false; }
+
+        if (authBtn) authBtn.classList.add('hidden');
+        if (logoutBtn) logoutBtn.classList.remove('hidden');
+        userElements.forEach(el => el.classList.remove('hidden'));
+
+        if (isAdmin) {
+            adminElements.forEach(el => el.classList.remove('hidden'));
+        } else {
+            adminElements.forEach(el => el.classList.add('hidden'));
+        }
+
+        if (logoutBtn) {
+            logoutBtn.innerHTML = `🚪 <span>${(isAdmin ? 'Admin: ' : '') + t('logout')}</span>`;
+        }
+        listenNotifications();
     } else {
-      adminElements.forEach(el => el.classList.add('hidden'));
+        if (authBtn) authBtn.classList.remove('hidden');
+        if (logoutBtn) logoutBtn.classList.add('hidden');
+        adminElements.forEach(el => el.classList.add('hidden'));
+        userElements.forEach(el => el.classList.add('hidden'));
+        isAdmin = false; userRole = null;
     }
 
-    if (logoutBtn) {
-      logoutBtn.innerHTML = `🚪 <span>${(isAdmin ? 'Admin: ' : '') + t('logout')}</span>`;
+    if (user) {
+        updatePresence();
+        setInterval(updatePresence, 2 * 60 * 1000); // Mettre à jour toutes les 2 minutes
     }
-    listenNotifications();
-  } else {
-    if (authBtn) authBtn.classList.remove('hidden');
-    if (logoutBtn) logoutBtn.classList.add('hidden');
-    adminElements.forEach(el => el.classList.add('hidden'));
-    userElements.forEach(el => el.classList.add('hidden'));
-    isAdmin = false; userRole = null;
-  }
 
-  if (currentView === 'admin' && !isAdmin) currentView = 'home';
-  renderView(currentView);
-  if (isAdmin) loadAllData();
-  loadNotifications();
+    if (currentView === 'admin' && !isAdmin) currentView = 'home';
+    renderView(currentView);
+    if (isAdmin) loadAllData();
+    loadNotifications();
 });
 
 // ============================================
 // BOUTON CONNEXION
 // ============================================
 document.getElementById('authBtn')?.addEventListener('click', () => {
-  const modal = document.getElementById('loginModal');
-  const loginCard = document.getElementById('loginFormCard');
-  const registerForm = document.getElementById('registerForm');
-  if (modal) modal.classList.remove('hidden');
-  if (loginCard) loginCard.classList.remove('hidden');
-  if (registerForm) registerForm.classList.add('hidden');
-  document.getElementById('loginEmail').value = '';
-  document.getElementById('loginPassword').value = '';
-  applyLanguage();
+    const modal = document.getElementById('loginModal');
+    const loginCard = document.getElementById('loginFormCard');
+    const registerForm = document.getElementById('registerForm');
+    if (modal) modal.classList.remove('hidden');
+    if (loginCard) loginCard.classList.remove('hidden');
+    if (registerForm) registerForm.classList.add('hidden');
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+    applyLanguage();
 });
 
 document.getElementById('closeLoginModal')?.addEventListener('click', () => {
-  document.getElementById('loginModal')?.classList.add('hidden');
+    document.getElementById('loginModal')?.classList.add('hidden');
 });
 document.getElementById('closeRegisterModal')?.addEventListener('click', () => {
-  document.getElementById('loginModal')?.classList.add('hidden');
+    document.getElementById('loginModal')?.classList.add('hidden');
 });
 document.getElementById('loginModal')?.addEventListener('click', (e) => {
-  if (e.target === document.getElementById('loginModal')) {
-    document.getElementById('loginModal').classList.add('hidden');
-  }
+    if (e.target === document.getElementById('loginModal')) {
+        document.getElementById('loginModal').classList.add('hidden');
+    }
 });
 
 document.getElementById('googleLoginBtn')?.addEventListener('click', () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider)
-    .then(() => { document.getElementById('loginModal')?.classList.add('hidden'); showMessage(t('welcomeBack'), 'success'); })
-    .catch(err => showMessage(t('errorOccurred') + err.message, 'error'));
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+        .then(() => { document.getElementById('loginModal')?.classList.add('hidden'); showMessage(t('welcomeBack'), 'success'); })
+        .catch(err => showMessage(t('errorOccurred') + err.message, 'error'));
 });
 
 document.getElementById('emailLoginBtn')?.addEventListener('click', () => {
-  const email = document.getElementById('loginEmail')?.value.trim();
-  const password = document.getElementById('loginPassword')?.value;
-  if (!email || !password) { showMessage(t('fillAllFields'), 'error'); return; }
-  auth.signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      if (!userCredential.user.emailVerified) {
-        showMessage(t('emailNotVerified'), 'error');
-        userCredential.user.sendEmailVerification().catch(() => { });
-        auth.signOut(); return;
-      }
-      document.getElementById('loginModal')?.classList.add('hidden');
-      showMessage(t('welcomeBack'), 'success');
-    })
-    .catch(err => {
-      if (err.code === 'auth/user-not-found') showMessage(t('accountNotFound'), 'error');
-      else showMessage(t('errorOccurred') + err.message, 'error');
-    });
+    const email = document.getElementById('loginEmail')?.value.trim();
+    const password = document.getElementById('loginPassword')?.value;
+    if (!email || !password) { showMessage(t('fillAllFields'), 'error'); return; }
+    auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            if (!userCredential.user.emailVerified) {
+                showMessage(t('emailNotVerified'), 'error');
+                userCredential.user.sendEmailVerification().catch(() => { });
+                auth.signOut(); return;
+            }
+            document.getElementById('loginModal')?.classList.add('hidden');
+            showMessage(t('welcomeBack'), 'success');
+        })
+        .catch(err => {
+            if (err.code === 'auth/user-not-found') showMessage(t('accountNotFound'), 'error');
+            else showMessage(t('errorOccurred') + err.message, 'error');
+        });
 });
 
 document.getElementById('switchToRegister')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  document.getElementById('loginFormCard').classList.add('hidden');
-  document.getElementById('registerForm').classList.remove('hidden');
-  document.getElementById('registerName').value = '';
-  document.getElementById('registerEmail').value = '';
-  document.getElementById('registerPassword').value = '';
-  applyLanguage();
+    e.preventDefault();
+    document.getElementById('loginFormCard').classList.add('hidden');
+    document.getElementById('registerForm').classList.remove('hidden');
+    document.getElementById('registerName').value = '';
+    document.getElementById('registerEmail').value = '';
+    document.getElementById('registerPassword').value = '';
+    applyLanguage();
 });
 
 document.getElementById('switchToLogin')?.addEventListener('click', (e) => {
-  e.preventDefault();
-  document.getElementById('registerForm').classList.add('hidden');
-  document.getElementById('loginFormCard').classList.remove('hidden');
-  applyLanguage();
+    e.preventDefault();
+    document.getElementById('registerForm').classList.add('hidden');
+    document.getElementById('loginFormCard').classList.remove('hidden');
+    applyLanguage();
 });
 
 document.getElementById('registerBtn')?.addEventListener('click', () => {
-  const name = document.getElementById('registerName')?.value.trim();
-  const email = document.getElementById('registerEmail')?.value.trim();
-  const password = document.getElementById('registerPassword')?.value;
-  if (!name || !email || !password) { showMessage(t('fillAllFields'), 'error'); return; }
-  if (password.length < 6) { showMessage(t('passwordError'), 'error'); return; }
-  auth.createUserWithEmailAndPassword(email, password)
-    .then(async (cred) => {
-      await cred.user.sendEmailVerification();
-      await cred.user.updateProfile({ displayName: name });
-      await db.collection('users').doc(cred.user.uid).set({
-        email, displayName: name, role: 'client', emailVerified: false,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      document.getElementById('loginModal')?.classList.add('hidden');
-      await auth.signOut();
-      showMessage(t('emailVerifySent'), 'success');
-    })
-    .catch(err => showMessage(t('errorOccurred') + err.message, 'error'));
+    const name = document.getElementById('registerName')?.value.trim();
+    const email = document.getElementById('registerEmail')?.value.trim();
+    const password = document.getElementById('registerPassword')?.value;
+    if (!name || !email || !password) { showMessage(t('fillAllFields'), 'error'); return; }
+    if (password.length < 6) { showMessage(t('passwordError'), 'error'); return; }
+    auth.createUserWithEmailAndPassword(email, password)
+        .then(async (cred) => {
+            await cred.user.sendEmailVerification();
+            await cred.user.updateProfile({ displayName: name });
+            await db.collection('users').doc(cred.user.uid).set({
+                email, displayName: name, role: 'client', emailVerified: false,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            document.getElementById('loginModal')?.classList.add('hidden');
+            await auth.signOut();
+            showMessage(t('emailVerifySent'), 'success');
+        })
+        .catch(err => showMessage(t('errorOccurred') + err.message, 'error'));
 });
 
 document.getElementById('logoutBtn')?.addEventListener('click', () => {
-  auth.signOut();
-  showMessage(t('loggedOut'), 'success');
+    auth.signOut();
+    showMessage(t('loggedOut'), 'success');
 });
 
 // ============================================
 // MENU DROPDOWN
 // ============================================
 document.getElementById('menuBtn')?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  document.getElementById('dropdownMenu')?.classList.toggle('hidden');
+    e.stopPropagation();
+    document.getElementById('dropdownMenu')?.classList.toggle('hidden');
 });
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('#menuDropdown')) {
-    document.getElementById('dropdownMenu')?.classList.add('hidden');
-  }
+    if (!e.target.closest('#menuDropdown')) {
+        document.getElementById('dropdownMenu')?.classList.add('hidden');
+    }
 });
 document.getElementById('menuSpecial')?.addEventListener('click', (e) => {
-  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
-  currentView = 'specialOffers'; renderView('specialOffers');
+    e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
+    currentView = 'specialOffers'; renderView('specialOffers');
 });
 document.getElementById('menuSettings')?.addEventListener('click', (e) => {
-  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
-  currentView = 'settings'; renderView('settings');
+    e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
+    currentView = 'settings'; renderView('settings');
 });
 document.getElementById('menuHistory')?.addEventListener('click', (e) => {
-  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
-  currentView = 'history'; renderView('history');
+    e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
+    currentView = 'history'; renderView('history');
 });
 document.getElementById('menuFavorites')?.addEventListener('click', (e) => {
-  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
-  currentView = 'favorites'; renderView('favorites');
+    e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
+    currentView = 'favorites'; renderView('favorites');
 });
 
 function renderFavorites(app) {
-  const favProducts = products.filter(p => favorites.includes(p.id));
-  app.innerHTML = `
+    const favProducts = products.filter(p => favorites.includes(p.id));
+    app.innerHTML = `
     <h2>❤️ ${t('favorites') || 'Favori'}</h2>
     <div class="grid">
       ${favProducts.length === 0 ? `<p class="text-center" style="grid-column:1/-1;">${t('noFavorites')}</p>` : favProducts.map(p => productCardHTML(p)).join('')}
     </div>`;
-  attachBuyButtons();
+    attachBuyButtons();
 }
 
 // ============================================
 // NOTIFICATIONS
 // ============================================
 async function loadNotifications() {
-  if (!currentUser) { notifications = []; updateNotifBadge(); return; }
-  try {
-    const snap = await db.collection('notifications').orderBy('createdAt', 'desc').limit(20).get();
-    const allNotifs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    
-    // Filtre local selon le rôle
-    if (isAdmin) {
-      notifications = allNotifs;
-    } else {
-      notifications = allNotifs.filter(n => 
-        n.targetRole === 'all' || 
-        !n.targetRole || 
-        (n.targetUserId && n.targetUserId === currentUser.uid)
-      );
-    }
-    
-    updateNotifBadge();
-  } catch (e) { notifications = []; updateNotifBadge(); }
+    if (!currentUser) { notifications = []; updateNotifBadge(); return; }
+    try {
+        const snap = await db.collection('notifications').orderBy('createdAt', 'desc').limit(20).get();
+        const allNotifs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        // Filtre local selon le rôle
+        if (isAdmin) {
+            notifications = allNotifs;
+        } else {
+            notifications = allNotifs.filter(n =>
+                n.targetRole === 'all' ||
+                !n.targetRole ||
+                (n.targetUserId && n.targetUserId === currentUser.uid)
+            );
+        }
+
+        updateNotifBadge();
+    } catch (e) { notifications = []; updateNotifBadge(); }
 }
 function updateNotifBadge() {
-  const badge = document.getElementById('notifBadge');
-  if (!badge) return;
-  const unread = notifications.filter(n => !n.read).length;
-  if (unread > 0) { badge.textContent = unread > 99 ? '99+' : unread; badge.classList.remove('hidden'); }
-  else badge.classList.add('hidden');
+    const badge = document.getElementById('notifBadge');
+    if (!badge) return;
+    const unread = notifications.filter(n => !n.read).length;
+    if (unread > 0) { badge.textContent = unread > 99 ? '99+' : unread; badge.classList.remove('hidden'); }
+    else badge.classList.add('hidden');
 }
 document.getElementById('notifBtn')?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  document.getElementById('notifModal').classList.remove('hidden');
-  renderNotifList();
+    e.stopPropagation();
+    document.getElementById('notifModal').classList.remove('hidden');
+    renderNotifList();
 });
 document.getElementById('closeNotifModal')?.addEventListener('click', () => {
-  document.getElementById('notifModal')?.classList.add('hidden');
+    document.getElementById('notifModal')?.classList.add('hidden');
 });
 document.getElementById('notifModal')?.addEventListener('click', (e) => {
-  if (e.target === document.getElementById('notifModal')) document.getElementById('notifModal').classList.add('hidden');
+    if (e.target === document.getElementById('notifModal')) document.getElementById('notifModal').classList.add('hidden');
 });
 function renderNotifList() {
-  const list = document.getElementById('notifList');
-  if (!list) return;
-  if (notifications.length === 0) {
-    list.innerHTML = `<p class="text-center" style="padding:2rem;">🔔 ${t('noNotifications')}</p>`; return;
-  }
-  list.innerHTML = notifications.map(n => `
+    const list = document.getElementById('notifList');
+    if (!list) return;
+    if (notifications.length === 0) {
+        list.innerHTML = `<p class="text-center" style="padding:2rem;">🔔 ${t('noNotifications')}</p>`; return;
+    }
+    list.innerHTML = notifications.map(n => `
     <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markNotifAsRead('${n.id}')" style="cursor:pointer;">
       <div class="notif-title">${n.type === 'promo' ? '🎉' : n.type === 'new' ? '🆕' : n.type === 'review' ? '⭐' : '💰'} ${gt(n.title)}</div>
       <p>${gt(n.message)}</p>
@@ -1189,95 +1195,104 @@ function renderNotifList() {
 }
 
 async function markNotifAsRead(notifId) {
-  try {
-    await db.collection('notifications').doc(notifId).update({ read: true });
-    // Update local state to avoid re-fetch immediately
-    const notif = notifications.find(n => n.id === notifId);
-    if (notif) {
-      notif.read = true;
-      updateNotifBadge();
-      renderNotifList();
-    }
-  } catch (e) { console.error("Erreur lecture notif:", e); }
+    try {
+        await db.collection('notifications').doc(notifId).update({ read: true });
+        // Update local state to avoid re-fetch immediately
+        const notif = notifications.find(n => n.id === notifId);
+        if (notif) {
+            notif.read = true;
+            updateNotifBadge();
+            renderNotifList();
+        }
+    } catch (e) { console.error("Erreur lecture notif:", e); }
 }
 
 // ============================================
 // LANGUE
 // ============================================
 document.getElementById('langSwitch')?.addEventListener('change', (e) => {
-  currentLang = e.target.value;
-  applyLanguage();
+    currentLang = e.target.value;
+    applyLanguage();
 });
 
 document.getElementById('currencySwitch')?.addEventListener('change', (e) => {
-  currentCurrency = e.target.value;
-  renderView(currentView);
+    currentCurrency = e.target.value;
+    renderView(currentView);
 });
 
 // ============================================
 // NAVIGATION
 // ============================================
 document.getElementById('navHome')?.addEventListener('click', (e) => {
-  e.preventDefault(); setActiveNav('navHome');
-  currentView = isAdmin ? 'admin' : 'home'; renderView(currentView);
+    e.preventDefault(); setActiveNav('navHome');
+    currentView = isAdmin ? 'admin' : 'home'; renderView(currentView);
 });
 document.getElementById('navShop')?.addEventListener('click', (e) => {
-  e.preventDefault(); setActiveNav('navShop');
-  currentView = 'shop'; renderView('shop');
+    e.preventDefault(); setActiveNav('navShop');
+    currentView = 'shop'; renderView('shop');
 });
 document.getElementById('navProfile')?.addEventListener('click', (e) => {
-  e.preventDefault(); setActiveNav('navProfile');
-  currentView = 'profile'; renderView('profile');
+    e.preventDefault(); setActiveNav('navProfile');
+    currentView = 'profile'; renderView('profile');
 });
 document.getElementById('navAdmin')?.addEventListener('click', (e) => {
-  e.preventDefault(); setActiveNav('navAdmin');
-  currentView = 'admin'; renderView('admin');
+    e.preventDefault(); setActiveNav('navAdmin');
+    currentView = 'admin'; renderView('admin');
 });
 
 
 function setActiveNav(activeId) {
-  document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-  document.getElementById(activeId)?.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    document.getElementById(activeId)?.classList.add('active');
 }
 
 // ============================================
 // MODAL ACHAT
 // ============================================
 document.getElementById('closeBuyModal')?.addEventListener('click', () => {
-  document.getElementById('buyModal')?.classList.add('hidden');
+    document.getElementById('buyModal')?.classList.add('hidden');
 });
 document.getElementById('buyModal')?.addEventListener('click', (e) => {
-  if (e.target === document.getElementById('buyModal')) document.getElementById('buyModal').classList.add('hidden');
+    if (e.target === document.getElementById('buyModal')) document.getElementById('buyModal').classList.add('hidden');
 });
 document.getElementById('submitOrder')?.addEventListener('click', async () => {
-  if (!currentUser) { showMessage(t('loginRequired'), 'error'); return; }
-  if (!currentUser.emailVerified) { showMessage(t('emailNotVerified'), 'error'); return; }
-  const address = document.getElementById('orderAddress')?.value.trim();
-  const payment = document.getElementById('orderPayment')?.value;
-  if (!address || address.length < 5) { showMessage(t('invalidAddress'), 'error'); return; }
-  const product = products.find(p => p.id === selectedProductId);
-  if (!product) return;
-  const quantity = parseInt(document.getElementById('orderQuantity')?.value) || 1;
-  const color = document.getElementById('orderColor')?.value || null;
-  const size = document.getElementById('orderSize')?.value || null;
+    if (!currentUser) { showMessage(t('loginRequired'), 'error'); return; }
+    if (!currentUser.emailVerified) { showMessage(t('emailNotVerified'), 'error'); return; }
+    const address = document.getElementById('orderAddress')?.value.trim();
+    const payment = document.getElementById('orderPayment')?.value;
+    if (!address || address.length < 5) { showMessage(t('invalidAddress'), 'error'); return; }
+    const product = products.find(p => p.id === selectedProductId);
+    if (!product) return;
+    const quantity = parseInt(document.getElementById('orderQuantity')?.value) || 1;
+    const color = document.getElementById('orderColor')?.value || null;
+    const size = document.getElementById('orderSize')?.value || null;
 
-  try {
-    const phone = document.getElementById('orderPhone')?.value.trim();
-    if (!phone) { showMessage(t('phoneRequired') || "Telefòn obligatwa", 'error'); return; }
+    try {
+        const phone = document.getElementById('orderPhone')?.value.trim();
+        if (!phone) { showMessage(t('phoneRequired') || "Telefòn obligatwa", 'error'); return; }
 
-    await db.collection('orders').add({
-      userId: currentUser.uid, userEmail: currentUser.email,
-      productId: product.id, productName: product.name,
-      price: product.price, quantity, color, size,
-      totalPrice: product.price * quantity,
-      currency: currentCurrency, image: product.image || '',
-      address, phone, payment, status: 'pending', deliveryEstimate: '',
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    document.getElementById('buyModal')?.classList.add('hidden');
-    document.getElementById('orderAddress').value = '';
-    showMessage(t('orderSuccess'), 'success');
-  } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
+        if (payment === 'MonCash') {
+            if (!moncashConfig.clientId || !moncashConfig.clientSecret) {
+                showMessage('⚠️ Konfigirasyon MonCash manke nan Admin an!', 'error');
+            } else {
+                showMessage('💳 Inisyalize peman MonCash Reyèl...', 'info');
+                console.log('Appel API MonCash avec ClientID:', moncashConfig.clientId);
+            }
+        }
+
+        await db.collection('orders').add({
+            userId: currentUser.uid, userEmail: currentUser.email,
+            productId: product.id, productName: product.name,
+            price: product.price, quantity, color, size,
+            totalPrice: product.price * quantity,
+            currency: currentCurrency, image: product.image || '',
+            address, phone, payment, status: 'pending', deliveryEstimate: '',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        document.getElementById('buyModal')?.classList.add('hidden');
+        document.getElementById('orderAddress').value = '';
+        showMessage(t('orderSuccess'), 'success');
+    } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
 });
 
 // ============================================
@@ -1285,178 +1300,178 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
 // ============================================
 let productsLoaded = false;
 async function loadProducts(forceRefresh = false) {
-  if (productsLoaded && !forceRefresh) return;
-  try {
-    const snap = await db.collection('products').orderBy('createdAt', 'desc').get();
-    products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    productsLoaded = true;
-  } catch (e) { products = []; }
+    if (productsLoaded && !forceRefresh) return;
+    try {
+        const snap = await db.collection('products').orderBy('createdAt', 'desc').get();
+        products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        productsLoaded = true;
+    } catch (e) { products = []; }
 }
 async function loadAllOrders() {
-  try {
-    const snap = await db.collection('orders').orderBy('createdAt', 'desc').get();
-    orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch (e) { orders = []; }
+    try {
+        const snap = await db.collection('orders').orderBy('createdAt', 'desc').get();
+        orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) { orders = []; }
 }
 async function loadMyOrders() {
-  if (!currentUser) { orders = []; return; }
-  try {
-    const snap = await db.collection('orders').where('userId', '==', currentUser.uid).get();
-    orders = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-      .sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0));
-  } catch (e) { orders = []; }
+    if (!currentUser) { orders = []; return; }
+    try {
+        const snap = await db.collection('orders').where('userId', '==', currentUser.uid).get();
+        orders = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+            .sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0));
+    } catch (e) { orders = []; }
 }
 async function loadAllUsers() {
-  try {
-    const snap = await db.collection('users').get();
-    allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch (e) { allUsers = []; }
+    try {
+        const snap = await db.collection('users').get();
+        allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) { allUsers = []; }
 }
 async function loadAllData() {
-  await Promise.all([loadProducts(true), loadAllOrders(), loadAllUsers()]);
+    await Promise.all([loadProducts(true), loadAllOrders(), loadAllUsers()]);
 }
 
 // ============================================
 // RECHERCHE & FILTRES
 // ============================================
 function getFilteredProducts() {
-  let filtered = [...products];
+    let filtered = [...products];
 
-  const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase()?.trim() || '';
-  const category = document.getElementById('categoryFilter')?.value || 'all';
-  const priceMin = parseFloat(document.getElementById('priceMin')?.value) || 0;
-  const priceMax = parseFloat(document.getElementById('priceMax')?.value) || Infinity;
-  const sortBy = document.getElementById('sortBy')?.value || 'date-desc';
+    const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase()?.trim() || '';
+    const category = document.getElementById('categoryFilter')?.value || 'all';
+    const priceMin = parseFloat(document.getElementById('priceMin')?.value) || 0;
+    const priceMax = parseFloat(document.getElementById('priceMax')?.value) || Infinity;
+    const sortBy = document.getElementById('sortBy')?.value || 'date-desc';
 
-  if (searchTerm) {
-    filtered = filtered.filter(p =>
-      p.name?.toLowerCase().includes(searchTerm) ||
-      p.description?.toLowerCase().includes(searchTerm)
-    );
-  }
+    if (searchTerm) {
+        filtered = filtered.filter(p =>
+            p.name?.toLowerCase().includes(searchTerm) ||
+            p.description?.toLowerCase().includes(searchTerm)
+        );
+    }
 
-  if (category !== 'all') {
-    filtered = filtered.filter(p => p.category === category);
-  }
+    if (category !== 'all') {
+        filtered = filtered.filter(p => p.category === category);
+    }
 
-  filtered = filtered.filter(p => p.price >= priceMin && p.price <= priceMax);
+    filtered = filtered.filter(p => p.price >= priceMin && p.price <= priceMax);
 
-  switch (sortBy) {
-    case 'date-asc': filtered.sort((a, b) => (a.createdAt?.toDate?.() || 0) - (b.createdAt?.toDate?.() || 0)); break;
-    case 'price-asc': filtered.sort((a, b) => a.price - b.price); break;
-    case 'price-desc': filtered.sort((a, b) => b.price - a.price); break;
-    case 'name-asc': filtered.sort((a, b) => (a.name || '').localeCompare(b.name || '')); break;
-    case 'name-desc': filtered.sort((a, b) => (b.name || '').localeCompare(a.name || '')); break;
-    default: filtered.sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0)); break;
-  }
+    switch (sortBy) {
+        case 'date-asc': filtered.sort((a, b) => (a.createdAt?.toDate?.() || 0) - (b.createdAt?.toDate?.() || 0)); break;
+        case 'price-asc': filtered.sort((a, b) => a.price - b.price); break;
+        case 'price-desc': filtered.sort((a, b) => b.price - a.price); break;
+        case 'name-asc': filtered.sort((a, b) => (a.name || '').localeCompare(b.name || '')); break;
+        case 'name-desc': filtered.sort((a, b) => (b.name || '').localeCompare(a.name || '')); break;
+        default: filtered.sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0)); break;
+    }
 
-  return filtered;
+    return filtered;
 }
 
 function displayFilteredProducts() {
-  const filtered = getFilteredProducts();
-  const resultsCount = document.getElementById('resultsCount');
+    const filtered = getFilteredProducts();
+    const resultsCount = document.getElementById('resultsCount');
 
-  if (resultsCount) {
-    if (filtered.length === 0) {
-      resultsCount.innerHTML = `🔍 ${t('noResultsFound')}`;
-    } else {
-      resultsCount.innerHTML = `<span>${filtered.length}</span> ${t('resultsFound')}`;
+    if (resultsCount) {
+        if (filtered.length === 0) {
+            resultsCount.innerHTML = `🔍 ${t('noResultsFound')}`;
+        } else {
+            resultsCount.innerHTML = `<span>${filtered.length}</span> ${t('resultsFound')}`;
+        }
     }
-  }
 
-  if (filtered.length === 0) {
-    return `<p class="text-center" style="grid-column:1/-1; padding:3rem;">📭 ${t('noResultsFound')}</p>`;
-  }
+    if (filtered.length === 0) {
+        return `<p class="text-center" style="grid-column:1/-1; padding:3rem;">📭 ${t('noResultsFound')}</p>`;
+    }
 
-  return filtered.map(p => productCardHTML(p)).join('');
+    return filtered.map(p => productCardHTML(p)).join('');
 }
 
 function setupSearchAndFilters() {
-  const searchBar = document.getElementById('searchFilterBar');
-  if (searchBar) searchBar.classList.remove('hidden');
+    const searchBar = document.getElementById('searchFilterBar');
+    if (searchBar) searchBar.classList.remove('hidden');
 
-  const searchInput = document.getElementById('searchInput');
-  if (searchInput) {
-    searchInput.addEventListener('input', debounce(() => refreshProductGrid(), 300));
-  }
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce(() => refreshProductGrid(), 300));
+    }
 
-  document.getElementById('searchBtn')?.addEventListener('click', () => refreshProductGrid());
+    document.getElementById('searchBtn')?.addEventListener('click', () => refreshProductGrid());
 
-  searchInput?.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') refreshProductGrid();
-  });
+    searchInput?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') refreshProductGrid();
+    });
 
-  document.getElementById('applyFiltersBtn')?.addEventListener('click', () => refreshProductGrid());
+    document.getElementById('applyFiltersBtn')?.addEventListener('click', () => refreshProductGrid());
 
-  document.getElementById('resetFiltersBtn')?.addEventListener('click', () => {
-    const si = document.getElementById('searchInput');
-    const cf = document.getElementById('categoryFilter');
-    const pmin = document.getElementById('priceMin');
-    const pmax = document.getElementById('priceMax');
-    const sb = document.getElementById('sortBy');
-    if (si) si.value = '';
-    if (cf) cf.value = 'all';
-    if (pmin) pmin.value = '';
-    if (pmax) pmax.value = '';
-    if (sb) sb.value = 'date-desc';
-    refreshProductGrid();
-  });
+    document.getElementById('resetFiltersBtn')?.addEventListener('click', () => {
+        const si = document.getElementById('searchInput');
+        const cf = document.getElementById('categoryFilter');
+        const pmin = document.getElementById('priceMin');
+        const pmax = document.getElementById('priceMax');
+        const sb = document.getElementById('sortBy');
+        if (si) si.value = '';
+        if (cf) cf.value = 'all';
+        if (pmin) pmin.value = '';
+        if (pmax) pmax.value = '';
+        if (sb) sb.value = 'date-desc';
+        refreshProductGrid();
+    });
 
-  document.getElementById('categoryFilter')?.addEventListener('change', () => refreshProductGrid());
-  document.getElementById('sortBy')?.addEventListener('change', () => refreshProductGrid());
-  document.getElementById('priceMin')?.addEventListener('input', debounce(() => refreshProductGrid(), 500));
-  document.getElementById('priceMax')?.addEventListener('input', debounce(() => refreshProductGrid(), 500));
+    document.getElementById('categoryFilter')?.addEventListener('change', () => refreshProductGrid());
+    document.getElementById('sortBy')?.addEventListener('change', () => refreshProductGrid());
+    document.getElementById('priceMin')?.addEventListener('input', debounce(() => refreshProductGrid(), 500));
+    document.getElementById('priceMax')?.addEventListener('input', debounce(() => refreshProductGrid(), 500));
 }
 
 function refreshProductGrid() {
-  const grid = document.getElementById('allProducts') || document.getElementById('featuredProducts');
-  if (grid) {
-    grid.innerHTML = displayFilteredProducts();
-    attachBuyButtons();
-  }
+    const grid = document.getElementById('allProducts') || document.getElementById('featuredProducts');
+    if (grid) {
+        grid.innerHTML = displayFilteredProducts();
+        attachBuyButtons();
+    }
 }
 
 // ============================================
 // RENDU VUES
 // ============================================
 async function renderView(view) {
-  currentView = view;
-  const app = document.getElementById('appContent');
-  if (!app) return;
+    currentView = view;
+    const app = document.getElementById('appContent');
+    if (!app) return;
 
-  // Afficher/cacher la barre de recherche
-  const searchBar = document.getElementById('searchFilterBar');
-  if (searchBar) {
-    if (view === 'shop' || view === 'specialOffers') {
-      searchBar.classList.remove('hidden');
+    // Afficher/cacher la barre de recherche
+    const searchBar = document.getElementById('searchFilterBar');
+    if (searchBar) {
+        if (view === 'shop' || view === 'specialOffers') {
+            searchBar.classList.remove('hidden');
+        } else {
+            searchBar.classList.add('hidden');
+        }
+    }
+
+    if (isAdmin && (view === 'home' || view === 'admin')) {
+        await renderAdminDashboard(app);
     } else {
-      searchBar.classList.add('hidden');
+        switch (view) {
+            case 'home': await renderHome(app); break;
+            case 'shop': await renderShop(app); break;
+            case 'orders': await renderProfile(app); break;
+            case 'profile': await renderProfile(app); break;
+            case 'specialOffers': await renderSpecialOffers(app); break;
+            case 'favorites': renderFavorites(app); break;
+            case 'settings': renderSettings(app); break;
+            case 'history': await renderProfile(app); break;
+            case 'services': renderServices(app); break;
+            case 'privacy': renderPrivacy(app); break;
+            case 'terms': renderTerms(app); break;
+            default: await renderHome(app);
+        }
     }
-  }
-
-  if (isAdmin && (view === 'home' || view === 'admin')) {
-    await renderAdminDashboard(app);
-  } else {
-    switch (view) {
-      case 'home': await renderHome(app); break;
-      case 'shop': await renderShop(app); break;
-      case 'orders': await renderProfile(app); break;
-      case 'profile': await renderProfile(app); break;
-      case 'specialOffers': await renderSpecialOffers(app); break;
-      case 'favorites': renderFavorites(app); break;
-      case 'settings': renderSettings(app); break;
-      case 'history': await renderProfile(app); break;
-      case 'services': renderServices(app); break;
-      case 'privacy': renderPrivacy(app); break;
-      case 'terms': renderTerms(app); break;
-      default: await renderHome(app);
-    }
-  }
 }
 function productCardHTML(product) {
-  const hasPromo = product.oldPrice && product.oldPrice > product.price;
-  return `
+    const hasPromo = product.oldPrice && product.oldPrice > product.price;
+    return `
     <div class="product-card" data-id="${product.id}">
       ${hasPromo ? `<div class="product-badge">🔥 ${t('specialPrice')}</div>` : ''}
       <button class="wishlist-btn ${favorites.includes(product.id) ? 'active' : ''}" onclick="toggleFavorite('${product.id}')">❤️</button>
@@ -1477,17 +1492,24 @@ function productCardHTML(product) {
 // DASHBOARD ADMIN (inchangé - déjà complet)
 // ============================================
 async function renderAdminDashboard(app) {
-  if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
-  await loadAllData();
+    if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
+    await loadMoncashConfig();
+    await loadAllData();
+    const onlineCount = await getOnlineUsersCount();
+    // Update online count in UI immediately if possible
+    setTimeout(() => {
+      const el = document.getElementById('onlineCountAdmin');
+      if (el) el.textContent = onlineCount;
+    }, 100);
 
-  const totalProducts = products.length;
-  const totalOrders = orders.length;
-  const totalClients = allUsers.filter(u => u.role === 'client').length;
-  const pendingCount = orders.filter(o => o.status === 'pending').length;
-  const confirmedCount = orders.filter(o => o.status === 'confirmed').length;
-  const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
+    const totalProducts = products.length;
+    const totalOrders = orders.length;
+    const totalClients = allUsers.filter(u => u.role === 'client').length;
+    const pendingCount = orders.filter(o => o.status === 'pending').length;
+    const confirmedCount = orders.filter(o => o.status === 'confirmed').length;
+    const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
 
-  app.innerHTML = `
+    app.innerHTML = `
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
       <h2 style="margin:0;">📊 ${t('dashboard')}</h2>
       <div class="badge badge-success">${t('welcomeAdmin')}</div>
@@ -1510,6 +1532,32 @@ async function renderAdminDashboard(app) {
         <div class="admin-stat-val">${formatPrice(totalRevenue)}</div>
         <div class="admin-stat-label">💰 ${t('revenue')}</div>
       </div>
+      <div class="admin-stat-card" style="border-left-color: #3498db;">
+        <div class="admin-stat-val" id="onlineCountAdmin">...</div>
+        <div class="admin-stat-label">👥 Kliyan an liy</div>
+      </div>
+    </div>
+
+    <div class="card-premium" style="margin-bottom:2rem;">
+      <h3>💳 Anviwònman MonCash (Peman Reyèl)</h3>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-top:1rem;">
+        <div>
+          <label>Client ID</label>
+          <input id="mcClientId" value="${moncashConfig.clientId}" placeholder="Antre Client ID MonCash" />
+        </div>
+        <div>
+          <label>Client Secret</label>
+          <input id="mcClientSecret" type="password" value="${moncashConfig.clientSecret}" placeholder="Antre Client Secret" />
+        </div>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label>Mode</label>
+        <select id="mcMode" style="margin:0;">
+          <option value="sandbox" ${moncashConfig.mode==='sandbox'?'selected':''}>SandBox (Tès)</option>
+          <option value="live" ${moncashConfig.mode==='live'?'selected':''}>Live (Reyèl)</option>
+        </select>
+      </div>
+      <button id="saveMcConfig" class="btn btn-blue" style="width:100%;">💾 Anrejistre Konfigirasyon MonCash</button>
     </div>
 
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2rem;">
@@ -1597,9 +1645,10 @@ async function renderAdminDashboard(app) {
             ${o.items ? `<div style="font-size:0.8rem; background:#fff; padding:0.5rem; border-radius:8px; margin-bottom:0.5rem; border:1px dashed #ccc;">
               <strong>Articles:</strong> ${o.items.map(it => it.name).join(', ')}
             </div>` : ''}
-            <div style="display:flex; gap:0.5rem;">
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
               <input id="delay-${o.id}" placeholder="${t('delayPlaceholder')}" value="${o.deliveryEstimate || ''}" style="margin:0; padding:0.4rem 0.8rem; flex:1;">
               <button class="btn btn-success btn-sm update-delay" data-id="${o.id}" style="border-radius:25px;">⏱️</button>
+              <button class="btn btn-danger btn-sm refund-order-btn" data-id="${o.id}" data-user-id="${o.userId}" data-amount="${o.price || o.totalPrice}">💸 Anile & Rembourse</button>
             </div>
           </div>`).join('')}
       </div>
@@ -1608,166 +1657,236 @@ async function renderAdminDashboard(app) {
     <div id="adminSendNotifForm" class="card mt-2 hidden"><h3>🔔 ${t('sendNotification')}</h3><input id="notifTitle" placeholder="${t('notificationTitle')}"><textarea id="notifMessage" placeholder="${t('notificationMessage')}"></textarea><button id="sendNotifBtn" class="btn btn-gold mt-2">📤 ${t('sendNotification')}</button></div>
   `;
 
-  // Events Admin
-  document.getElementById('adminAddProductBtn')?.addEventListener('click', () => {
-    document.getElementById('adminAddProductForm').classList.toggle('hidden');
-    document.getElementById('adminClientsList').classList.add('hidden');
-    document.getElementById('adminSendNotifForm').classList.add('hidden');
-  });
-  document.getElementById('adminManageOrdersBtn')?.addEventListener('click', () => {
-    document.getElementById('adminOrderList').scrollIntoView({ behavior: 'smooth' });
-  });
-  document.getElementById('adminManageClientsBtn')?.addEventListener('click', () => {
-    document.getElementById('adminClientsList').classList.toggle('hidden');
-    document.getElementById('adminAddProductForm').classList.add('hidden');
-    document.getElementById('adminSendNotifForm').classList.add('hidden');
-  });
-  document.getElementById('adminSendNotifBtn')?.addEventListener('click', () => {
-    document.getElementById('adminSendNotifForm').classList.toggle('hidden');
-    document.getElementById('adminAddProductForm').classList.add('hidden');
-    document.getElementById('adminClientsList').classList.add('hidden');
-  });
-
-  document.getElementById('saveProductBtn')?.addEventListener('click', async () => {
-    const name = document.getElementById('adminProdName')?.value.trim();
-    const price = parseFloat(document.getElementById('adminProdPrice')?.value);
-    const oldPrice = parseFloat(document.getElementById('adminProdOldPrice')?.value) || null;
-    const category = document.getElementById('adminProdCategory')?.value;
-    const stock = parseInt(document.getElementById('adminProdStock')?.value) || 0;
-    const colorsRaw = document.getElementById('adminProdColors')?.value.trim();
-    const sizesRaw = document.getElementById('adminProdSizes')?.value.trim();
-    const image = document.getElementById('adminProdImage')?.value.trim();
-    const description = document.getElementById('adminProdDesc')?.value.trim();
-
-    if (!name || !price) { showMessage(t('fillAllFields'), 'error'); return; }
-
-    const colors = colorsRaw ? colorsRaw.split(',').map(c => c.trim()) : [];
-    const sizes = sizesRaw ? sizesRaw.split(',').map(s => s.trim()) : [];
-
-    try {
-      showMessage("Traduction automatique en cours...", "info");
-      const [nameTrans, descTrans] = await Promise.all([
-        getTranslations(name),
-        getTranslations(description)
-      ]);
-
-      await db.collection('products').add({ 
-        name: nameTrans, 
-        price, oldPrice, category, stock, colors, sizes,
-        image: image || '', 
-        description: descTrans, 
-        createdAt: firebase.firestore.FieldValue.serverTimestamp() 
-      });
-      showMessage(t('productAdded'), 'success');
-      await loadAllData(); renderView('admin');
-    } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
-  });
-
-  document.querySelectorAll('.delete-product').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      if (confirm(t('confirmDelete'))) {
-        await db.collection('products').doc(e.currentTarget.dataset.id).delete();
-        showMessage(t('productDeleted'), 'success');
-        await loadAllData(); renderView('admin');
-      }
+    // Events Admin
+    document.getElementById('adminAddProductBtn')?.addEventListener('click', () => {
+        document.getElementById('adminAddProductForm').classList.toggle('hidden');
+        document.getElementById('adminClientsList').classList.add('hidden');
+        document.getElementById('adminSendNotifForm').classList.add('hidden');
     });
-  });
+    document.getElementById('adminManageOrdersBtn')?.addEventListener('click', () => {
+        document.getElementById('adminOrderList').scrollIntoView({ behavior: 'smooth' });
+    });
+    document.getElementById('adminManageClientsBtn')?.addEventListener('click', () => {
+        document.getElementById('adminClientsList').classList.toggle('hidden');
+        document.getElementById('adminAddProductForm').classList.add('hidden');
+        document.getElementById('adminSendNotifForm').classList.add('hidden');
+    });
+    document.getElementById('adminSendNotifBtn')?.addEventListener('click', () => {
+        document.getElementById('adminSendNotifForm').classList.toggle('hidden');
+        document.getElementById('adminAddProductForm').classList.add('hidden');
+        document.getElementById('adminClientsList').classList.add('hidden');
+    });
 
-  document.querySelectorAll('.status-select').forEach(select => {
-    select.addEventListener('change', async (e) => {
-      const orderId = e.target.dataset.orderId;
-      const newStatus = e.target.value;
-      const order = orders.find(o => o.id === orderId);
-      const oldStatus = order ? order.status : 'pending';
-      let reason = '';
+    document.getElementById('saveProductBtn')?.addEventListener('click', async () => {
+        const name = document.getElementById('adminProdName')?.value.trim();
+        const price = parseFloat(document.getElementById('adminProdPrice')?.value);
+        const oldPrice = parseFloat(document.getElementById('adminProdOldPrice')?.value) || null;
+        const category = document.getElementById('adminProdCategory')?.value;
+        const stock = parseInt(document.getElementById('adminProdStock')?.value) || 0;
+        const colorsRaw = document.getElementById('adminProdColors')?.value.trim();
+        const sizesRaw = document.getElementById('adminProdSizes')?.value.trim();
+        const image = document.getElementById('adminProdImage')?.value.trim();
+        const description = document.getElementById('adminProdDesc')?.value.trim();
 
-      if (newStatus === 'cancelled') {
-        reason = prompt(t('reasonPlaceholder'));
-        if (!reason) {
-          e.target.value = oldStatus;
-          showMessage(t('reasonRequired'), 'error');
-          return;
-        }
-      }
+        if (!name || !price) { showMessage(t('fillAllFields'), 'error'); return; }
 
-      try {
-        await db.collection('orders').doc(orderId).update({ 
-          status: newStatus,
-          cancellationReason: reason || null
+        const colors = colorsRaw ? colorsRaw.split(',').map(c => c.trim()) : [];
+        const sizes = sizesRaw ? sizesRaw.split(',').map(s => s.trim()) : [];
+
+        try {
+            showMessage("Traduction automatique en cours...", "info");
+            const [nameTrans, descTrans] = await Promise.all([
+                getTranslations(name),
+                getTranslations(description)
+            ]);
+
+            await db.collection('products').add({
+                name: nameTrans,
+                price, oldPrice, category, stock, colors, sizes,
+                image: image || '',
+                description: descTrans,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            showMessage(t('productAdded'), 'success');
+            await loadAllData(); renderView('admin');
+        } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
+    });
+
+    document.querySelectorAll('.delete-product').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            if (confirm(t('confirmDelete'))) {
+                await db.collection('products').doc(e.currentTarget.dataset.id).delete();
+                showMessage(t('productDeleted'), 'success');
+                await loadAllData(); renderView('admin');
+            }
         });
-
-        // Stock Decrement Logic
-        if (newStatus === 'confirmed' && oldStatus !== 'confirmed' && order.productId) {
-          const productRef = db.collection('products').doc(order.productId);
-          const productDoc = await productRef.get();
-          if (productDoc.exists) {
-            const currentStock = productDoc.data().stock || 0;
-            const orderQty = order.quantity || 1;
-            await productRef.update({ stock: Math.max(0, currentStock - orderQty) });
-            await loadProducts(true); // Refresh local products list
-          }
-        }
-
-        showMessage(t('statusUpdated'), 'success');
-        await loadAllOrders(); // Refresh orders to ensure UI is up to date
-      } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
     });
-  });
 
-  document.querySelectorAll('.update-delay').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const orderId = e.currentTarget.dataset.id;
-      const delay = document.getElementById(`delay-${orderId}`).value.trim();
-      if (!delay) { showMessage(t('delayRequired'), 'error'); return; }
-      await db.collection('orders').doc(orderId).update({ deliveryEstimate: delay });
-      showMessage(t('delayUpdated'), 'success');
+    document.querySelectorAll('.status-select').forEach(select => {
+        select.addEventListener('change', async (e) => {
+            const orderId = e.target.dataset.orderId;
+            const newStatus = e.target.value;
+            const order = orders.find(o => o.id === orderId);
+            const oldStatus = order ? order.status : 'pending';
+            let reason = '';
+
+            if (newStatus === 'cancelled') {
+                reason = prompt(t('reasonPlaceholder'));
+                if (!reason) {
+                    e.target.value = oldStatus;
+                    showMessage(t('reasonRequired'), 'error');
+                    return;
+                }
+            }
+
+            try {
+                await db.collection('orders').doc(orderId).update({
+                    status: newStatus,
+                    cancellationReason: reason || null
+                });
+
+                // Stock Decrement Logic
+                if (newStatus === 'confirmed' && oldStatus !== 'confirmed' && order.productId) {
+                    const productRef = db.collection('products').doc(order.productId);
+                    const productDoc = await productRef.get();
+                    if (productDoc.exists) {
+                        const currentStock = productDoc.data().stock || 0;
+                        const orderQty = order.quantity || 1;
+                        await productRef.update({ stock: Math.max(0, currentStock - orderQty) });
+                        await loadProducts(true); // Refresh local products list
+                    }
+                }
+
+                showMessage(t('statusUpdated'), 'success');
+                await loadAllOrders(); // Refresh orders to ensure UI is up to date
+            } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
+        });
     });
-  });
 
-  document.querySelectorAll('.toggle-role').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const uid = e.currentTarget.dataset.uid;
-      const currentRole = e.currentTarget.dataset.role;
-      const newRole = currentRole === 'admin' ? 'client' : 'admin';
-      await db.collection('users').doc(uid).update({ role: newRole });
-      showMessage(newRole === 'admin' ? t('madeAdmin') : t('madeClient'), 'success');
-      await loadAllData(); renderView('admin');
+    document.querySelectorAll('.update-delay').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const orderId = e.currentTarget.dataset.id;
+            const delay = document.getElementById(`delay-${orderId}`).value.trim();
+            if (!delay) { showMessage(t('delayRequired'), 'error'); return; }
+            await db.collection('orders').doc(orderId).update({ deliveryEstimate: delay });
+            showMessage(t('delayUpdated'), 'success');
+        });
     });
-  });
 
-  document.getElementById('sendNotifBtn')?.addEventListener('click', async () => {
-    const title = document.getElementById('notifTitle')?.value.trim();
-    const message = document.getElementById('notifMessage')?.value.trim();
-    if (!title || !message) { showMessage(t('fillAllFields'), 'error'); return; }
+    document.querySelectorAll('.toggle-role').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const uid = e.currentTarget.dataset.uid;
+            const currentRole = e.currentTarget.dataset.role;
+            const newRole = currentRole === 'admin' ? 'client' : 'admin';
+            await db.collection('users').doc(uid).update({ role: newRole });
+            showMessage(newRole === 'admin' ? t('madeAdmin') : t('madeClient'), 'success');
+            await loadAllData(); renderView('admin');
+        });
+    });
 
+    document.getElementById('sendNotifBtn')?.addEventListener('click', async () => {
+        const title = document.getElementById('notifTitle')?.value.trim();
+        const message = document.getElementById('notifMessage')?.value.trim();
+        if (!title || !message) { showMessage(t('fillAllFields'), 'error'); return; }
+
+        try {
+            showMessage("Traduction automatique en cours...", "info");
+            const [titleTrans, messageTrans] = await Promise.all([
+                getTranslations(title),
+                getTranslations(message)
+            ]);
+
+            await db.collection('notifications').add({
+                title: titleTrans,
+                message: messageTrans,
+                type: 'promo',
+                targetRole: 'all',
+                read: false,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            showMessage(t('notifSent'), 'success');
+            document.getElementById('notifTitle').value = '';
+            document.getElementById('notifMessage').value = '';
+            document.getElementById('adminSendNotifForm').classList.add('hidden');
+        } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
+    });
+
+    // Save MonCash Config
+    document.getElementById('saveMcConfig')?.addEventListener('click', async () => {
+        const clientId = document.getElementById('mcClientId').value.trim();
+        const clientSecret = document.getElementById('mcClientSecret').value.trim();
+        const mode = document.getElementById('mcMode').value;
+        try {
+            await db.collection('settings').doc('moncash').set({ clientId, clientSecret, mode, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+            moncashConfig = { clientId, clientSecret, mode };
+            showMessage('✅ Konfigirasyon MonCash sove!', 'success');
+        } catch (e) { showMessage('Erreur: ' + e.message, 'error'); }
+    });
+
+    // Refund Order
+    document.querySelectorAll('.refund-order-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const orderId = e.currentTarget.dataset.id;
+            const userId = e.currentTarget.dataset.userId;
+            const amount = parseFloat(e.currentTarget.dataset.amount);
+            if (confirm(`Eske w sèten ou vle anile epi remèt $${amount} bay kliyan an?`)) {
+                await refundUser(userId, amount, orderId);
+                await db.collection('orders').doc(orderId).update({ status: 'cancelled' });
+                renderView('admin');
+            }
+        });
+    });
+}
+
+// ---------- NEW ADMIN FUNCTIONS ----------
+async function loadMoncashConfig() {
     try {
-      showMessage("Traduction automatique en cours...", "info");
-      const [titleTrans, messageTrans] = await Promise.all([
-        getTranslations(title),
-        getTranslations(message)
-      ]);
+        const doc = await db.collection('settings').doc('moncash').get();
+        if (doc.exists) moncashConfig = doc.data();
+    } catch (e) { console.error('Erreur config MonCash:', e); }
+}
 
-      await db.collection('notifications').add({ 
-        title: titleTrans, 
-        message: messageTrans, 
-        type: 'promo', 
-        targetRole: 'all',
-        read: false, 
-        createdAt: firebase.firestore.FieldValue.serverTimestamp() 
-      });
-      showMessage(t('notifSent'), 'success');
-      document.getElementById('notifTitle').value = '';
-      document.getElementById('notifMessage').value = '';
-      document.getElementById('adminSendNotifForm').classList.add('hidden');
-    } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
-  });
+async function refundUser(userId, amount, orderId) {
+    try {
+        const userRef = db.collection('users').doc(userId);
+        await db.runTransaction(async (transaction) => {
+            const userDoc = await transaction.get(userRef);
+            if (!userDoc.exists) throw "Kliyan sa a pa egziste!";
+            const currentBalance = userDoc.data().balance || 0;
+            transaction.update(userRef, { balance: currentBalance + amount, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+            transaction.set(db.collection('notifications').doc(), {
+                targetUserId: userId, title: 'Lajan Rembourse',
+                message: `Nou remèt ou $${amount} pou kòmand #${orderId.substring(0, 6)} ki anile a.`,
+                type: 'refund', read: false, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        });
+        showMessage('✅ Lajan an remèt kliyan an!', 'success');
+    } catch (e) { showMessage('Erreur remboursement: ' + e, 'error'); }
+}
+
+async function updatePresence() {
+    if (!currentUser) return;
+    try {
+        await db.collection('users').doc(currentUser.uid).update({
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+            online: true
+        });
+    } catch (e) { console.error("Presence error:", e); }
+}
+
+async function getOnlineUsersCount() {
+    try {
+        const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000);
+        const snap = await db.collection('users').where('lastSeen', '>=', fiveMinsAgo).get();
+        return snap.size;
+    } catch (e) { return 0; }
 }
 
 // ============================================
 // PAGES CLIENT
 // ============================================
 async function renderHome(app) {
-  app.innerHTML = `
+    app.innerHTML = `
     <div class="card text-center">
       <h1 style="color:var(--blue-deep);">🏠 ${t('welcome')}</h1>
       <p style="font-size:1.2rem;">${t('slogan')}</p>
@@ -1806,30 +1925,30 @@ async function renderHome(app) {
       </div>
     </div>`;
 
-  await loadProducts();
-  const grid = document.getElementById('featuredProducts');
-  if (grid) {
-    grid.innerHTML = products.length === 0 ? `<p>📦 ${t('noProducts')}</p>` : products.slice(0, 4).map(p => productCardHTML(p)).join('');
-  }
+    await loadProducts();
+    const grid = document.getElementById('featuredProducts');
+    if (grid) {
+        grid.innerHTML = products.length === 0 ? `<p>📦 ${t('noProducts')}</p>` : products.slice(0, 4).map(p => productCardHTML(p)).join('');
+    }
 
-  document.getElementById('goShopBtn')?.addEventListener('click', () => { currentView = 'shop'; renderView('shop'); });
-  attachBuyButtons();
+    document.getElementById('goShopBtn')?.addEventListener('click', () => { currentView = 'shop'; renderView('shop'); });
+    attachBuyButtons();
 }
 
 function filterByCategory(cat) {
-  currentView = 'shop';
-  renderView('shop').then(() => {
-    const filter = document.getElementById('categoryFilter');
-    if (filter) {
-      filter.value = cat;
-      refreshProductGrid();
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+    currentView = 'shop';
+    renderView('shop').then(() => {
+        const filter = document.getElementById('categoryFilter');
+        if (filter) {
+            filter.value = cat;
+            refreshProductGrid();
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 }
 
 async function renderShop(app) {
-  app.innerHTML = `
+    app.innerHTML = `
     <h2>🛍️ ${t('shop')}</h2>
     <div class="grid" id="allProducts">
       ${Array(8).fill(0).map(() => `
@@ -1842,46 +1961,48 @@ async function renderShop(app) {
         </div>`).join('')}
     </div>`;
 
-  await loadProducts();
-  const grid = document.getElementById('allProducts');
-  if (grid) {
-    grid.innerHTML = displayFilteredProducts();
-  }
-  attachBuyButtons();
-  setupSearchAndFilters();
+    await loadProducts();
+    const grid = document.getElementById('allProducts');
+    if (grid) {
+        grid.innerHTML = displayFilteredProducts();
+    }
+    attachBuyButtons();
+    setupSearchAndFilters();
 }
 
 async function renderSpecialOffers(app) {
-  await loadProducts();
-  app.innerHTML = `<h2>🎉 ${t('specialOffers')}</h2><div class="grid" id="allProducts">${displayFilteredProducts()}</div>`;
-  attachBuyButtons();
-  setupSearchAndFilters();
+    await loadProducts();
+    app.innerHTML = `<h2>🎉 ${t('specialOffers')}</h2><div class="grid" id="allProducts">${displayFilteredProducts()}</div>`;
+    attachBuyButtons();
+    setupSearchAndFilters();
 }
 
 async function renderProfile(app) {
-  if (!currentUser) {
-    app.innerHTML = `<div class="card text-center"><p>🔐 ${t('loginRequired')}</p><button class="btn btn-gold" id="loginFromOrders">${t('login')}</button></div>`;
-    document.getElementById('loginFromOrders')?.addEventListener('click', () => document.getElementById('authBtn')?.click());
-    return;
-  }
-
-  let userAddress = '';
-  let userPhone = '';
-  try {
-    const userDoc = await db.collection('users').doc(currentUser.uid).get();
-    if (userDoc.exists) {
-      userAddress = userDoc.data().address || '';
-      userPhone = userDoc.data().phone || '';
+    if (!currentUser) {
+        app.innerHTML = `<div class="card text-center"><p>🔐 ${t('loginRequired')}</p><button class="btn btn-gold" id="loginFromOrders">${t('login')}</button></div>`;
+        document.getElementById('loginFromOrders')?.addEventListener('click', () => document.getElementById('authBtn')?.click());
+        return;
     }
-  } catch (e) { console.error("Erreur profil:", e); }
 
-  await loadMyOrders();
+    let userAddress = '';
+    let userPhone = '';
+    let currentUserData = {};
+    try {
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        if (userDoc.exists) {
+            currentUserData = userDoc.data();
+            userAddress = currentUserData.address || '';
+            userPhone = currentUserData.phone || '';
+        }
+    } catch (e) { console.error("Erreur profil:", e); }
 
-  const totalSpent = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
-  const totalOrders = orders.length;
-  const initials = (currentUser.displayName || currentUser.email || 'U').substring(0, 2).toUpperCase();
+    await loadMyOrders();
 
-  app.innerHTML = `
+    const totalSpent = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
+    const totalOrders = orders.length;
+    const initials = (currentUser.displayName || currentUser.email || 'U').substring(0, 2).toUpperCase();
+
+    app.innerHTML = `
     <div class="profile-layout">
       <!-- SIDEBAR -->
       <div class="profile-sidebar">
@@ -1909,6 +2030,10 @@ async function renderProfile(app) {
         <div id="tab-overview" class="profile-tab-content active">
           <h2 style="color:var(--blue-deep); margin-bottom:1.5rem;">📊 Aperçu du Compte</h2>
           <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:1.5rem; margin-bottom:2rem;">
+            <div class="profile-stat-box" style="background:var(--blue-deep); color:white;">
+              <div class="profile-stat-val" style="color:var(--gold);">${formatPrice(currentUserData?.balance || 0)}</div>
+              <div style="font-size:0.9rem; opacity:0.8; font-weight:600;">Balans ou</div>
+            </div>
             <div class="profile-stat-box">
               <div class="profile-stat-val">${totalOrders}</div>
               <div style="font-size:0.9rem; color:var(--text-soft); font-weight:600;">Commandes</div>
@@ -2001,113 +2126,113 @@ async function renderProfile(app) {
     </div>
   `;
 
-  // Tab Switching Logic
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.profile-tab-content').forEach(c => c.classList.remove('active'));
+    // Tab Switching Logic
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.profile-tab-content').forEach(c => c.classList.remove('active'));
 
-      e.currentTarget.classList.add('active');
-      const targetId = e.currentTarget.getAttribute('data-target');
-      document.getElementById(targetId).classList.add('active');
+            e.currentTarget.classList.add('active');
+            const targetId = e.currentTarget.getAttribute('data-target');
+            document.getElementById(targetId).classList.add('active');
+        });
     });
-  });
 
-  // Save Profile Logic
-  document.getElementById('saveProfileBtn')?.addEventListener('click', async () => {
-    const name = document.getElementById('profName').value.trim();
-    const address = document.getElementById('profAddress').value.trim();
-    const phone = document.getElementById('profPhone').value.trim();
+    // Save Profile Logic
+    document.getElementById('saveProfileBtn')?.addEventListener('click', async () => {
+        const name = document.getElementById('profName').value.trim();
+        const address = document.getElementById('profAddress').value.trim();
+        const phone = document.getElementById('profPhone').value.trim();
 
-    if (address && address.length < 5) {
-      showMessage(t('invalidAddress'), 'error');
-      return;
-    }
+        if (address && address.length < 5) {
+            showMessage(t('invalidAddress'), 'error');
+            return;
+        }
 
-    try {
-      await db.collection('users').doc(currentUser.uid).update({
-        displayName: name,
-        address: address,
-        phone: phone
-      });
-      await currentUser.updateProfile({ displayName: name });
-      showMessage(t('profileUpdated'), 'success');
-      // Update UI without full reload
-      document.querySelector('.avatar-container h3').textContent = name || t('clientLabel');
-      
-      const avatarEl = document.querySelector('.avatar');
-      if (!currentUser.photoURL) {
-        avatarEl.innerHTML = `<span id="avatarInitials">${(name || currentUser.email || 'U').substring(0, 2).toUpperCase()}</span><div style="position:absolute; bottom:0; right:0; background:var(--gold); color:white; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; border:2px solid var(--white);">📷</div>`;
-      }
-    } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
-  });
+        try {
+            await db.collection('users').doc(currentUser.uid).update({
+                displayName: name,
+                address: address,
+                phone: phone
+            });
+            await currentUser.updateProfile({ displayName: name });
+            showMessage(t('profileUpdated'), 'success');
+            // Update UI without full reload
+            document.querySelector('.avatar-container h3').textContent = name || t('clientLabel');
 
-  // Photo Upload Logic
-  document.getElementById('profileAvatar')?.addEventListener('click', () => {
-    document.getElementById('profPhotoInput')?.click();
-  });
+            const avatarEl = document.querySelector('.avatar');
+            if (!currentUser.photoURL) {
+                avatarEl.innerHTML = `<span id="avatarInitials">${(name || currentUser.email || 'U').substring(0, 2).toUpperCase()}</span><div style="position:absolute; bottom:0; right:0; background:var(--gold); color:white; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; border:2px solid var(--white);">📷</div>`;
+            }
+        } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
+    });
 
-  document.getElementById('profPhotoInput')?.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    // Photo Upload Logic
+    document.getElementById('profileAvatar')?.addEventListener('click', () => {
+        document.getElementById('profPhotoInput')?.click();
+    });
 
-    if (file.size > 2 * 1024 * 1024) {
-      showMessage(t('fileTooLarge') || "Fichier trop volumineux (max 2Mo)", "error");
-      return;
-    }
+    document.getElementById('profPhotoInput')?.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-    try {
-      showMessage(t('uploading') || "Chargement...", "info");
-      const ref = storage.ref(`profiles/${currentUser.uid}/${file.name}`);
-      await ref.put(file);
-      const url = await ref.getDownloadURL();
+        if (file.size > 2 * 1024 * 1024) {
+            showMessage(t('fileTooLarge') || "Fichier trop volumineux (max 2Mo)", "error");
+            return;
+        }
 
-      await currentUser.updateProfile({ photoURL: url });
-      await db.collection('users').doc(currentUser.uid).update({ photoURL: url });
+        try {
+            showMessage(t('uploading') || "Chargement...", "info");
+            const ref = storage.ref(`profiles/${currentUser.uid}/${file.name}`);
+            await ref.put(file);
+            const url = await ref.getDownloadURL();
 
-      const avatarEl = document.getElementById('profileAvatar');
-      avatarEl.innerHTML = `<img src="${url}" id="avatarImg"><div style="position:absolute; bottom:0; right:0; background:var(--gold); color:white; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; border:2px solid var(--white);">📷</div>`;
-      
-      showMessage(t('profileUpdated'), "success");
-    } catch (err) {
-      console.error(err);
-      showMessage(t('errorOccurred') + err.message, "error");
-    }
-  });
+            await currentUser.updateProfile({ photoURL: url });
+            await db.collection('users').doc(currentUser.uid).update({ photoURL: url });
 
-  // Reset Password Logic
-  document.getElementById('resetPasswordBtn')?.addEventListener('click', async () => {
-    try {
-      await auth.sendPasswordResetEmail(currentUser.email);
-      showMessage('Email de réinitialisation envoyé !', 'success');
-    } catch (e) {
-      showMessage('Erreur: ' + e.message, 'error');
-    }
-  });
+            const avatarEl = document.getElementById('profileAvatar');
+            avatarEl.innerHTML = `<img src="${url}" id="avatarImg"><div style="position:absolute; bottom:0; right:0; background:var(--gold); color:white; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; border:2px solid var(--white);">📷</div>`;
 
-  // Logout Logic
-  document.getElementById('profileLogoutBtn')?.addEventListener('click', () => {
-    auth.signOut();
-    showMessage(t('loggedOut'), 'success');
-  });
+            showMessage(t('profileUpdated'), "success");
+        } catch (err) {
+            console.error(err);
+            showMessage(t('errorOccurred') + err.message, "error");
+        }
+    });
+
+    // Reset Password Logic
+    document.getElementById('resetPasswordBtn')?.addEventListener('click', async () => {
+        try {
+            await auth.sendPasswordResetEmail(currentUser.email);
+            showMessage('Email de réinitialisation envoyé !', 'success');
+        } catch (e) {
+            showMessage('Erreur: ' + e.message, 'error');
+        }
+    });
+
+    // Logout Logic
+    document.getElementById('profileLogoutBtn')?.addEventListener('click', () => {
+        auth.signOut();
+        showMessage(t('loggedOut'), 'success');
+    });
 }
 
 async function renderClientOrders(app) {
-  await renderProfile(app);
+    await renderProfile(app);
 }
 
 async function renderSettings(app) {
-  let notifPrefs = { newProducts: true, specialPrices: true, updates: true };
-  if (currentUser) {
-    try {
-      const userDoc = await db.collection('users').doc(currentUser.uid).get();
-      if (userDoc.exists && userDoc.data().notifPrefs) {
-        notifPrefs = userDoc.data().notifPrefs;
-      }
-    } catch (e) { console.error(e); }
-  }
+    let notifPrefs = { newProducts: true, specialPrices: true, updates: true };
+    if (currentUser) {
+        try {
+            const userDoc = await db.collection('users').doc(currentUser.uid).get();
+            if (userDoc.exists && userDoc.data().notifPrefs) {
+                notifPrefs = userDoc.data().notifPrefs;
+            }
+        } catch (e) { console.error(e); }
+    }
 
-  app.innerHTML = `
+    app.innerHTML = `
     <div class="card-premium settings-card" style="animation: viewFadeIn 0.4s ease;">
       <h2 style="margin-bottom:2rem; color:var(--blue-deep);">⚙️ ${t('settings')}</h2>
       
@@ -2177,65 +2302,65 @@ async function renderSettings(app) {
       </div>` : ''}
     </div>`;
 
-  // Language Change
-  document.getElementById('settingsLang')?.addEventListener('change', (e) => {
-    currentLang = e.target.value;
-    document.getElementById('langSwitch').value = currentLang;
-    applyLanguage();
-    renderView('settings'); // Refresh to update labels
-  });
+    // Language Change
+    document.getElementById('settingsLang')?.addEventListener('change', (e) => {
+        currentLang = e.target.value;
+        document.getElementById('langSwitch').value = currentLang;
+        applyLanguage();
+        renderView('settings'); // Refresh to update labels
+    });
 
-  // Notif Status Update
-  updateNotifUI();
-
-  document.getElementById('requestNotifBtn')?.addEventListener('click', async () => {
-    const permission = await Notification.requestPermission();
+    // Notif Status Update
     updateNotifUI();
-    if (permission === 'granted') showMessage("Notifications autorisées !", "success");
-  });
 
-  document.getElementById('saveNotifPrefsBtn')?.addEventListener('click', async () => {
-    if (!currentUser) { showMessage(t('loginRequired'), 'error'); return; }
-    const prefs = {
-      newProducts: document.getElementById('prefNewProducts').checked,
-      specialPrices: document.getElementById('prefSpecialPrices').checked,
-      updates: document.getElementById('prefUpdates').checked
-    };
-    try {
-      await db.collection('users').doc(currentUser.uid).update({ notifPrefs: prefs });
-      showMessage(t('notifPreferencesSaved'), 'success');
-    } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
-  });
+    document.getElementById('requestNotifBtn')?.addEventListener('click', async () => {
+        const permission = await Notification.requestPermission();
+        updateNotifUI();
+        if (permission === 'granted') showMessage("Notifications autorisées !", "success");
+    });
 
-  document.getElementById('resendVerifyEmail')?.addEventListener('click', async () => {
-    if (currentUser) { await currentUser.sendEmailVerification(); showMessage(t('emailVerifySent'), 'success'); }
-  });
+    document.getElementById('saveNotifPrefsBtn')?.addEventListener('click', async () => {
+        if (!currentUser) { showMessage(t('loginRequired'), 'error'); return; }
+        const prefs = {
+            newProducts: document.getElementById('prefNewProducts').checked,
+            specialPrices: document.getElementById('prefSpecialPrices').checked,
+            updates: document.getElementById('prefUpdates').checked
+        };
+        try {
+            await db.collection('users').doc(currentUser.uid).update({ notifPrefs: prefs });
+            showMessage(t('notifPreferencesSaved'), 'success');
+        } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
+    });
+
+    document.getElementById('resendVerifyEmail')?.addEventListener('click', async () => {
+        if (currentUser) { await currentUser.sendEmailVerification(); showMessage(t('emailVerifySent'), 'success'); }
+    });
 }
 
 function updateNotifUI() {
-  const label = document.getElementById('notifStatusLabel');
-  const btn = document.getElementById('requestNotifBtn');
-  if (!label) return;
+    const label = document.getElementById('notifStatusLabel');
+    const btn = document.getElementById('requestNotifBtn');
+    if (!label) return;
 
-  if (!("Notification" in window)) {
-    label.textContent = "Non supporté";
-    label.style.color = "var(--danger)";
-    return;
-  }
+    if (!("Notification" in window)) {
+        label.textContent = "Non supporté";
+        label.style.color = "var(--danger)";
+        return;
+    }
 
-  if (Notification.permission === 'granted') {
-    label.textContent = t('notifGranted');
-    label.style.color = "var(--success)";
-    btn.style.display = 'none';
-  } else if (Notification.permission === 'denied') {
-    label.textContent = t('notifBlocked');
-    label.style.color = "var(--danger)";
-    btn.style.display = 'none';
-  } else {
-    label.textContent = "Non configuré";
-    label.style.color = "#f39c12";
-    btn.style.display = 'inline-block';
-  }
+    if (Notification.permission === 'granted') {
+        label.textContent = t('notifGranted');
+        label.style.color = "var(--success)";
+        btn.style.display = 'none';
+    } else if (Notification.permission === 'denied') {
+        label.textContent = t('notifBlocked');
+        label.style.color = "var(--danger)";
+        btn.style.display = 'none';
+    } else {
+        label.textContent = "Non configuré";
+        label.style.color = "#f39c12";
+        btn.style.display = 'inline-block';
+    }
 }
 
 
@@ -2243,207 +2368,207 @@ function updateNotifUI() {
 // ATTACHER BOUTONS ACHAT
 // ============================================
 function attachBuyButtons() {
-  document.querySelectorAll('.add-cart-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      addToCart(e.currentTarget.dataset.productId);
+    document.querySelectorAll('.add-cart-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            addToCart(e.currentTarget.dataset.productId);
+        });
     });
-  });
 
-  document.querySelectorAll('.buy-now-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      if (!currentUser) { showMessage(t('loginRequired'), 'error'); document.getElementById('authBtn')?.click(); return; }
-      if (!currentUser.emailVerified) { showMessage(t('emailNotVerified'), 'error'); return; }
-      const product = products.find(p => p.id === e.currentTarget.dataset.productId);
-      if (!product) return;
-      selectedProductId = product.id;
-      document.getElementById('modalProductName').textContent = gt(product.name);
-      document.getElementById('modalProductPrice').textContent = formatPrice(product.price);
-      document.getElementById('productDetailsContent').innerHTML = `<p style="margin:1rem 0; color:var(--text-soft);">${gt(product.description) || ''}</p>`;
-      
-      const variationContainer = document.getElementById('variationSelectors');
-      if (variationContainer) {
-        let html = '';
-        
-        // Stock / Quantity
-        if (product.stock > 0) {
-          html += `
+    document.querySelectorAll('.buy-now-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            if (!currentUser) { showMessage(t('loginRequired'), 'error'); document.getElementById('authBtn')?.click(); return; }
+            if (!currentUser.emailVerified) { showMessage(t('emailNotVerified'), 'error'); return; }
+            const product = products.find(p => p.id === e.currentTarget.dataset.productId);
+            if (!product) return;
+            selectedProductId = product.id;
+            document.getElementById('modalProductName').textContent = gt(product.name);
+            document.getElementById('modalProductPrice').textContent = formatPrice(product.price);
+            document.getElementById('productDetailsContent').innerHTML = `<p style="margin:1rem 0; color:var(--text-soft);">${gt(product.description) || ''}</p>`;
+
+            const variationContainer = document.getElementById('variationSelectors');
+            if (variationContainer) {
+                let html = '';
+
+                // Stock / Quantity
+                if (product.stock > 0) {
+                    html += `
             <div>
               <label>🔢 ${t('quantity')}</label>
               <input type="number" id="orderQuantity" value="1" min="1" max="${product.stock}" style="width:100px;">
               <span style="font-size:0.8rem; color:var(--text-soft); margin-left:0.5rem;">(${product.stock} ${t('available') || 'disponibles'})</span>
             </div>`;
-        } else {
-          html += `<p style="color:var(--danger); font-weight:700;">🚫 ${t('outOfStock')}</p>`;
-        }
+                } else {
+                    html += `<p style="color:var(--danger); font-weight:700;">🚫 ${t('outOfStock')}</p>`;
+                }
 
-        // Colors
-        if (product.colors && product.colors.length > 0) {
-          html += `
+                // Colors
+                if (product.colors && product.colors.length > 0) {
+                    html += `
             <div>
               <label>🎨 ${t('selectColor')}</label>
               <select id="orderColor">
                 ${product.colors.map(c => `<option value="${c}">${c}</option>`).join('')}
               </select>
             </div>`;
-        }
+                }
 
-        // Sizes
-        if (product.sizes && product.sizes.length > 0) {
-          html += `
+                // Sizes
+                if (product.sizes && product.sizes.length > 0) {
+                    html += `
             <div>
               <label>📏 ${t('selectSize')}</label>
               <select id="orderSize">
                 ${product.sizes.map(s => `<option value="${s}">${s}</option>`).join('')}
               </select>
             </div>`;
-        }
-        
-        variationContainer.innerHTML = html;
-      }
+                }
 
-      document.getElementById('buyModal').classList.remove('hidden');
+                variationContainer.innerHTML = html;
+            }
 
-      try {
-        const userDoc = await db.collection('users').doc(currentUser.uid).get();
-        if (userDoc.exists) {
-          const userData = userDoc.data();
-          if (userData.address) document.getElementById('orderAddress').value = userData.address;
-          if (userData.phone) document.getElementById('orderPhone').value = userData.phone;
-        } else {
-          document.getElementById('orderAddress').value = '';
-          document.getElementById('orderPhone').value = '';
-        }
-        renderReviews(product.id);
-      } catch (e) { 
-        document.getElementById('orderAddress').value = ''; 
-        document.getElementById('orderPhone').value = '';
-      }
+            document.getElementById('buyModal').classList.remove('hidden');
+
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    if (userData.address) document.getElementById('orderAddress').value = userData.address;
+                    if (userData.phone) document.getElementById('orderPhone').value = userData.phone;
+                } else {
+                    document.getElementById('orderAddress').value = '';
+                    document.getElementById('orderPhone').value = '';
+                }
+                renderReviews(product.id);
+            } catch (e) {
+                document.getElementById('orderAddress').value = '';
+                document.getElementById('orderPhone').value = '';
+            }
+        });
     });
-  });
 }
 
 // Event Listeners Panier
 document.getElementById('cartBtn')?.addEventListener('click', () => {
-  document.getElementById('cartModal').classList.remove('hidden');
-  renderCart();
+    document.getElementById('cartModal').classList.remove('hidden');
+    renderCart();
 });
 
 
 
 document.getElementById('closeCartModal')?.addEventListener('click', () => {
-  document.getElementById('cartModal').classList.add('hidden');
+    document.getElementById('cartModal').classList.add('hidden');
 });
 document.getElementById('cartModal')?.addEventListener('click', (e) => {
-  if (e.target === document.getElementById('cartModal')) document.getElementById('cartModal').classList.add('hidden');
+    if (e.target === document.getElementById('cartModal')) document.getElementById('cartModal').classList.add('hidden');
 });
 
 document.getElementById('checkoutBtn')?.addEventListener('click', async () => {
-  if (!currentUser) {
-    document.getElementById('cartModal').classList.add('hidden');
-    showMessage(t('loginRequired'), 'error');
-    document.getElementById('authBtn')?.click();
-    return;
-  }
-  if (cart.length === 0) return;
-
-  // Vérifier profil
-  let userDoc;
-  try {
-    userDoc = await db.collection('users').doc(currentUser.uid).get();
-    if (!userDoc.exists || !userDoc.data().address || userDoc.data().address.length < 5 || !userDoc.data().phone) {
-      document.getElementById('cartModal').classList.add('hidden');
-      showMessage(t('invalidAddress') + " / " + t('fillAllFields'), 'error');
-      currentView = 'profile'; renderView('profile');
-      return;
+    if (!currentUser) {
+        document.getElementById('cartModal').classList.add('hidden');
+        showMessage(t('loginRequired'), 'error');
+        document.getElementById('authBtn')?.click();
+        return;
     }
-  } catch (e) { return; }
+    if (cart.length === 0) return;
 
-  const userData = userDoc.data();
-  const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+    // Vérifier profil
+    let userDoc;
+    try {
+        userDoc = await db.collection('users').doc(currentUser.uid).get();
+        if (!userDoc.exists || !userDoc.data().address || userDoc.data().address.length < 5 || !userDoc.data().phone) {
+            document.getElementById('cartModal').classList.add('hidden');
+            showMessage(t('invalidAddress') + " / " + t('fillAllFields'), 'error');
+            currentView = 'profile'; renderView('profile');
+            return;
+        }
+    } catch (e) { return; }
 
-  try {
-    await db.collection('orders').add({
-      userId: currentUser.uid, userEmail: currentUser.email,
-      userName: userData.displayName || currentUser.displayName || 'Client',
-      address: userData.address, phone: userData.phone,
-      items: cart.map(item => ({ id: item.id, name: item.name, price: item.price })),
-      productName: cart.length > 1 ? `${cart[0].name} + ${cart.length - 1}` : cart[0].name,
-      price: totalPrice, currency: currentCurrency, status: 'pending',
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    cart = [];
-    localStorage.removeItem('totalLakayCart');
-    updateCartBadge();
-    document.getElementById('cartModal').classList.add('hidden');
-    showMessage(t('orderSuccess'), 'success');
-    renderView('profile');
-  } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
+    const userData = userDoc.data();
+    const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+
+    try {
+        await db.collection('orders').add({
+            userId: currentUser.uid, userEmail: currentUser.email,
+            userName: userData.displayName || currentUser.displayName || 'Client',
+            address: userData.address, phone: userData.phone,
+            items: cart.map(item => ({ id: item.id, name: item.name, price: item.price })),
+            productName: cart.length > 1 ? `${cart[0].name} + ${cart.length - 1}` : cart[0].name,
+            price: totalPrice, currency: currentCurrency, status: 'pending',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        cart = [];
+        localStorage.removeItem('totalLakayCart');
+        updateCartBadge();
+        document.getElementById('cartModal').classList.add('hidden');
+        showMessage(t('orderSuccess'), 'success');
+        renderView('profile');
+    } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
 });
 
 // Reviews Logic
 let currentRating = 0;
 document.querySelectorAll('#starRating span').forEach(star => {
-  star.addEventListener('click', (e) => {
-    currentRating = parseInt(e.target.dataset.rating);
-    document.querySelectorAll('#starRating span').forEach(s => {
-      s.classList.toggle('active', parseInt(s.dataset.rating) <= currentRating);
+    star.addEventListener('click', (e) => {
+        currentRating = parseInt(e.target.dataset.rating);
+        document.querySelectorAll('#starRating span').forEach(s => {
+            s.classList.toggle('active', parseInt(s.dataset.rating) <= currentRating);
+        });
     });
-  });
 });
 
 document.getElementById('submitReviewBtn')?.addEventListener('click', async () => {
-  if (!currentUser) { showMessage(t('loginRequired'), 'error'); return; }
-  if (currentRating === 0) { showMessage(t('ratingError'), 'error'); return; }
-  const comment = document.getElementById('reviewComment').value.trim();
-  if (!comment) { showMessage(t('commentError'), 'error'); return; }
+    if (!currentUser) { showMessage(t('loginRequired'), 'error'); return; }
+    if (currentRating === 0) { showMessage(t('ratingError'), 'error'); return; }
+    const comment = document.getElementById('reviewComment').value.trim();
+    if (!comment) { showMessage(t('commentError'), 'error'); return; }
 
-  try {
-    await db.collection('reviews').add({
-      productId: selectedProductId,
-      userId: currentUser.uid,
-      userName: currentUser.displayName || 'Kliyan',
-      rating: currentRating,
-      comment,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    try {
+        await db.collection('reviews').add({
+            productId: selectedProductId,
+            userId: currentUser.uid,
+            userName: currentUser.displayName || 'Kliyan',
+            rating: currentRating,
+            comment,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
 
-    // Notifier l'admin
-    await db.collection('notifications').add({
-      title: 'Nouvel avis',
-      message: `${currentUser.displayName || 'Client'} a laissé un avis de ${currentRating} étoiles.`,
-      type: 'review',
-      targetRole: 'admin',
-      read: false,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+        // Notifier l'admin
+        await db.collection('notifications').add({
+            title: 'Nouvel avis',
+            message: `${currentUser.displayName || 'Client'} a laissé un avis de ${currentRating} étoiles.`,
+            type: 'review',
+            targetRole: 'admin',
+            read: false,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
 
-    showMessage(t('reviewSuccess'));
-    document.getElementById('reviewComment').value = '';
-    currentRating = 0;
-    document.querySelectorAll('#starRating span').forEach(s => s.classList.remove('active'));
-    renderReviews(selectedProductId);
-  } catch (e) { showMessage(t('reviewError'), 'error'); }
+        showMessage(t('reviewSuccess'));
+        document.getElementById('reviewComment').value = '';
+        currentRating = 0;
+        document.querySelectorAll('#starRating span').forEach(s => s.classList.remove('active'));
+        renderReviews(selectedProductId);
+    } catch (e) { showMessage(t('reviewError'), 'error'); }
 });
 
 async function renderReviews(productId) {
-  const list = document.getElementById('productReviewsList');
-  if (!list) return;
-  list.innerHTML = t('loading');
-  try {
-    const snap = await db.collection('reviews').where('productId', '==', productId).get();
-    const revs = snap.docs.map(d => d.data()).sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0));
-    if (revs.length === 0) { list.innerHTML = `<p>${t('noReviews')}</p>`; return; }
-    list.innerHTML = revs.map(r => `
+    const list = document.getElementById('productReviewsList');
+    if (!list) return;
+    list.innerHTML = t('loading');
+    try {
+        const snap = await db.collection('reviews').where('productId', '==', productId).get();
+        const revs = snap.docs.map(d => d.data()).sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0));
+        if (revs.length === 0) { list.innerHTML = `<p>${t('noReviews')}</p>`; return; }
+        list.innerHTML = revs.map(r => `
       <div class="review-item">
         <div class="review-user">${r.userName}</div>
         <div class="review-stars">${'★'.repeat(r.rating)}</div>
         <p>${r.comment}</p>
       </div>`).join('');
-  } catch (e) { list.innerHTML = ''; }
+    } catch (e) { list.innerHTML = ''; }
 }
 
 function renderServices(app) {
-  app.innerHTML = `
+    app.innerHTML = `
     <div class="card-premium" style="animation: viewFadeIn 0.4s ease;">
       <h2>🛠️ ${t('servicesTitle')}</h2>
       <div style="padding: 1rem 0; line-height: 1.8;">
@@ -2460,7 +2585,7 @@ function renderServices(app) {
 }
 
 function renderPrivacy(app) {
-  app.innerHTML = `
+    app.innerHTML = `
     <div class="card-premium" style="animation: viewFadeIn 0.4s ease;">
       <h2>🔒 ${t('privacyTitle')}</h2>
       <div style="padding: 1rem 0; line-height: 1.8;">
@@ -2477,7 +2602,7 @@ function renderPrivacy(app) {
 }
 
 function renderTerms(app) {
-  app.innerHTML = `
+    app.innerHTML = `
     <div class="card-premium" style="animation: viewFadeIn 0.4s ease;">
       <h2>📜 ${t('termsTitle')}</h2>
       <div style="padding: 1rem 0; line-height: 1.8;">
@@ -2497,44 +2622,44 @@ function renderTerms(app) {
 // DÉMARRAGE
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🚀 Total Lakay - Version Ultime avec Recherche & Filtres');
-  applyLanguage();
+    console.log('🚀 Total Lakay - Version Ultime avec Recherche & Filtres');
+    applyLanguage();
 
-  // Navigation Links (Menu & Footer)
-  const navActions = [
-    { id: 'linkServices', view: 'services' },
-    { id: 'linkPrivacy', view: 'privacy' },
-    { id: 'linkTerms', view: 'terms' },
-    { id: 'footerServices', view: 'services' },
-    { id: 'footerPrivacy', view: 'privacy' },
-    { id: 'footerTerms', view: 'terms' }
-  ];
+    // Navigation Links (Menu & Footer)
+    const navActions = [
+        { id: 'linkServices', view: 'services' },
+        { id: 'linkPrivacy', view: 'privacy' },
+        { id: 'linkTerms', view: 'terms' },
+        { id: 'footerServices', view: 'services' },
+        { id: 'footerPrivacy', view: 'privacy' },
+        { id: 'footerTerms', view: 'terms' }
+    ];
 
-  navActions.forEach(action => {
-    document.getElementById(action.id)?.addEventListener('click', (e) => {
-      e.preventDefault(); renderView(action.view); window.scrollTo(0, 0);
+    navActions.forEach(action => {
+        document.getElementById(action.id)?.addEventListener('click', (e) => {
+            e.preventDefault(); renderView(action.view); window.scrollTo(0, 0);
+        });
     });
-  });
 
-  document.getElementById('footerContact')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    window.open('https://wa.me/50938824664', '_blank');
-  });
+    document.getElementById('footerContact')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.open('https://wa.me/50938824664', '_blank');
+    });
 
-  // Consent Modal Events
-  document.getElementById('acceptConsent')?.addEventListener('click', async () => {
-    if (currentUser) {
-      await db.collection('users').doc(currentUser.uid).update({ termsAccepted: true });
-      document.getElementById('consentModal').classList.add('hidden');
-      showMessage(t('welcome'), 'success');
-    }
-  });
+    // Consent Modal Events
+    document.getElementById('acceptConsent')?.addEventListener('click', async () => {
+        if (currentUser) {
+            await db.collection('users').doc(currentUser.uid).update({ termsAccepted: true });
+            document.getElementById('consentModal').classList.add('hidden');
+            showMessage(t('welcome'), 'success');
+        }
+    });
 
-  document.getElementById('declineConsent')?.addEventListener('click', () => {
-    auth.signOut();
-    document.getElementById('consentModal').classList.add('hidden');
-    showMessage(t('loggedOut'), 'error');
-  });
+    document.getElementById('declineConsent')?.addEventListener('click', () => {
+        auth.signOut();
+        document.getElementById('consentModal').classList.add('hidden');
+        showMessage(t('loggedOut'), 'error');
+    });
 
-  renderView('home');
+    renderView('home');
 });
