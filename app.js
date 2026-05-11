@@ -1142,7 +1142,15 @@ document.getElementById('menuAI')?.addEventListener('click', (e) => {
 
 document.getElementById('menuBtn')?.addEventListener('click', (e) => {
   e.stopPropagation();
-  document.getElementById('dropdownMenu')?.classList.toggle('hidden');
+  const dropdown = document.getElementById('dropdownMenu');
+  if (dropdown) {
+    dropdown.classList.toggle('hidden');
+    // Mettre à jour les sélecteurs mobiles avec les valeurs actuelles
+    const lsM = document.getElementById('langSwitchMobile');
+    const csM = document.getElementById('currencySwitchMobile');
+    if (lsM) lsM.value = currentLang;
+    if (csM) csM.value = currentCurrency;
+  }
 });
 document.addEventListener('click', (e) => {
   if (!e.target.closest('#menuDropdown')) {
@@ -1164,6 +1172,14 @@ document.getElementById('menuHistory')?.addEventListener('click', (e) => {
 document.getElementById('menuFavorites')?.addEventListener('click', (e) => {
   e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
   currentView = 'favorites'; renderView('favorites');
+});
+document.getElementById('menuHome')?.addEventListener('click', (e) => {
+  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
+  renderView(isAdmin ? 'admin' : 'home');
+});
+document.getElementById('menuShop')?.addEventListener('click', (e) => {
+  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
+  renderView('shop');
 });
 
 function renderFavorites(app) {
@@ -1251,10 +1267,20 @@ document.getElementById('langSwitch')?.addEventListener('change', (e) => {
   currentLang = e.target.value;
   applyLanguage();
 });
+document.getElementById('langSwitchMobile')?.addEventListener('change', (e) => {
+  currentLang = e.target.value;
+  applyLanguage();
+  document.getElementById('dropdownMenu')?.classList.add('hidden');
+});
 
 document.getElementById('currencySwitch')?.addEventListener('change', (e) => {
   currentCurrency = e.target.value;
   renderView(currentView);
+});
+document.getElementById('currencySwitchMobile')?.addEventListener('change', (e) => {
+  currentCurrency = e.target.value;
+  renderView(currentView);
+  document.getElementById('dropdownMenu')?.classList.add('hidden');
 });
 
 // ============================================
@@ -3003,22 +3029,26 @@ Recommande 4 produits que ce client devrait acheter. Réponds UNIQUEMENT en JSON
 async function askAIAssistant(question) {
   const context = `
 Tu es l'assistant virtuel de Total Lakay, la boutique en ligne #1 en Haïti.
+"Tout bagay lakay ou nan yon sèl klike."
+
+CONNAISSANCES RÉCENTES (MANUEL) :
+- Objectifs : Vendre Électronique, Vêtements, Maison, École partout en Haïti.
+- Paiement : MonCash et Cash (Lajan Kach).
+- WhatsApp : +509 38824664.
+- Commande : Cliquer sur Achte, remplir adresse et téléphone, choisir paiement.
+- Inscription : Obligatoire pour acheter, validation par email nécessaire.
+
 Langue actuelle : ${currentLang}
 Devise : ${currentCurrency}
 
-Informations boutique :
-- Paiements acceptés : MonCash, Cash
-- Livraison : Partout en Haïti
-- WhatsApp : +509 38824664
-
 Règles :
-- Réponds UNIQUEMENT dans la langue ${currentLang}
-- Sois TRÈS CONCIS (max 2 phrases)
-- Utilise des emojis pour être amical
-- Si la question n'est pas claire, demande précision brièvement.
+- Réponds UNIQUEMENT dans la langue ${currentLang} (ou créole si demandé).
+- Sois TRÈS CONCIS (max 2 phrases).
+- Utilise les infos du manuel ci-dessus pour répondre aux questions sur le site.
+- Sois amical et professionnel 🤖.
 `;
 
-  const fullPrompt = `${context}\n\nClient: ${question}\nAssistant:`;
+  const fullPrompt = `${context}\n\nQuestion Client: ${question}\nAssistant Total Lakay:`;
   return await callAI(fullPrompt);
 }
 
@@ -3181,8 +3211,10 @@ async function callAI(prompt) {
       return data.candidates[0].content.parts[0].text;
       
     } catch (e) {
-      console.error('Erreur appel IA:', e);
-      throw e;
+      console.error('❌ Erreur réseau ou API IA:', e);
+      // Tentative de diagnostic
+      if (!navigator.onLine) throw new Error('Pas de connexion internet');
+      throw new Error('Erreur de communication avec le serveur IA');
     }
   }
 
