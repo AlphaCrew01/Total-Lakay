@@ -151,7 +151,8 @@ body {
   background: linear-gradient(135deg, var(--blue-deep) 0%, var(--blue-dark) 100%);
   color: var(--white);
   padding: 0 2rem;
-  height: 80px;
+  min-height: 80px;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -163,6 +164,7 @@ body {
   z-index: 1000;
   border-bottom: 2px solid var(--gold);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-wrap: wrap;
 }
 
 .navbar.scrolled {
@@ -1127,43 +1129,43 @@ label {
   }
 
   .navbar, .navbar.scrolled {
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1rem;
     height: auto !important;
     min-height: 70px;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 0.2rem;
-    border-bottom: 3px solid var(--gold);
+    justify-content: space-between;
+    gap: 0.5rem;
     background: var(--blue-deep) !important;
   }
 
   .nav-links {
-    width: 100%;
+    width: auto;
     display: flex;
-    justify-content: center;
-    gap: 0.3rem;
-    flex-wrap: wrap;
-    padding: 0.4rem 0;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    flex-wrap: nowrap;
+    padding: 0;
   }
 
-  .nav-links select.lang-select {
-    flex: 0 1 auto;
-    max-width: 130px;
+  /* Hide most items in the bar on mobile, move to menu */
+  #navHome, #navShop, #navAI, #navProfile, #navAdmin, 
+  #langSwitch, #currencySwitch, .logo-text small {
+    display: none !important;
+  }
+
+  .mobile-only {
+    display: block !important;
   }
 
   .nav-item {
-    font-size: 0.75rem;
-    padding: 0.4rem 0.6rem;
-  }
-
-  .logo-area {
-    width: 100%;
+    font-size: 1.2rem;
+    padding: 0.5rem 0.7rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
     justify-content: center;
-    margin-bottom: 0.2rem;
-  }
-
-  .logo-text {
-    font-size: 1.1rem;
   }
 
   .grid {
@@ -1252,11 +1254,21 @@ label {
   }
 
   .logo-text {
-    font-size: 0.95rem;
+    font-size: 1.1rem;
+    white-space: nowrap;
   }
 
   .logo-text small {
-    font-size: 0.55rem;
+    display: none;
+  }
+
+  .lang-select-mobile {
+    background: var(--gray-100);
+    border: 2px solid var(--gray-200);
+    padding: 0.6rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-family: inherit;
   }
 
   /* Dropdown mobile fix */
