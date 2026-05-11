@@ -110,11 +110,34 @@
       <div class="dropdown" id="menuDropdown">
         <button id="menuBtn" class="btn-menu">☰</button>
         <div id="dropdownMenu" class="dropdown-content hidden">
+          <a href="#" id="menuHome">🏠 <span data-i18n="home">Akèy</span></a>
+          <a href="#" id="menuShop">🛍️ <span data-i18n="shop">Boutik</span></a>
           <a href="#" id="menuFavorites">❤️ <span data-i18n="favorites">Favori</span></a>
           <a href="#" id="menuAI">🤖 <span data-i18n="aiAssistant">Asistan IA</span></a>
           <a href="#" id="menuSpecial">🎉 <span data-i18n="specialOffers">Òf espesyal</span></a>
           <a href="#" id="menuHistory">📋 <span data-i18n="history">Istwa</span></a>
           <a href="#" id="menuSettings">⚙️ <span data-i18n="settings">Paramèt</span></a>
+          
+          <div class="menu-divider mobile-only" style="height:1px; background:#eee; margin:0.5rem 0; display:none;"></div>
+          
+          <div class="mobile-only" style="padding:0.8rem 1.2rem; display:none;">
+            <label style="color:var(--text-soft); font-size:0.7rem; text-transform:uppercase; margin-bottom:0.5rem; display:block;">Langue / Lavi</label>
+            <select id="langSwitchMobile" class="lang-select-mobile" style="width:100%; margin-bottom:0.5rem;">
+               <option value="ht">🇭🇹 Kreyòl</option>
+               <option value="fr">🇫🇷 Français</option>
+               <option value="en">🇺🇸 English</option>
+               <option value="es">🇪🇸 Español</option>
+            </select>
+            <label style="color:var(--text-soft); font-size:0.7rem; text-transform:uppercase; margin-bottom:0.5rem; display:block;">Devise / Lajan</label>
+            <select id="currencySwitchMobile" class="lang-select-mobile" style="width:100%;">
+               <option value="HTG">🇭🇹 HTG</option>
+               <option value="USD">🇺🇸 USD</option>
+               <option value="EUR">🇪🇺 EUR</option>
+            </select>
+          </div>
+
+          <div class="menu-divider" style="height:1px; background:#eee; margin:0.5rem 0;"></div>
+
           <a href="#" id="linkServices">🛠️ <span data-i18n="servicesTitle">Sèvis</span></a>
           <a href="#" id="linkPrivacy">🔒 <span data-i18n="privacyTitle">Konfidansyalite</span></a>
           <a href="#" id="linkTerms">📜 <span data-i18n="termsTitle">Kondisyon</span></a>
