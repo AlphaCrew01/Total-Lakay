@@ -1756,8 +1756,8 @@ async function renderAdminDashboard(app) {
           <div>
             <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-soft);">Modèle</label>
             <select id="aiModel" class="filter-select" style="width:100%;">
-              <option value="gemini-1.5-flash" ${AIConfig.model === 'gemini-1.5-flash' ? 'selected' : ''}>Gemini 1.5 Flash (Rapide)</option>
-              <option value="gemini-1.5-pro" ${AIConfig.model === 'gemini-1.5-pro' ? 'selected' : ''}>Gemini 1.5 Pro (Puissant)</option>
+              <option value="gemini-1.5-flash-latest" ${AIConfig.model === 'gemini-1.5-flash-latest' ? 'selected' : ''}>Gemini 1.5 Flash (Rapide)</option>
+              <option value="gemini-1.5-pro-latest" ${AIConfig.model === 'gemini-1.5-pro-latest' ? 'selected' : ''}>Gemini 1.5 Pro (Puissant)</option>
             </select>
           </div>
           <div style="display:flex; align-items:center; gap:10px;">
@@ -3282,7 +3282,7 @@ function renderTerms(app) {
 let AIConfig = {
   provider: 'gemini',
   apiKey: '', // 🔒 Chargé depuis Firebase Remote Config
-  model: 'gemini-1.5-flash',
+  model: 'gemini-1.5-flash-latest',
   maxTokens: 500,
   temperature: 0.7,
   enabled: true
