@@ -1322,6 +1322,7 @@ async function loadNotifications() {
       notifications = allNotifs.filter(n =>
         n.targetRole === 'all' ||
         !n.targetRole ||
+        n.targetRole === 'client' ||
         (n.targetUserId && n.targetUserId === currentUser.uid)
       );
     }
@@ -1913,9 +1914,14 @@ async function renderAdminDashboard(app) {
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
         <div>
           <label style="display:block; margin-bottom:8px; font-weight:600;">🎯 Destinataire</label>
+          <input type="text" id="notifUserSearch" class="search-input" style="width:100%; margin-bottom:10px; padding:10px 15px;" placeholder="🔍 Chercher un utilisateur...">
           <select id="notifTarget" class="filter-select" style="width:100%;">
-            <option value="all">📢 Tout moun</option>
-            ${allUsers.map(u => `<option value="${u.id}">${u.displayName || u.email}</option>`).join('')}
+            <option value="all" style="font-weight:bold;">📢 Tout moun (Tous)</option>
+            <option value="role_client" style="font-weight:bold;">👥 Tous les Clients</option>
+            <option value="role_admin" style="font-weight:bold;">👑 Tous les Administrateurs</option>
+            <optgroup label="Utilisateurs Spécifiques">
+              ${allUsers.map(u => `<option class="notif-user-opt" value="${u.id}">${u.displayName || 'Sans Nom'} (${u.email})</option>`).join('')}
+            </optgroup>
           </select>
         </div>
         <div>
@@ -2096,8 +2102,8 @@ async function renderAdminDashboard(app) {
         reason: reasonTrans,
         message: messageTrans,
         type: reason.toLowerCase().includes('promo') ? 'promo' : 'info',
-        targetUserId: target === 'all' ? null : target,
-        targetRole: target === 'all' ? 'all' : null,
+        targetUserId: (target === 'all' || target.startsWith('role_')) ? null : target,
+        targetRole: target === 'all' ? 'all' : (target.startsWith('role_') ? target.replace('role_', '') : null),
         read: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
@@ -2192,6 +2198,15 @@ async function renderAdminDashboard(app) {
   // Close Presence Modal
   document.getElementById('closePresenceModal')?.addEventListener('click', () => {
     document.getElementById('presenceModal')?.classList.add('hidden');
+  });
+
+  // Search Filter for Notifications
+  document.getElementById('notifUserSearch')?.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    document.querySelectorAll('#notifTarget .notif-user-opt').forEach(opt => {
+      const text = opt.textContent.toLowerCase();
+      opt.style.display = text.includes(term) ? '' : 'none';
+    });
   });
 }
 
