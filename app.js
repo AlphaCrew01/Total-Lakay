@@ -143,6 +143,7 @@ const i18n = {
     orderSummary: "Rezime Kòmand",
     orderInfo: "Enfòmasyon Livrezon",
     confirmOrder: "Konfime Kòmand",
+    mustPurchaseToReview: "Ou dwe achte pwodui sa a epi resevwa l avan ou kite yon avis.",
     mostRecent: "Pi resan",
     priceLowToHigh: "Pri: Ba → Wo",
     priceHighToLow: "Pri: Wo → Ba",
@@ -232,6 +233,15 @@ const i18n = {
     termsPriceDesc: "Pri yo ka chanje san avètisman. Nou fè efò pou deskripsyon yo toujou egzak.",
     termsMod: "Mizajou :",
     termsModDesc: "Total Lakay ka modifye kondisyon sa yo epi n ap voye notifikasyon pou fè w konnen.",
+    validated: "Validé",
+    processing: "En préparation",
+    in_transit: "En transit",
+    completed: "Terminé",
+    orderTracking: "Swivi Kòmand",
+    orderCode: "Kòd Kòmand",
+    allowLocation: "Pèmèt Geolocation",
+    locationDesc: "Aktive opsyon sa pou nou ka livre w pi byen ak presizyon map.",
+    urgentDeliveries: "Livrezon Ijan",
   },
   fr: {
     home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -325,6 +335,7 @@ const i18n = {
     orderSummary: "Résumé de la commande",
     orderInfo: "Informations de livraison",
     confirmOrder: "Confirmer la commande",
+    mustPurchaseToReview: "Vous devez avoir acheté et reçu ce produit pour laisser un avis.",
     mostRecent: "Le plus récent",
     priceLowToHigh: "Prix : Bas → Haut",
     priceHighToLow: "Prix : Haut → Bas",
@@ -416,6 +427,15 @@ const i18n = {
     termsPriceDesc: "Nous nous efforçons d'afficher des prix et des descriptions exacts en temps réel.",
     termsMod: "Évolution :",
     termsModDesc: "Nos conditions peuvent évoluer ; vous serez informé par notification push.",
+    validated: "Validée",
+    processing: "En préparation",
+    in_transit: "En transit",
+    completed: "Terminé",
+    orderTracking: "Suivi de Commande",
+    orderCode: "Code Commande",
+    allowLocation: "Autoriser Géolocalisation",
+    locationDesc: "Activez cette option pour une livraison plus précise via GPS.",
+    urgentDeliveries: "Livraisons Urgentes",
   },
   en: {
     home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -517,6 +537,7 @@ const i18n = {
     orderSummary: "Order Summary",
     orderInfo: "Shipping Information",
     confirmOrder: "Confirm Order",
+    mustPurchaseToReview: "You must have purchased and received this product to leave a review.",
     categoryElectronics: "📱 Electronics",
     categoryClothing: "👕 Clothing & Accessories",
     categorySchool: "🎓 School",
@@ -597,6 +618,15 @@ const i18n = {
     termsPriceDesc: "Prices may change without notice. We strive for accurate descriptions.",
     termsMod: "Updates:",
     termsModDesc: "Total Lakay may modify these terms and we will notify you.",
+    validated: "Validated",
+    processing: "Processing",
+    in_transit: "In Transit",
+    completed: "Completed",
+    orderTracking: "Order Tracking",
+    orderCode: "Order Code",
+    allowLocation: "Allow Geolocation",
+    locationDesc: "Enable this for more precise delivery via GPS tracking.",
+    urgentDeliveries: "Urgent Deliveries",
   },
   es: {
     home: "Inicio", shop: "Tienda", orders: "Pedidos", admin: "Admin",
@@ -698,6 +728,7 @@ const i18n = {
     orderSummary: "Resumen del pedido",
     orderInfo: "Información de envío",
     confirmOrder: "Confirmar pedido",
+    mustPurchaseToReview: "Debes haber comprado y recibido este producto para dejar una reseña.",
     mostRecent: "Más reciente",
     priceLowToHigh: "Precio: Bajo → Alto",
     priceHighToLow: "Precio: Alto → Bajo",
@@ -918,6 +949,15 @@ function formatPrice(priceBase) {
   if (currentCurrency === 'HTG') return `${Math.round(converted).toLocaleString()} G`;
   if (currentCurrency === 'EUR') return `${converted.toFixed(2)} €`;
   return `${converted.toFixed(2)} ${currentCurrency}`;
+}
+
+function generateOrderCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let result = '';
+  for (let i = 0; i < 6; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return `TL-${result}`;
 }
 
 // ---------- FONCTIONS UTILITAIRES ----------
@@ -1414,7 +1454,9 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
       price: product.price, quantity, color, size,
       totalPrice: product.price * quantity,
       currency: currentCurrency, image: product.image || '',
-      address, phone, payment, status: 'pending', deliveryEstimate: '',
+      address, phone, payment, status: 'pending',
+      orderCode: generateOrderCode(),
+      deliveryEstimate: '',
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     document.getElementById('buyModal')?.classList.add('hidden');
@@ -1655,7 +1697,8 @@ async function renderAdminDashboard(app) {
   const totalOrders = orders.length;
   const totalClients = allUsers.filter(u => u.role === 'client').length;
   const pendingCount = orders.filter(o => o.status === 'pending').length;
-  const totalRevenue = orders.filter(o => o.status === 'confirmed' || o.status === 'delivered').reduce((sum, o) => sum + (o.price || 0), 0);
+  const urgentCount = orders.filter(o => o.status === 'processing' || o.status === 'in_transit').length;
+  const totalRevenue = orders.filter(o => ['validated', 'processing', 'in_transit', 'delivered', 'completed'].includes(o.status)).reduce((sum, o) => sum + (o.price || 0), 0);
 
   app.innerHTML = `
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
@@ -1681,6 +1724,10 @@ async function renderAdminDashboard(app) {
       <div class="admin-stat-card" id="onlineStatsCard" style="background:var(--white); padding:25px; border-radius:var(--radius-lg); border-left:5px solid #f39c12; box-shadow:var(--shadow-md); cursor:pointer;">
         <div id="onlineCountAdmin" style="font-size:2rem; font-weight:900; color:var(--blue-deep);">${onlineCount}</div>
         <div style="color:var(--text-soft); font-weight:600; font-size:0.9rem;">🟢 ${t('onlineClients')}</div>
+      </div>
+      <div class="admin-stat-card" style="background:var(--white); padding:25px; border-radius:var(--radius-lg); border-left:5px solid var(--danger); box-shadow:var(--shadow-md);">
+        <div style="font-size:2rem; font-weight:900; color:var(--danger);">${urgentCount}</div>
+        <div style="color:var(--text-soft); font-weight:600; font-size:0.9rem;">🚩 ${t('urgentDeliveries')}</div>
       </div>
     </div>
 
@@ -1778,11 +1825,16 @@ async function renderAdminDashboard(app) {
                 <strong style="color:var(--blue-deep); font-size:1.05rem;">${o.productName}</strong>
                 <select class="status-select filter-select" data-order-id="${o.id}" style="padding:5px 15px; font-size:0.8rem; border-radius:20px;">
                   <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>⏳ ${t('pending')}</option>
-                  <option value="confirmed" ${o.status === 'confirmed' ? 'selected' : ''}>✅ ${t('confirmed')}</option>
-                  <option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>🚚 ${t('delivered')}</option>
+                  <option value="validated" ${o.status === 'validated' ? 'selected' : ''}>✔️ ${t('validated')}</option>
+                  <option value="processing" ${o.status === 'processing' ? 'selected' : ''}>⚙️ ${t('processing')}</option>
+                  <option value="in_transit" ${o.status === 'in_transit' ? 'selected' : ''}>🚚 ${t('in_transit')}</option>
+                  <option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>📦 ${t('delivered')}</option>
+                  <option value="completed" ${o.status === 'completed' ? 'selected' : ''}>🏁 ${t('completed')}</option>
                   <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>❌ ${t('cancelled')}</option>
                 </select>
+                ${o.coords ? `<button class="btn btn-sm btn-outline view-map-btn" data-coords='${JSON.stringify(o.coords)}' data-order-id="${o.id}" style="margin-top:5px;">🗺️ Map</button>` : ''}
               </div>
+              <div id="map-order-${o.id}" class="map-container hidden" style="height:200px; margin-top:10px;"></div>
               <div style="font-size:0.85rem; color:var(--text-soft); line-height:1.6; margin-bottom:15px;">
                 <div>💰 <strong>${formatPrice(o.price)}</strong> | 👤 ${o.userEmail}</div>
                 <div>📍 ${o.address} | 📞 ${o.phone || '---'}</div>
@@ -1875,9 +1927,6 @@ async function renderAdminDashboard(app) {
 
     if (!name || !price) { showMessage(t('fillAllFields'), 'error'); return; }
 
-    const colors = colorsRaw ? colorsRaw.split(',').map(c => c.trim()) : [];
-    const sizes = sizesRaw ? sizesRaw.split(',').map(s => s.trim()) : [];
-
     try {
       showMessage("Traduction automatique en cours...", "info");
       const [nameTrans, descTrans] = await Promise.all([
@@ -1887,7 +1936,7 @@ async function renderAdminDashboard(app) {
 
       await db.collection('products').add({
         name: nameTrans,
-        price, oldPrice, category, stock, colors, sizes,
+        price, oldPrice, category, stock, colors: colorsRaw ? colorsRaw.split(',').map(c => c.trim()) : [], sizes: sizesRaw ? sizesRaw.split(',').map(s => s.trim()) : [],
         image: image || '',
         description: descTrans,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1945,6 +1994,21 @@ async function renderAdminDashboard(app) {
         showMessage(t('statusUpdated'), 'success');
         await loadAllOrders(); // Refresh orders to ensure UI is up to date
       } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
+    });
+  });
+
+  document.querySelectorAll('.view-map-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const b = e.currentTarget;
+      const orderId = b.dataset.orderId;
+      const coords = JSON.parse(b.dataset.coords);
+      const mapDiv = document.getElementById(`map-order-${orderId}`);
+      if (mapDiv.classList.contains('hidden')) {
+        mapDiv.classList.remove('hidden');
+        setTimeout(() => initOrderMap(`map-order-${orderId}`, coords), 100);
+      } else {
+        mapDiv.classList.add('hidden');
+      }
     });
   });
 
@@ -2507,7 +2571,13 @@ async function renderProfile(app) {
                 <div style="padding:25px; border-radius:var(--radius); border:1px solid var(--gray-200); background:var(--white-soft); transition:var(--transition); cursor:default;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--gray-200)'">
                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                     <strong style="color:var(--blue-deep); font-size:1.2rem;">${o.productName}</strong>
-                    <span style="background:var(--blue-deep); color:white; padding:6px 15px; border-radius:30px; font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:1px;">${t(o.status)}</span>
+                    <div style="margin: 20px 0;">
+                      ${renderStepper(o.status)}
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                       <span style="font-weight:700; font-size:0.9rem; color:var(--text-soft);">${t('orderCode')}: ${o.orderCode || '---'}</span>
+                       <span class="status-badge status-${o.status}" style="padding:6px 15px; border-radius:30px; font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:1px;">${t(o.status)}</span>
+                    </div>
                   </div>
                   <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div style="font-size:1rem; color:var(--text-soft);">
@@ -2731,6 +2801,20 @@ async function renderSettings(app) {
         <button class="btn btn-gold mt-2" id="saveNotifPrefsBtn" style="width:100%;">${t('notifSave')}</button>
       </div>
 
+      <div class="settings-section mt-3">
+        <h3>📍 ${t('allowLocation')}</h3>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-title">${t('allowLocation')}</div>
+            <div class="setting-desc">${t('locationDesc')}</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="prefLocation" ${localStorage.getItem('allowLocation') === 'true' ? 'checked' : ''}>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
       ${currentUser ? `
       <div class="settings-section mt-3" style="padding-top:1.5rem; border-top:1px solid #eee;">
         <h3>👤 ${t('accountInfo')}</h3>
@@ -2772,6 +2856,17 @@ async function renderSettings(app) {
       await db.collection('users').doc(currentUser.uid).update({ notifPrefs: prefs });
       showMessage(t('notifPreferencesSaved'), 'success');
     } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
+  });
+
+  document.getElementById('prefLocation')?.addEventListener('change', (e) => {
+    localStorage.setItem('allowLocation', e.target.checked);
+    if (e.target.checked) {
+      navigator.geolocation.getCurrentPosition(() => {}, () => {
+        showMessage("Permission refusée par le navigateur", "error");
+        e.target.checked = false;
+        localStorage.setItem('allowLocation', false);
+      });
+    }
   });
 
   document.getElementById('resendVerifyEmail')?.addEventListener('click', async () => {
@@ -2983,6 +3078,16 @@ document.querySelectorAll('#starRating span').forEach(star => {
 
 document.getElementById('submitReviewBtn')?.addEventListener('click', async () => {
   if (!currentUser) { showMessage(t('loginRequired'), 'error'); return; }
+  
+  // Vérifier si l'utilisateur a déjà acheté ce produit et s'il est livré
+  const ordersSnap = await db.collection('orders').where('userId', '==', currentUser.uid).get();
+  const hasPurchased = ordersSnap.docs.some(doc => {
+    const data = doc.data();
+    return data.items.some(i => i.id === selectedProductId) && data.status === 'delivered';
+  });
+
+  if (!hasPurchased) { showMessage(t('mustPurchaseToReview'), 'error'); return; }
+
   if (currentRating === 0) { showMessage(t('ratingError'), 'error'); return; }
   const comment = document.getElementById('reviewComment').value.trim();
   if (!comment) { showMessage(t('commentError'), 'error'); return; }
@@ -3018,18 +3123,29 @@ document.getElementById('submitReviewBtn')?.addEventListener('click', async () =
 async function renderReviews(productId) {
   const list = document.getElementById('productReviewsList');
   if (!list) return;
-  list.innerHTML = t('loading');
+
   try {
-    const snap = await db.collection('reviews').where('productId', '==', productId).get();
-    const revs = snap.docs.map(d => d.data()).sort((a, b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0));
-    if (revs.length === 0) { list.innerHTML = `<p>${t('noReviews')}</p>`; return; }
-    list.innerHTML = revs.map(r => `
-      <div class="review-item">
-        <div class="review-user">${r.userName}</div>
-        <div class="review-stars">${'★'.repeat(r.rating)}</div>
-        <p>${r.comment}</p>
-      </div>`).join('');
-  } catch (e) { list.innerHTML = ''; }
+    const snap = await db.collection('reviews').where('productId', '==', productId).orderBy('createdAt', 'desc').get();
+    if (snap.empty) {
+      list.innerHTML = `<p style="opacity:0.6; font-size:0.9rem;">${t('noReviews')}</p>`;
+      return;
+    }
+
+    list.innerHTML = snap.docs.map(doc => {
+      const r = doc.data();
+      const date = r.createdAt ? r.createdAt.toDate().toLocaleDateString() : '---';
+      return `
+        <div class="review-item">
+          <div class="review-header">
+            <span class="review-author">👤 ${r.userName || 'Kliyan'}</span>
+            <span class="review-date">${date}</span>
+          </div>
+          <div class="review-stars">${'⭐'.repeat(r.rating)}</div>
+          <p style="margin-top:10px; font-size:0.9rem; color:var(--text-main);">${r.comment}</p>
+        </div>
+      `;
+    }).join('');
+  } catch (e) { console.error(e); }
 }
 
 function renderServices(app) {
@@ -3774,6 +3890,13 @@ async function renderCheckout(app) {
             <option value="Cash">Cash</option>
           </select>
 
+          ${localStorage.getItem('allowLocation') === 'true' ? `
+          <div style="margin-top:20px;">
+            <label>🗺️ Localisation GPS</label>
+            <div id="checkoutMap" class="map-container"></div>
+            <p style="font-size:0.8rem; color:var(--text-soft); margin-top:5px;">${t('locationDesc')}</p>
+          </div>` : ''}
+
           <button id="finalizeOrderBtn" class="btn btn-gold" style="width:100%; padding:15px; margin-top:30px; font-size:1.1rem;">✅ ${t('confirmOrder') || 'Konfime Kòmand'}</button>
         </div>
 
@@ -3848,6 +3971,8 @@ async function renderCheckout(app) {
           address,
           phone,
           status: 'pending',
+          orderCode: generateOrderCode(),
+          coords: orderCoords,
           paymentMethod: payment,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -3863,4 +3988,73 @@ async function renderCheckout(app) {
       showMessage('Erreur: ' + e.message, 'error');
     }
   });
+
+  if (localStorage.getItem('allowLocation') === 'true') {
+    setTimeout(() => initOrderMap('checkoutMap'), 200);
+  }
+}
+
+function renderStepper(currentStatus) {
+  const statuses = ['pending', 'validated', 'processing', 'in_transit', 'delivered', 'completed'];
+  const currentIndex = statuses.indexOf(currentStatus);
+  
+  if (currentStatus === 'cancelled') return `<div style="color:var(--danger); font-weight:700; text-align:center; padding:10px; border:1px dashed var(--danger); border-radius:10px;">❌ ${t('cancelled')}</div>`;
+
+  return `
+    <ul class="stepper">
+      ${statuses.map((s, i) => {
+        let state = '';
+        if (i < currentIndex) state = 'completed';
+        else if (i === currentIndex) state = 'active';
+        
+        return `
+          <li class="step ${state}">
+            <div class="step-icon">${i < currentIndex ? '✓' : i + 1}</div>
+            <span class="step-label">${t(s)}</span>
+          </li>
+        `;
+      }).join('')}
+    </ul>
+  `;
+}
+
+let orderCoords = null;
+function initOrderMap(containerId, initialCoords = null) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const defaultPos = initialCoords || [18.5392, -72.3350]; // Port-au-Prince
+  
+  // Clean existing map instance if any
+  const existingMap = container._leaflet_id;
+  if (existingMap) {
+    container.innerHTML = "";
+    container._leaflet_id = null;
+  }
+
+  const map = L.map(containerId).setView(defaultPos, 13);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  let marker = L.marker(defaultPos, { draggable: !initialCoords }).addTo(map);
+
+  if (!initialCoords) {
+    orderCoords = defaultPos;
+    map.on('click', (e) => {
+      const { lat, lng } = e.latlng;
+      marker.setLatLng([lat, lng]);
+      orderCoords = [lat, lng];
+    });
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const p = [pos.coords.latitude, pos.coords.longitude];
+        map.setView(p, 16);
+        marker.setLatLng(p);
+        orderCoords = p;
+      });
+    }
+  }
 }
