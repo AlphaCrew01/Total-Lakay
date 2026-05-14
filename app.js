@@ -233,15 +233,12 @@ const i18n = {
     termsPriceDesc: "Pri yo ka chanje san avètisman. Nou fè efò pou deskripsyon yo toujou egzak.",
     termsMod: "Mizajou :",
     termsModDesc: "Total Lakay ka modifye kondisyon sa yo epi n ap voye notifikasyon pou fè w konnen.",
-    validated: "Validé",
-    processing: "En préparation",
-    in_transit: "En transit",
-    completed: "Terminé",
-    orderTracking: "Swivi Kòmand",
-    orderCode: "Kòd Kòmand",
-    allowLocation: "Pèmèt Geolocation",
-    locationDesc: "Aktive opsyon sa pou nou ka livre w pi byen ak presizyon map.",
-    urgentDeliveries: "Livrezon Ijan",
+    userMoncashPhone: "Nimewo MonCash ou",
+    userMoncashConsent: "Mwen dakò pou m resevwa lajan sou kont MonCash mwen",
+    logistics: "Lojistik", logisticsDashboard: "Tablodbò Lojistik",
+    liveFleet: "Flòt an Tan Reyèl", activeOrders: "Kòmand Aktiv",
+    trackOrder: "Suiv Kòmand", in_transit: "Nan wout", completed: "Konplete",
+    validated: "Valide", processing: "Nan preparasyon", returnLogistics: "Retounen Lojistik"
   },
   fr: {
     home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -427,15 +424,12 @@ const i18n = {
     termsPriceDesc: "Nous nous efforçons d'afficher des prix et des descriptions exacts en temps réel.",
     termsMod: "Évolution :",
     termsModDesc: "Nos conditions peuvent évoluer ; vous serez informé par notification push.",
-    validated: "Validée",
-    processing: "En préparation",
-    in_transit: "En transit",
-    completed: "Terminé",
-    orderTracking: "Suivi de Commande",
-    orderCode: "Code Commande",
-    allowLocation: "Autoriser Géolocalisation",
-    locationDesc: "Activez cette option pour une livraison plus précise via GPS.",
-    urgentDeliveries: "Livraisons Urgentes",
+    userMoncashPhone: "Votre numéro MonCash",
+    userMoncashConsent: "J'accepte de recevoir mes remboursements sur mon compte MonCash",
+    logistics: "Logistique", logisticsDashboard: "Tableau de Bord Logistique",
+    liveFleet: "Flotte en Temps Réel", activeOrders: "Commandes Actives",
+    trackOrder: "Suivre Commande", in_transit: "En transit", completed: "Complété",
+    validated: "Validé", processing: "En préparation", returnLogistics: "Retour Logistique"
   },
   en: {
     home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -963,7 +957,7 @@ function generateOrderCode() {
 // ---------- FONCTIONS UTILITAIRES ----------
 function t(key) { return i18n[currentLang]?.[key] || key; }
 
-function applyLanguage() {
+function applyLanguage(shouldRender = true) {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (i18n[currentLang]?.[key]) el.textContent = i18n[currentLang][key];
@@ -973,7 +967,7 @@ function applyLanguage() {
     if (i18n[currentLang]?.[key]) el.placeholder = i18n[currentLang][key];
   });
 
-  if (currentView) renderView(currentView);
+  if (shouldRender && currentView) renderView(currentView);
 }
 
 function showMessage(message, type = 'success') {
@@ -1658,7 +1652,7 @@ async function renderView(view) {
     app.style.transform = 'translateY(0)';
     
     // Traduire le nouveau contenu
-    translatePage();
+    applyLanguage(false);
     window.scrollTo(0, 0);
   }, 200);
 }
@@ -4121,12 +4115,17 @@ function initOrderMap(containerId, initialCoords = null) {
     });
 
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((pos) => {
-        const p = [pos.coords.latitude, pos.coords.longitude];
-        map.setView(p, 16);
-        marker.setLatLng(p);
-        orderCoords = p;
-      });
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const p = [pos.coords.latitude, pos.coords.longitude];
+          map.setView(p, 16);
+          marker.setLatLng(p);
+          orderCoords = p;
+        },
+        (err) => {
+          console.warn("Geolocation Error: ", err);
+        }
+      );
     }
   }
 }
@@ -4144,26 +4143,26 @@ async function renderLogisticsDashboard(app) {
     <div class="container" style="padding:40px 0;">
       <h2 style="margin-bottom:30px; display:flex; align-items:center; gap:10px;">
         <span style="background:var(--blue-deep); color:white; padding:10px; border-radius:10px;">🚚</span> 
-        Tableau de Bord Logistique
+        ${t('logisticsDashboard')}
       </h2>
       
       <div class="grid" style="grid-template-columns: 1fr 1fr; gap:30px; margin-bottom:40px;">
         <!-- Stats Chart -->
         <div class="card-premium" style="background:var(--white); padding:25px; border-radius:var(--radius-lg); box-shadow:var(--shadow-md);">
-          <h3 style="margin-bottom:20px;">📊 Statut des Commandes</h3>
+          <h3 style="margin-bottom:20px;">📊 ${t('status')}</h3>
           <canvas id="logisticsPieChart" style="max-height:300px;"></canvas>
         </div>
         
         <!-- Live Fleet Map -->
         <div class="card-premium" style="background:var(--white); padding:25px; border-radius:var(--radius-lg); box-shadow:var(--shadow-md);">
-          <h3 style="margin-bottom:20px;">🗺️ Flotte en Temps Réel (Live Fleet)</h3>
+          <h3 style="margin-bottom:20px;">🗺️ ${t('liveFleet')}</h3>
           <div id="adminLiveMap" style="height:300px; border-radius:10px; border:1px solid #eee; overflow:hidden;"></div>
-          <p style="margin-top:10px; font-size:0.8rem; color:var(--text-soft);">Les commandes en transit sont affichées avec leur position approximative.</p>
+          <p style="margin-top:10px; font-size:0.8rem; color:var(--text-soft);">${t('in_transit')}</p>
         </div>
       </div>
 
       <div class="card-premium" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg);">
-        <h3 style="margin-bottom:20px;">📋 Commandes Actives</h3>
+        <h3 style="margin-bottom:20px;">📋 ${t('activeOrders')}</h3>
         <div style="overflow-x:auto;">
           <table style="width:100%; border-collapse:collapse; min-width:600px;">
             <thead>
@@ -4189,13 +4188,13 @@ async function renderLogisticsDashboard(app) {
                   </td>
                   <td style="padding:15px;">${formatPrice(o.price)}</td>
                   <td style="padding:15px;">
-                    <button class="btn btn-sm btn-outline admin-view-track" data-id="${o.id}">Ouvrir Suivi</button>
+                    <button class="btn btn-sm btn-outline admin-view-track" data-id="${o.id}">${t('trackOrder')}</button>
                   </td>
                 </tr>
               `).join('')}
             </tbody>
           </table>
-          ${activeOrders.length === 0 ? '<p style="padding:20px; text-align:center; color:var(--text-soft);">Aucune commande en cours.</p>' : ''}
+          ${activeOrders.length === 0 ? `<p style="padding:20px; text-align:center; color:var(--text-soft);">${t('noOrdersAdmin')}</p>` : ''}
         </div>
       </div>
     </div>
@@ -4208,7 +4207,7 @@ async function renderLogisticsDashboard(app) {
       new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ['En attente', 'En préparation', 'En transit', 'Livré'],
+          labels: [t('pending'), t('processing'), t('in_transit'), t('delivered')],
           datasets: [{
             data: [
               orders.filter(o=>o.status==='pending').length,
@@ -4254,8 +4253,8 @@ async function renderOrderTracking(app) {
   app.innerHTML = `
     <div class="container" style="padding:40px 0;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-        <h2 style="margin:0;">📦 Suivi de Commande: <span style="color:var(--gold);">${order.orderCode || order.id.substring(0,8)}</span></h2>
-        ${isAdmin ? `<button class="btn btn-outline" id="backToLogistics">Retour Logistique</button>` : ''}
+        <h2 style="margin:0;">📦 ${t('orderTracking')}: <span style="color:var(--gold);">${order.orderCode || order.id.substring(0,8)}</span></h2>
+        ${isAdmin ? `<button class="btn btn-outline" id="backToLogistics">${t('returnLogistics')}</button>` : ''}
       </div>
 
       <div class="card-premium" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); margin-bottom:30px;">
@@ -4264,19 +4263,19 @@ async function renderOrderTracking(app) {
 
       <div class="grid" style="grid-template-columns: 1fr 1fr; gap:30px;">
         <div class="card-premium" style="background:var(--white); padding:25px; border-radius:var(--radius-lg); box-shadow:var(--shadow-md);">
-          <h3 style="margin-bottom:20px;">📍 Localisation en Temps Réel</h3>
+          <h3 style="margin-bottom:20px;">📍 ${t('liveFleet')}</h3>
           <div id="liveTrackingMap" style="height:350px; border-radius:10px; overflow:hidden;"></div>
         </div>
         
         <div class="card-premium" style="background:var(--white); padding:25px; border-radius:var(--radius-lg); box-shadow:var(--shadow-md);">
-          <h3 style="margin-bottom:20px;">📄 Détails</h3>
-          <p><strong>Produit:</strong> ${order.productName}</p>
-          <p><strong>Quantité:</strong> ${order.quantity || 1}</p>
+          <h3 style="margin-bottom:20px;">📄 ${t('orderInfo')}</h3>
+          <p><strong>${t('productName')}:</strong> ${order.productName}</p>
+          <p><strong>${t('quantity')}:</strong> ${order.quantity || 1}</p>
           <p><strong>Total:</strong> ${formatPrice(order.price)}</p>
-          <p><strong>Paiement:</strong> ${order.paymentMethod || 'Non spécifié'}</p>
-          <p><strong>Adresse:</strong> ${order.address}</p>
-          <p><strong>Téléphone:</strong> ${order.phone}</p>
-          ${order.deliveryEstimate ? `<div style="margin-top:20px; padding:15px; background:var(--blue-light); border-radius:8px; color:var(--blue-deep);"><strong>Temps estimé:</strong> ${order.deliveryEstimate}</div>` : ''}
+          <p><strong>${t('payment')}:</strong> ${order.paymentMethod || 'Non spécifié'}</p>
+          <p><strong>${t('address')}:</strong> ${order.address}</p>
+          <p><strong>${t('phone')}:</strong> ${order.phone}</p>
+          ${order.deliveryEstimate ? `<div style="margin-top:20px; padding:15px; background:var(--blue-light); border-radius:8px; color:var(--blue-deep);"><strong>${t('delivery')}:</strong> ${order.deliveryEstimate}</div>` : ''}
         </div>
       </div>
     </div>
