@@ -3542,9 +3542,8 @@ async function callAI(prompt) {
       
     } catch (e) {
       console.error('❌ Erreur réseau ou API IA:', e);
-      // Tentative de diagnostic
       if (!navigator.onLine) throw new Error('Pas de connexion internet');
-      throw new Error('Erreur de communication avec le serveur IA');
+      throw e;
     }
   }
 
@@ -3647,7 +3646,7 @@ async function sendChatbotMessage() {
     if (typingDiv) typingDiv.remove();
     const errorDiv = document.createElement('div');
     errorDiv.className = 'message bot';
-    errorDiv.textContent = t('aiError');
+    errorDiv.textContent = t('aiError') + " (" + e.message + ")";
     messages.appendChild(errorDiv);
   }
   messages.scrollTop = messages.scrollHeight;
