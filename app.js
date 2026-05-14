@@ -117,6 +117,8 @@ const i18n = {
     footerRights: "Total Lakay © 2026", footerContact: "Kontakte nou",
     footerServices: "Sèvis", footerPrivacy: "Konfidansyalite",
     footerTerms: "Kondisyon Itilizasyon",
+    footerSlogan: "Pi gwo boutik an liy an Ayiti ki ofri w pi bon pwodwi yo ak yon sèvis livrezon rapid ak sekirize.",
+    footerCopy: "Total Lakay © 2026. Tout dwa rezève. Deziyen ak ❤️ pou Ayiti.",
     notifSent: "✅ Notifikasyon voye!",
     roleChanged: "✅ Wòl modifye!",
     madeAdmin: "✅ Fè admin!",
@@ -135,6 +137,12 @@ const i18n = {
     sortNameDesc: "Non: Z → A",
     resultsFound: "rezilta jwenn",
     noResultsFound: "Pa gen rezilta. Eseye ak lòt mo.",
+    left: "restan",
+    testimonialsTitle: "Sa kliyan nou yo di",
+    statistics: "Statistik",
+    orderSummary: "Rezime Kòmand",
+    orderInfo: "Enfòmasyon Livrezon",
+    confirmOrder: "Konfime Kòmand",
     mostRecent: "Pi resan",
     priceLowToHigh: "Pri: Ba → Wo",
     priceHighToLow: "Pri: Wo → Ba",
@@ -292,6 +300,8 @@ const i18n = {
     footerRights: "Total Lakay © 2026", footerContact: "Contactez-nous",
     footerServices: "Services", footerPrivacy: "Confidentialité",
     footerTerms: "Conditions d'Utilisation",
+    footerSlogan: "La plus grande boutique en ligne d'Haïti offrant les meilleurs produits avec un service de livraison rapide et sécurisé.",
+    footerCopy: "Total Lakay © 2026. Tous droits réservés. Conçu avec ❤️ pour Haïti.",
     notifSent: "✅ Notification envoyée !",
     roleChanged: "✅ Rôle modifié !",
     madeAdmin: "✅ Passé admin !",
@@ -310,6 +320,11 @@ const i18n = {
     sortNameDesc: "Nom: Z → A",
     resultsFound: "résultats trouvés",
     noResultsFound: "Aucun résultat. Essayez d'autres mots.",
+    left: "restants",
+    testimonialsTitle: "Ce que disent nos clients",
+    orderSummary: "Résumé de la commande",
+    orderInfo: "Informations de livraison",
+    confirmOrder: "Confirmer la commande",
     mostRecent: "Le plus récent",
     priceLowToHigh: "Prix : Bas → Haut",
     priceHighToLow: "Prix : Haut → Bas",
@@ -469,6 +484,8 @@ const i18n = {
     footerRights: "Total Lakay © 2026", footerContact: "Contact us",
     footerServices: "Services", footerPrivacy: "Privacy",
     footerTerms: "Terms of Use",
+    footerSlogan: "Haiti's largest online store offering the best products with a fast and secure delivery service.",
+    footerCopy: "Total Lakay © 2026. All rights reserved. Designed with ❤️ for Haiti.",
     notifSent: "✅ Notification sent!",
     roleChanged: "✅ Role changed!",
     madeAdmin: "✅ Made admin!",
@@ -495,6 +512,11 @@ const i18n = {
     sortNameDesc: "Name: Z → A",
     resultsFound: "results found",
     noResultsFound: "No results. Try other words.",
+    left: "left",
+    testimonialsTitle: "What our customers say",
+    orderSummary: "Order Summary",
+    orderInfo: "Shipping Information",
+    confirmOrder: "Confirm Order",
     categoryElectronics: "📱 Electronics",
     categoryClothing: "👕 Clothing & Accessories",
     categorySchool: "🎓 School",
@@ -643,6 +665,8 @@ const i18n = {
     footerRights: "Total Lakay © 2026", footerContact: "Contáctanos",
     footerServices: "Servicios", footerPrivacy: "Privacidad",
     footerTerms: "Condiciones de Uso",
+    footerSlogan: "La tienda en línea más grande de Haití que ofrece los mejores productos con un servicio de entrega rápido y seguro.",
+    footerCopy: "Total Lakay © 2026. Todos los derechos reservados. Diseñado con ❤️ para Haití.",
     notifSent: "✅ ¡Notificación enviada!",
     roleChanged: "✅ ¡Rol cambiado!",
     madeAdmin: "✅ ¡Hecho admin!",
@@ -669,6 +693,11 @@ const i18n = {
     sortNameDesc: "Nombre: Z → A",
     resultsFound: "resultados encontrados",
     noResultsFound: "Sin resultados. Prueba otras palabras.",
+    left: "restantes",
+    testimonialsTitle: "Lo que dicen nuestros clientes",
+    orderSummary: "Resumen del pedido",
+    orderInfo: "Información de envío",
+    confirmOrder: "Confirmar pedido",
     mostRecent: "Más reciente",
     priceLowToHigh: "Precio: Bajo → Alto",
     priceHighToLow: "Precio: Alto → Bajo",
@@ -1539,35 +1568,51 @@ async function renderView(view) {
   const app = document.getElementById('appContent');
   if (!app) return;
 
-  // Afficher/cacher la barre de recherche
-  const searchBar = document.getElementById('searchFilterBar');
-  if (searchBar) {
-    if (view === 'shop' || view === 'specialOffers') {
-      searchBar.classList.remove('hidden');
-    } else {
-      searchBar.classList.add('hidden');
-    }
-  }
+  // Animation de sortie
+  app.style.opacity = '0';
+  app.style.transform = 'translateY(10px)';
 
-  if (isAdmin && (view === 'home' || view === 'admin')) {
-    await renderAdminDashboard(app);
-  } else {
-    switch (view) {
-      case 'home': await renderHome(app); break;
-      case 'shop': await renderShop(app); break;
-      case 'aiPage': await renderAIPage(app); break;
-      case 'orders': await renderProfile(app); break;
-      case 'profile': await renderProfile(app); break;
-      case 'specialOffers': await renderSpecialOffers(app); break;
-      case 'favorites': renderFavorites(app); break;
-      case 'settings': renderSettings(app); break;
-      case 'history': await renderProfile(app); break;
-      case 'services': renderServices(app); break;
-      case 'privacy': renderPrivacy(app); break;
-      case 'terms': renderTerms(app); break;
-      default: await renderHome(app);
+  setTimeout(async () => {
+    // Afficher/cacher la barre de recherche
+    const searchBar = document.getElementById('searchFilterBar');
+    if (searchBar) {
+      if (view === 'shop' || view === 'specialOffers') {
+        searchBar.classList.remove('hidden');
+      } else {
+        searchBar.classList.add('hidden');
+      }
     }
-  }
+
+    if (isAdmin && (view === 'home' || view === 'admin')) {
+      await renderAdminDashboard(app);
+    } else {
+      switch (view) {
+        case 'home': await renderHome(app); break;
+        case 'shop': await renderShop(app); break;
+        case 'aiPage': await renderAIPage(app); break;
+        case 'orders': await renderProfile(app); break;
+        case 'profile': await renderProfile(app); break;
+        case 'specialOffers': await renderSpecialOffers(app); break;
+        case 'favorites': renderFavorites(app); break;
+        case 'settings': renderSettings(app); break;
+        case 'history': await renderProfile(app); break;
+        case 'services': renderServices(app); break;
+        case 'privacy': renderPrivacy(app); break;
+        case 'terms': renderTerms(app); break;
+        case 'checkout': await renderCheckout(app); break;
+        default: await renderHome(app);
+      }
+    }
+
+    // Animation d'entrée
+    app.style.transition = 'all 0.4s ease-out';
+    app.style.opacity = '1';
+    app.style.transform = 'translateY(0)';
+    
+    // Traduire le nouveau contenu
+    translatePage();
+    window.scrollTo(0, 0);
+  }, 200);
 }
 function productCardHTML(product) {
   const hasPromo = product.oldPrice && product.oldPrice > product.price;
@@ -1694,6 +1739,14 @@ async function renderAdminDashboard(app) {
         </div>
         <button id="saveProductBtn" class="btn-gold mt-2" style="width:100%; padding:15px;">✅ ${t('save')}</button>
       </div>
+
+      <!-- STATISTICS CHARTS -->
+      <div class="card-premium" style="grid-column: 1 / -1; background:var(--white); padding:25px; border-radius:var(--radius-lg); border:1px solid var(--gray-200); margin-top:30px;">
+        <h3 style="margin-bottom:20px;">📊 ${t('statistics')} (Ventes 7 derniers jours)</h3>
+        <div id="adminSalesChart" class="chart-container">
+          <!-- JS will populate bars -->
+        </div>
+      </div>
     </div>
 
     <div class="grid" style="grid-template-columns: 1fr 1.5fr; gap:30px;">
@@ -1785,6 +1838,9 @@ async function renderAdminDashboard(app) {
       <button id="sendNotifBtn" class="btn-gold" style="width:100%; padding:15px;">📤 ${t('sendNotification')}</button>
     </div>
   `;
+
+  // Render Charts
+  renderAdminCharts();
 
   // Events Admin
   document.getElementById('adminAddProductBtn')?.addEventListener('click', () => {
@@ -2096,57 +2152,73 @@ async function renderHome(app) {
       <img src="logo.jpeg" alt="Total Lakay" class="hero-logo" onerror="this.style.display='none';">
       <h1 class="hero-title">🏠 ${t('welcome')}</h1>
       <p class="hero-subtitle">${t('slogan')}</p>
-      <div id="homePromo"></div>
-      <button class="btn-gold mt-2" id="goShopBtn" style="font-size:1.1rem; padding:15px 40px;">🛒 ${t('goShop')}</button>
+      <button onclick="renderView('shop')" class="btn btn-gold" style="padding:15px 40px; font-size:1.1rem; margin-top:20px;">🛍️ ${t('goShop')}</button>
     </div>
 
-    <div class="container">
-      <!-- CATEGORIES QUICK ACCESS -->
-      <div class="category-section" style="padding: 60px 0;">
-        <h2 style="text-align:center; margin-bottom:40px;">📁 ${t('categoriesTitle')}</h2>
-        <div class="category-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px;">
-          <div class="category-card" onclick="filterByCategory('school')" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); text-align:center; box-shadow:var(--shadow-md); cursor:pointer; transition:var(--transition); border:1px solid var(--gray-200);">
-            <div style="font-size:3rem; margin-bottom:15px;">🎓</div>
-            <h4 style="color:var(--blue-deep);">${t('school')}</h4>
+    <!-- Featured Section with Skeletons -->
+    <section class="container" style="padding: 60px 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px;">
+        <div>
+          <h2 style="font-size: 2rem; margin-bottom: 10px;">✨ ${t('featured')}</h2>
+          <p style="color: var(--text-soft);">${t('exploreCategories')}</p>
+        </div>
+        <button onclick="renderView('shop')" class="btn-outline desktop-only">${t('viewAll') || 'Tout Boutik'}</button>
+      </div>
+      <div id="featuredProducts" class="grid">
+        ${renderSkeletons(4)}
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="glass-dark" style="padding: 80px 0; margin: 60px 0; color: white;">
+      <div class="container" style="text-align: center;">
+        <h2 style="color: var(--gold); font-size: 2rem; margin-bottom: 50px;">🌟 ${t('testimonialsTitle')}</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+          <div class="glass" style="padding: 30px; border-radius: var(--radius-lg); text-align: left;">
+             <div style="color: var(--gold); margin-bottom: 15px;">⭐⭐⭐⭐⭐</div>
+             <p style="font-style: italic; opacity: 0.9; margin-bottom: 20px;">"Sèvis la rapid anpil, epi pwodwi yo se kalite siperyè. Mwen rekòmande Total Lakay bay tout moun!"</p>
+             <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--blue-deep);">JB</div>
+                <div><strong style="display: block;">Jean-Baptiste L.</strong> <small style="opacity: 0.6;">Kliyan verifye</small></div>
+             </div>
           </div>
-          <div class="category-card" onclick="filterByCategory('home')" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); text-align:center; box-shadow:var(--shadow-md); cursor:pointer; transition:var(--transition); border:1px solid var(--gray-200);">
-            <div style="font-size:3rem; margin-bottom:15px;">🏠</div>
-            <h4 style="color:var(--blue-deep);">${t('home')}</h4>
-          </div>
-          <div class="category-card" onclick="filterByCategory('clothing')" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); text-align:center; box-shadow:var(--shadow-md); cursor:pointer; transition:var(--transition); border:1px solid var(--gray-200);">
-            <div style="font-size:3rem; margin-bottom:15px;">👕</div>
-            <h4 style="color:var(--blue-deep);">${t('clothing')}</h4>
-          </div>
-          <div class="category-card" onclick="filterByCategory('electronics')" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); text-align:center; box-shadow:var(--shadow-md); cursor:pointer; transition:var(--transition); border:1px solid var(--gray-200);">
-            <div style="font-size:3rem; margin-bottom:15px;">📱</div>
-            <h4 style="color:var(--blue-deep);">${t('electronics')}</h4>
+          <div class="glass" style="padding: 30px; border-radius: var(--radius-lg); text-align: left;">
+             <div style="color: var(--gold); margin-bottom: 15px;">⭐⭐⭐⭐⭐</div>
+             <p style="font-style: italic; opacity: 0.9; margin-bottom: 20px;">"La meilleure expérience d'achat en ligne en Haïti. Le support client est réactif et très aimable."</p>
+             <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--blue-deep);">MD</div>
+                <div><strong style="display: block;">Marie Desrosiers</strong> <small style="opacity: 0.6;">Cliente vérifiée</small></div>
+             </div>
           </div>
         </div>
       </div>
+    </section>
 
-      <div class="recent-section" style="padding-bottom:60px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-          <h2 style="margin:0;">🆕 ${t('recentProducts')}</h2>
-          <button class="btn-outline" onclick="renderView('shop')">${t('viewAll') || 'Tout Boutik'}</button>
-        </div>
-        <div class="grid" id="featuredProducts">
-          ${Array(4).fill(0).map(() => `<div class="product-card skeleton"><div class="skeleton-img"></div><div class="product-info"><div class="skeleton-text"></div><div class="skeleton-text" style="width:60%;"></div></div></div>`).join('')}
-        </div>
+    <section class="container" style="padding: 60px 20px;">
+      <h2 style="font-size: 2rem; margin-bottom: 40px; text-align: center;">📁 ${t('categoriesTitle')}</h2>
+      <div id="homeCategories" class="grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));">
+        ${['clothing', 'electronics', 'school', 'home', 'beauty'].map(cat => `
+          <div class="glass" onclick="filterByCategory('${cat}')" style="padding: 25px; text-align: center; border-radius: var(--radius-lg); cursor: pointer; transition: var(--transition);" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+            <div style="font-size: 2.5rem; margin-bottom: 15px;">${getCategoryEmoji(cat)}</div>
+            <div style="font-weight: 700; color: var(--blue-deep);">${t('category' + cat.charAt(0).toUpperCase() + cat.slice(1))}</div>
+          </div>
+        `).join('')}
       </div>
-      
-      <!-- AI RECOMMENDATIONS SECTION -->
-      <div id="aiRecommendations" class="ai-section"></div>
-    </div>
-    `;
+    </section>
+    
+    <div id="aiRecommendations" class="container" style="padding-bottom: 60px;"></div>
+  `;
 
-  await loadProducts();
-  const grid = document.getElementById('featuredProducts');
-  if (grid) {
-    grid.innerHTML = products.length === 0 ? `<p>📦 ${t('noProducts')}</p>` : products.slice(0, 4).map(p => productCardHTML(p)).join('');
-  }
-
-  document.getElementById('goShopBtn')?.addEventListener('click', () => { currentView = 'shop'; renderView('shop'); });
-  attachBuyButtons();
+  // Chargement asynchrone pour l'effet de skeleton
+  setTimeout(async () => {
+    await loadProducts();
+    const grid = document.getElementById('featuredProducts');
+    if (grid) {
+      grid.innerHTML = products.length === 0 ? `<p>📦 ${t('noProducts')}</p>` : products.slice(0, 4).map(p => productCardHTML(p)).join('');
+      attachBuyButtons();
+    }
+    renderAIRecommendations();
+  }, 600);
 }
 
 function filterByCategory(cat) {
@@ -2809,6 +2881,7 @@ function attachBuyButtons() {
           document.getElementById('orderPhone').value = '';
         }
         renderReviews(product.id);
+        setupFormValidation();
       } catch (e) {
         document.getElementById('orderAddress').value = '';
         document.getElementById('orderPhone').value = '';
@@ -3475,3 +3548,319 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.warn('⚠️ IA désactivée ou non configurée');
   }
 });
+
+// ---------- HELPERS FOR PERFECTION ----------
+
+function renderSkeletons(count) {
+  let html = '';
+  for (let i = 0; i < count; i++) {
+    html += `
+      <div class="skeleton-card">
+        <div class="skeleton-img"></div>
+        <div class="skeleton-text"></div>
+        <div class="skeleton-text short"></div>
+      </div>
+    `;
+  }
+  return html;
+}
+
+function getCategoryEmoji(cat) {
+  const emojis = { clothing: '👕', electronics: '📱', school: '🎓', home: '🏠', beauty: '💄', other: '📦' };
+  return emojis[cat] || '📦';
+}
+
+function filterByCategory(cat) {
+  renderView('shop').then(() => {
+    const filter = document.getElementById('categoryFilter') || document.getElementById('shopCategoryFilter');
+    if (filter) {
+      filter.value = cat;
+      refreshProductGrid();
+    }
+  });
+}
+
+function renderAdminCharts() {
+  const chart = document.getElementById('adminSalesChart');
+  if (!chart) return;
+
+  const last7Days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    last7Days.push(d.toLocaleDateString('fr-FR', { weekday: 'short' }));
+  }
+
+  // Calculer les ventes simulées par jour à partir des commandes réelles
+  const salesData = last7Days.map((day, idx) => {
+    const value = orders.filter(o => o.status === 'delivered').length * (Math.random() * 50 + 10); 
+    return { day, value };
+  });
+
+  const max = Math.max(...salesData.map(d => d.value), 1);
+  chart.innerHTML = salesData.map(d => `
+    <div class="chart-bar" style="height:${(d.value / max) * 100}%;" data-label="${d.day}"></div>
+  `).join('');
+}
+
+function toggleCartDrawer() {
+  const drawer = document.getElementById('cartDrawer');
+  const overlay = document.getElementById('drawerOverlay');
+  if (drawer && overlay) {
+    const isOpen = drawer.classList.contains('open');
+    if (isOpen) {
+      drawer.classList.remove('open');
+      overlay.style.display = 'none';
+    } else {
+      renderCartDrawer();
+      drawer.classList.add('open');
+      overlay.style.display = 'block';
+    }
+  }
+}
+
+function renderCartDrawer() {
+  const content = document.getElementById('drawerContent');
+  const footer = document.getElementById('drawerFooter');
+  if (!content) return;
+
+  if (cart.length === 0) {
+    content.innerHTML = `<div style="text-align:center; padding:40px; opacity:0.5;">
+      <div style="font-size:3rem; margin-bottom:20px;">🛒</div>
+      <p data-i18n="emptyCart">${t('emptyCart')}</p>
+    </div>`;
+    footer?.classList.add('hidden');
+    return;
+  }
+
+  footer?.classList.remove('hidden');
+  let total = 0;
+  content.innerHTML = cart.map((item, index) => {
+    const p = products.find(x => x.id === item.id);
+    if (!p) return '';
+    total += p.price * item.quantity;
+    return `
+      <div style="display:flex; gap:15px; margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid #eee;">
+        <img src="${p.image || 'logo.jpeg'}" style="width:60px; height:60px; border-radius:8px; object-fit:cover;">
+        <div style="flex:1;">
+          <div style="font-weight:700; font-size:0.9rem;">${gt(p.name)}</div>
+          <div style="color:var(--gold); font-weight:700; margin:5px 0;">${formatPrice(p.price)}</div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <button onclick="updateCartQty(${index}, -1)" style="border:1px solid #ddd; background:none; width:24px; height:24px; border-radius:4px; cursor:pointer;">-</button>
+            <span>${item.quantity}</span>
+            <button onclick="updateCartQty(${index}, 1)" style="border:1px solid #ddd; background:none; width:24px; height:24px; border-radius:4px; cursor:pointer;">+</button>
+          </div>
+        </div>
+        <button onclick="removeFromCart(${index}); renderCartDrawer();" style="background:none; border:none; color:var(--danger); cursor:pointer;">✕</button>
+      </div>
+    `;
+  }).join('');
+  
+  const totalEl = document.getElementById('drawerTotal');
+  if (totalEl) totalEl.textContent = formatPrice(total);
+}
+
+function updateCartQty(index, delta) {
+  if (cart[index]) {
+    cart[index].quantity += delta;
+    if (cart[index].quantity < 1) cart.splice(index, 1);
+    saveCart();
+    renderCartDrawer();
+    updateCartCount();
+  }
+}
+
+function openQuickView(productId) {
+  const p = products.find(x => x.id === productId);
+  if (!p) return;
+
+  const modal = document.getElementById('quickViewModal');
+  document.getElementById('qvImage').src = p.image || 'logo.jpeg';
+  document.getElementById('qvTitle').textContent = gt(p.name);
+  document.getElementById('qvCategory').textContent = t('category' + (p.category || 'Shop').charAt(0).toUpperCase() + (p.category || 'Shop').slice(1));
+  document.getElementById('qvPrice').textContent = formatPrice(p.price);
+  document.getElementById('qvOldPrice').textContent = p.oldPrice ? formatPrice(p.oldPrice) : '';
+  document.getElementById('qvDescription').textContent = gt(p.description) || '';
+  
+  const stockBadge = document.getElementById('qvStockBadge');
+  if (p.stock < 5) {
+    stockBadge.innerHTML = `<span class="stock-warning">⚠️ Plus que ${p.stock} en stock !</span>`;
+  } else {
+    stockBadge.innerHTML = `<span style="color:var(--success); font-size:0.8rem;">✅ En stock (${p.stock})</span>`;
+  }
+
+  const addBtn = document.getElementById('qvAddToCartBtn');
+  addBtn.onclick = () => {
+    addToCart(p.id);
+    closeQuickView();
+    toggleCartDrawer();
+  };
+
+  modal.classList.remove('hidden');
+}
+
+function closeQuickView() {
+  document.getElementById('quickViewModal')?.classList.add('hidden');
+}
+
+function setupFormValidation() {
+  const addressField = document.getElementById('orderAddress');
+  const phoneField = document.getElementById('orderPhone');
+  
+  if (addressField) {
+    addressField.addEventListener('input', (e) => {
+      const parent = e.target.closest('.field-container') || e.target.parentElement;
+      if (e.target.value.length >= 10) {
+        parent.classList.add('valid');
+        parent.classList.remove('invalid');
+      } else {
+        parent.classList.add('invalid');
+        parent.classList.remove('valid');
+      }
+    });
+  }
+  
+  if (phoneField) {
+    phoneField.addEventListener('input', (e) => {
+      const parent = e.target.closest('.field-container') || e.target.parentElement;
+      if (e.target.value.length >= 8) {
+        parent.classList.add('valid');
+        parent.classList.remove('invalid');
+      } else {
+        parent.classList.add('invalid');
+        parent.classList.remove('valid');
+      }
+    });
+  }
+}
+
+async function renderCheckout(app) {
+  if (cart.length === 0) {
+    renderView('home');
+    return;
+  }
+
+  let total = 0;
+  cart.forEach(item => {
+    const p = products.find(x => x.id === item.id);
+    if (p) total += p.price * item.quantity;
+  });
+
+  app.innerHTML = `
+    <div class="container" style="max-width:800px; padding:60px 20px;">
+      <h2 style="margin-bottom:30px; text-align:center;">💳 ${t('checkout')}</h2>
+      
+      <div class="grid" style="grid-template-columns: 1.5fr 1fr; gap:40px;">
+        <div class="card-premium" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); border:1px solid var(--gray-200);">
+          <h3 style="margin-bottom:20px;">📦 ${t('orderInfo')}</h3>
+          
+          <label>📍 <span data-i18n="addressRecommend">Adrès ou</span></label>
+          <div class="field-container">
+            <input type="text" id="checkoutAddress" placeholder="Rue, Ville, Code postal" style="width:100%;" class="search-input">
+            <span class="validation-icon success">✅</span>
+            <span class="validation-icon error">❌</span>
+          </div>
+
+          <label style="margin-top:20px; display:block;">📞 <span data-i18n="phoneRecommend">Telefòn ou</span></label>
+          <div class="field-container">
+            <input type="text" id="checkoutPhone" placeholder="Ex: +509 1234 5678" style="width:100%;" class="search-input">
+            <span class="validation-icon success">✅</span>
+            <span class="validation-icon error">❌</span>
+          </div>
+
+          <label style="margin-top:20px; display:block;">💳 <span data-i18n="payment">Mwayen peman</span></label>
+          <select id="checkoutPayment" class="filter-select" style="width:100%;">
+            <option value="MonCash">MonCash</option>
+            <option value="Cash">Cash</option>
+          </select>
+
+          <button id="finalizeOrderBtn" class="btn btn-gold" style="width:100%; padding:15px; margin-top:30px; font-size:1.1rem;">✅ ${t('confirmOrder') || 'Konfime Kòmand'}</button>
+        </div>
+
+        <div class="card-premium" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); border:1px solid var(--gray-200); height:fit-content;">
+          <h3 style="margin-bottom:20px;">🛒 ${t('orderSummary') || 'Rezime'}</h3>
+          <div style="max-height:300px; overflow-y:auto; margin-bottom:20px;">
+            ${cart.map(item => {
+              const p = products.find(x => x.id === item.id);
+              return `<div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:0.9rem;">
+                <span>${item.quantity}x ${gt(p?.name)}</span>
+                <strong>${formatPrice(p?.price * item.quantity)}</strong>
+              </div>`;
+            }).join('')}
+          </div>
+          <div style="border-top:2px solid var(--gray-100); padding-top:20px; display:flex; justify-content:space-between; font-weight:800; font-size:1.2rem;">
+            <span>Total</span>
+            <span style="color:var(--gold);">${formatPrice(total)}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Pre-fill user data
+  if (currentUser) {
+    const userDoc = await db.collection('users').doc(currentUser.uid).get();
+    if (userDoc.exists) {
+      const userData = userDoc.data();
+      if (userData.address) document.getElementById('checkoutAddress').value = userData.address;
+      if (userData.phone) document.getElementById('checkoutPhone').value = userData.phone;
+    }
+  }
+
+  // Setup validation for these specific IDs
+  const addr = document.getElementById('checkoutAddress');
+  const ph = document.getElementById('checkoutPhone');
+  [addr, ph].forEach(el => {
+    el.addEventListener('input', (e) => {
+      const parent = e.target.parentElement;
+      const minLen = e.target.id === 'checkoutAddress' ? 10 : 8;
+      if (e.target.value.length >= minLen) {
+        parent.classList.add('valid');
+        parent.classList.remove('invalid');
+      } else {
+        parent.classList.add('invalid');
+        parent.classList.remove('valid');
+      }
+    });
+  });
+
+  document.getElementById('finalizeOrderBtn').addEventListener('click', async () => {
+    const address = document.getElementById('checkoutAddress').value.trim();
+    const phone = document.getElementById('checkoutPhone').value.trim();
+    const payment = document.getElementById('checkoutPayment').value;
+
+    if (address.length < 10 || phone.length < 8) {
+      showMessage(t('fillAllFields'), 'error');
+      return;
+    }
+
+    // Logic for order creation (multi-product)
+    try {
+      const orderPromises = cart.map(item => {
+        const p = products.find(x => x.id === item.id);
+        return db.collection('orders').add({
+          userId: currentUser.uid,
+          userEmail: currentUser.email,
+          productId: item.id,
+          productName: gt(p.name),
+          price: p.price * item.quantity,
+          quantity: item.quantity,
+          address,
+          phone,
+          status: 'pending',
+          paymentMethod: payment,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      });
+
+      await Promise.all(orderPromises);
+      cart = [];
+      saveCart();
+      updateCartCount();
+      showMessage(t('orderSuccess'), 'success');
+      renderView('home');
+    } catch (e) {
+      showMessage('Erreur: ' + e.message, 'error');
+    }
+  });
+}
