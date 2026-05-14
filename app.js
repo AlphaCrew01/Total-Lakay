@@ -1271,6 +1271,10 @@ document.getElementById('menuShop')?.addEventListener('click', (e) => {
   e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
   renderView('shop');
 });
+document.getElementById('menuLogistics')?.addEventListener('click', (e) => {
+  e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
+  if (isAdmin) renderView('logistics');
+});
 
 function renderSpecialOffers(app) {
   const promoProducts = products.filter(p => p.oldPrice && p.oldPrice > p.price);
@@ -1642,6 +1646,8 @@ async function renderView(view) {
         case 'privacy': renderPrivacy(app); break;
         case 'terms': renderTerms(app); break;
         case 'checkout': await renderCheckout(app); break;
+        case 'logistics': if (isAdmin) { await renderLogisticsDashboard(app); } else { renderView('home'); } break;
+        case 'tracking': await renderOrderTracking(app); break;
         default: await renderHome(app);
       }
     }
@@ -2649,7 +2655,10 @@ async function renderProfile(app) {
                       <span style="margin:0 10px; color:var(--gray-300);">|</span>
                       <span>📅 ${o.createdAt?.toDate?.()?.toLocaleDateString() || '---'}</span>
                     </div>
-                    ${o.deliveryEstimate ? `<div style="font-weight:700; color:var(--success); font-size:0.9rem;">🚚 ${t('delivery')}: ${o.deliveryEstimate}</div>` : ''}
+                    <div style="display:flex; gap:15px; align-items:center;">
+                      ${o.deliveryEstimate ? `<div style="font-weight:700; color:var(--success); font-size:0.9rem;">🚚 ${t('delivery')}: ${o.deliveryEstimate}</div>` : ''}
+                      ${['pending', 'validated', 'processing', 'in_transit'].includes(o.status) ? `<button class="btn btn-sm btn-gold client-track-btn" style="padding:8px 15px;" data-id="${o.id}">📍 Suivre</button>` : ''}
+                    </div>
                   </div>
                 </div>`).join('')}
             </div>
@@ -2722,6 +2731,14 @@ async function renderProfile(app) {
         avatarEl.innerHTML = `<span id="avatarInitials">${(name || currentUser.email || 'U').substring(0, 2).toUpperCase()}</span><div style="position:absolute; bottom:0; right:0; background:var(--gold); color:white; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; border:2px solid var(--white);">📷</div>`;
       }
     } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
+  });
+
+  // Track Order Logic
+  document.querySelectorAll('.client-track-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      currentTrackingOrderId = e.target.dataset.id;
+      renderView('tracking');
+    });
   });
 
   // Link MonCash Logic
@@ -4112,4 +4129,204 @@ function initOrderMap(containerId, initialCoords = null) {
       });
     }
   }
+}
+
+let currentTrackingOrderId = null;
+let activeTrackingInterval = null;
+
+async function renderLogisticsDashboard(app) {
+  if (!isAdmin) { renderView('home'); return; }
+
+  const activeOrders = orders.filter(o => ['pending', 'validated', 'processing', 'in_transit'].includes(o.status));
+  const deliveredOrders = orders.filter(o => o.status === 'delivered' || o.status === 'completed');
+
+  app.innerHTML = `
+    <div class="container" style="padding:40px 0;">
+      <h2 style="margin-bottom:30px; display:flex; align-items:center; gap:10px;">
+        <span style="background:var(--blue-deep); color:white; padding:10px; border-radius:10px;">🚚</span> 
+        Tableau de Bord Logistique
+      </h2>
+      
+      <div class="grid" style="grid-template-columns: 1fr 1fr; gap:30px; margin-bottom:40px;">
+        <!-- Stats Chart -->
+        <div class="card-premium" style="background:var(--white); padding:25px; border-radius:var(--radius-lg); box-shadow:var(--shadow-md);">
+          <h3 style="margin-bottom:20px;">📊 Statut des Commandes</h3>
+          <canvas id="logisticsPieChart" style="max-height:300px;"></canvas>
+        </div>
+        
+        <!-- Live Fleet Map -->
+        <div class="card-premium" style="background:var(--white); padding:25px; border-radius:var(--radius-lg); box-shadow:var(--shadow-md);">
+          <h3 style="margin-bottom:20px;">🗺️ Flotte en Temps Réel (Live Fleet)</h3>
+          <div id="adminLiveMap" style="height:300px; border-radius:10px; border:1px solid #eee; overflow:hidden;"></div>
+          <p style="margin-top:10px; font-size:0.8rem; color:var(--text-soft);">Les commandes en transit sont affichées avec leur position approximative.</p>
+        </div>
+      </div>
+
+      <div class="card-premium" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg);">
+        <h3 style="margin-bottom:20px;">📋 Commandes Actives</h3>
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; min-width:600px;">
+            <thead>
+              <tr style="background:var(--gray-100); border-bottom:2px solid var(--gray-200); text-align:left;">
+                <th style="padding:15px;">Code</th>
+                <th style="padding:15px;">Client</th>
+                <th style="padding:15px;">Statut</th>
+                <th style="padding:15px;">Montant</th>
+                <th style="padding:15px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${activeOrders.map(o => `
+                <tr style="border-bottom:1px solid #eee;">
+                  <td style="padding:15px; font-weight:700; color:var(--blue-deep);">${o.orderCode || o.id.substring(0,6)}</td>
+                  <td style="padding:15px;">${o.userEmail}</td>
+                  <td style="padding:15px;">
+                    <span style="padding:5px 10px; border-radius:20px; font-size:0.8rem; font-weight:600; 
+                      background:${o.status==='in_transit' ? 'var(--gold)' : 'var(--blue-light)'};
+                      color:${o.status==='in_transit' ? 'var(--blue-deep)' : 'var(--blue-deep)'};">
+                      ${t(o.status)}
+                    </span>
+                  </td>
+                  <td style="padding:15px;">${formatPrice(o.price)}</td>
+                  <td style="padding:15px;">
+                    <button class="btn btn-sm btn-outline admin-view-track" data-id="${o.id}">Ouvrir Suivi</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          ${activeOrders.length === 0 ? '<p style="padding:20px; text-align:center; color:var(--text-soft);">Aucune commande en cours.</p>' : ''}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Init Pie Chart
+  setTimeout(() => {
+    const ctx = document.getElementById('logisticsPieChart');
+    if (ctx && window.Chart) {
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['En attente', 'En préparation', 'En transit', 'Livré'],
+          datasets: [{
+            data: [
+              orders.filter(o=>o.status==='pending').length,
+              orders.filter(o=>o.status==='processing').length,
+              orders.filter(o=>o.status==='in_transit').length,
+              deliveredOrders.length
+            ],
+            backgroundColor: ['#e74c3c', '#f39c12', '#f1c40f', '#2ecc71']
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    // Init Live Map
+    const mapEl = document.getElementById('adminLiveMap');
+    if (mapEl) {
+      const liveMap = L.map('adminLiveMap').setView([18.5392, -72.3350], 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(liveMap);
+      
+      activeOrders.forEach(o => {
+        if (o.coords) {
+          const m = L.marker(o.coords).addTo(liveMap);
+          m.bindPopup(`<b>${o.orderCode || o.id}</b><br>${o.userEmail}<br>${t(o.status)}`);
+        }
+      });
+    }
+    
+    document.querySelectorAll('.admin-view-track').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        currentTrackingOrderId = e.target.dataset.id;
+        renderView('tracking');
+      });
+    });
+  }, 200);
+}
+
+async function renderOrderTracking(app) {
+  if (!currentTrackingOrderId) { renderView('home'); return; }
+  const order = orders.find(o => o.id === currentTrackingOrderId);
+  if (!order) { renderView('home'); return; }
+
+  app.innerHTML = `
+    <div class="container" style="padding:40px 0;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+        <h2 style="margin:0;">📦 Suivi de Commande: <span style="color:var(--gold);">${order.orderCode || order.id.substring(0,8)}</span></h2>
+        ${isAdmin ? `<button class="btn btn-outline" id="backToLogistics">Retour Logistique</button>` : ''}
+      </div>
+
+      <div class="card-premium" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); margin-bottom:30px;">
+        ${renderStepper(order.status)}
+      </div>
+
+      <div class="grid" style="grid-template-columns: 1fr 1fr; gap:30px;">
+        <div class="card-premium" style="background:var(--white); padding:25px; border-radius:var(--radius-lg); box-shadow:var(--shadow-md);">
+          <h3 style="margin-bottom:20px;">📍 Localisation en Temps Réel</h3>
+          <div id="liveTrackingMap" style="height:350px; border-radius:10px; overflow:hidden;"></div>
+        </div>
+        
+        <div class="card-premium" style="background:var(--white); padding:25px; border-radius:var(--radius-lg); box-shadow:var(--shadow-md);">
+          <h3 style="margin-bottom:20px;">📄 Détails</h3>
+          <p><strong>Produit:</strong> ${order.productName}</p>
+          <p><strong>Quantité:</strong> ${order.quantity || 1}</p>
+          <p><strong>Total:</strong> ${formatPrice(order.price)}</p>
+          <p><strong>Paiement:</strong> ${order.paymentMethod || 'Non spécifié'}</p>
+          <p><strong>Adresse:</strong> ${order.address}</p>
+          <p><strong>Téléphone:</strong> ${order.phone}</p>
+          ${order.deliveryEstimate ? `<div style="margin-top:20px; padding:15px; background:var(--blue-light); border-radius:8px; color:var(--blue-deep);"><strong>Temps estimé:</strong> ${order.deliveryEstimate}</div>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('backToLogistics')?.addEventListener('click', () => {
+    currentTrackingOrderId = null;
+    if (activeTrackingInterval) clearInterval(activeTrackingInterval);
+    renderView('logistics');
+  });
+
+  setTimeout(() => {
+    const mapEl = document.getElementById('liveTrackingMap');
+    if (!mapEl) return;
+    
+    const destCoords = order.coords || [18.5392, -72.3350];
+    const map = L.map('liveTrackingMap').setView(destCoords, 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    // Destination Marker
+    L.marker(destCoords, {icon: L.icon({
+      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+      iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+    })}).addTo(map).bindPopup("Destination");
+
+    // Live Delivery Simulation if in transit
+    if (order.status === 'in_transit') {
+      const startCoords = [18.55, -72.30]; // Port-au-Prince Center (simulated warehouse)
+      let currentLoc = [...startCoords];
+      
+      const driverMarker = L.marker(currentLoc).addTo(map).bindPopup("Livreur en route").openPopup();
+      
+      // Calculate steps
+      const steps = 100;
+      const stepLat = (destCoords[0] - startCoords[0]) / steps;
+      const stepLng = (destCoords[1] - startCoords[1]) / steps;
+      let currentStep = 0;
+
+      if (activeTrackingInterval) clearInterval(activeTrackingInterval);
+      activeTrackingInterval = setInterval(() => {
+        if (currentStep >= steps) {
+          clearInterval(activeTrackingInterval);
+          return;
+        }
+        currentLoc[0] += stepLat;
+        currentLoc[1] += stepLng;
+        driverMarker.setLatLng(currentLoc);
+        currentStep++;
+      }, 500); // Move every 500ms
+    }
+  }, 300);
 }
