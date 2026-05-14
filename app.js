@@ -61,6 +61,7 @@ const i18n = {
     manageClients: "Jere Kliyan", statistics: "Estatistik",
     quickActions: "Aksyon Rapid",
     welcome: "Byenveni nan Total Lakay", slogan: "Tout bagay lakay ou nan yon sèl klike.",
+    shopSlogan: "Jwenn tout kalite pwodwi nou yo nan yon sèl plas.",
     featured: "Pwodui rekòmande", goShop: "Ale nan boutik",
     buy: "Achte", price: "Pri", noProducts: "Pa gen pwodui ankò",
     loading: "Chajman...",
@@ -252,6 +253,7 @@ const i18n = {
     manageClients: "Gérer Clients", statistics: "Statistiques",
     quickActions: "Actions Rapides",
     welcome: "Bienvenue sur Total Lakay", slogan: "Tout ce qu'il vous faut, en un clic.",
+    shopSlogan: "Trouvez tous nos produits de qualité en un seul endroit.",
     featured: "Produits recommandés", goShop: "Aller à la boutique",
     buy: "Acheter", price: "Prix", noProducts: "Aucun produit",
     loading: "Chargement...",
@@ -444,6 +446,7 @@ const i18n = {
     manageClients: "Manage Clients", statistics: "Statistics",
     quickActions: "Quick Actions",
     welcome: "Welcome to Total Lakay", slogan: "Everything you need, one click away.",
+    shopSlogan: "Find all our quality products in one place.",
     featured: "Featured products", goShop: "Go to shop",
     buy: "Buy", price: "Price", noProducts: "No products yet",
     loading: "Loading...",
@@ -635,6 +638,7 @@ const i18n = {
     manageClients: "Gestionar Clientes", statistics: "Estadísticas",
     quickActions: "Acciones Rápidas",
     welcome: "Bienvenido a Total Lakay", slogan: "Todo lo que necesitas, a un clic.",
+    shopSlogan: "Encuentra todos nuestros productos de calidad en un solo lugar.",
     featured: "Productos destacados", goShop: "Ir a la tienda",
     buy: "Comprar", price: "Precio", noProducts: "No hay productos aún",
     loading: "Cargando...",
@@ -2375,7 +2379,7 @@ async function renderShop(app) {
       <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:url('logo.jpeg') center/cover; opacity:0.1; filter:blur(5px);"></div>
       <div style="position:relative; z-index:1;">
         <h1 style="font-size:3rem; font-weight:900; margin-bottom:15px; letter-spacing:-1px;">🛍️ ${t('shop')}</h1>
-        <p style="font-size:1.2rem; opacity:0.9; max-width:600px; margin:0 auto;">Jwenn tout kalite pwodwi nou yo nan yon sèl plas.</p>
+        <p style="font-size:1.2rem; opacity:0.9; max-width:600px; margin:0 auto;">${t('shopSlogan')}</p>
       </div>
     </div>
 
