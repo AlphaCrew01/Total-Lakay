@@ -74,7 +74,7 @@
       <button id="navAdmin" class="nav-item admin-only hidden">⚙️ <span data-i18n="admin">Admin</span></button>
 
       <!-- Panier -->
-      <button id="cartBtn" class="nav-item user-only hidden">
+      <button id="cartBtn" class="nav-item user-only hidden" onclick="toggleCartDrawer()">
         🛒 <span data-i18n="cart">Panyen</span>
         <span id="cartBadge" class="cart-badge hidden">0</span>
       </button>
@@ -114,22 +114,22 @@
           <a href="#" id="menuSpecial">🎉 <span data-i18n="specialOffers">Òf espesyal</span></a>
           <a href="#" id="menuHistory">📋 <span data-i18n="history">Istwa</span></a>
           <a href="#" id="menuSettings">⚙️ <span data-i18n="settings">Paramèt</span></a>
-          
+
           <div class="menu-divider mobile-only"></div>
-          
+
           <div class="mobile-only">
             <label>Lang / Langue</label>
             <select id="langSwitchMobile" class="lang-select-mobile">
-               <option value="ht">🇭🇹 Kreyòl</option>
-               <option value="fr">🇫🇷 Français</option>
-               <option value="en">🇺🇸 English</option>
-               <option value="es">🇪🇸 Español</option>
+              <option value="ht">🇭🇹 Kreyòl</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="en">🇺🇸 English</option>
+              <option value="es">🇪🇸 Español</option>
             </select>
             <label>Lajan / Devise</label>
             <select id="currencySwitchMobile" class="lang-select-mobile">
-               <option value="HTG">🇭🇹 HTG</option>
-               <option value="USD">🇺🇸 USD</option>
-               <option value="EUR">🇪🇺 EUR</option>
+              <option value="HTG">🇭🇹 HTG</option>
+              <option value="USD">🇺🇸 USD</option>
+              <option value="EUR">🇪🇺 EUR</option>
             </select>
           </div>
 
@@ -169,8 +169,10 @@
           <option value="name-asc" data-i18n="sortNameAsc">Nom: A → Z</option>
           <option value="name-desc" data-i18n="sortNameDesc">Nom: Z → A</option>
         </select>
-        <button id="applyFiltersBtn" class="btn btn-gold btn-sm">🔍 <span data-i18n="applyFilters">Filtrer</span></button>
-        <button id="resetFiltersBtn" class="btn btn-outline btn-sm">🔄 <span data-i18n="resetFilters">Reset</span></button>
+        <button id="applyFiltersBtn" class="btn btn-gold btn-sm">🔍 <span
+            data-i18n="applyFilters">Filtrer</span></button>
+        <button id="resetFiltersBtn" class="btn btn-outline btn-sm">🔄 <span
+            data-i18n="resetFilters">Reset</span></button>
         <div id="resultsCount" class="results-count"></div>
       </div>
     </div>
@@ -257,11 +259,19 @@
       <div id="variationSelectors" style="display:flex; flex-direction:column; gap:1rem;"></div>
 
       <label>📍 <span data-i18n="addressRecommend">Adrès ou</span></label>
-      <input type="text" id="orderAddress" placeholder="Rue, Ville, Code postal"
-        data-i18n-placeholder="addressPlaceholder">
+      <div class="field-container">
+        <input type="text" id="orderAddress" placeholder="Rue, Ville, Code postal"
+          data-i18n-placeholder="addressPlaceholder">
+        <span class="validation-icon success">✅</span>
+        <span class="validation-icon error">❌</span>
+      </div>
 
       <label>📞 <span data-i18n="phoneRecommend">Telefòn ou</span></label>
-      <input type="text" id="orderPhone" placeholder="Ex: +509 1234 5678" data-i18n-placeholder="phonePlaceholder">
+      <div class="field-container">
+        <input type="text" id="orderPhone" placeholder="Ex: +509 1234 5678" data-i18n-placeholder="phonePlaceholder">
+        <span class="validation-icon success">✅</span>
+        <span class="validation-icon error">❌</span>
+      </div>
 
       <label>💳 <span data-i18n="payment">Mwayen peman</span></label>
       <select id="orderPayment">
@@ -304,7 +314,8 @@
           <span data-i18n="total">Total</span>
           <span id="cartTotalAmount">0 G</span>
         </div>
-        <button id="checkoutBtn" class="btn btn-gold" style="width:100%;">💳 <span data-i18n="checkout">Peye kounye a</span></button>
+        <button id="checkoutBtn" class="btn btn-gold" style="width:100%;">💳 <span data-i18n="checkout">Peye kounye
+            a</span></button>
         <div class="secure-text">
           🔒 <span data-i18n="securePaymentInfo">Peman 100% sekirize</span>
         </div>
@@ -358,53 +369,96 @@
   <!-- ============================================ -->
   <!-- FOOTER -->
   <!-- ============================================ -->
-  <footer class="footer" style="background:var(--blue-deep); color:white; padding:80px 0 40px; margin-top:80px; position:relative; overflow:hidden;">
+  <footer class="footer"
+    style="background:var(--blue-deep); color:white; padding:80px 0 40px; margin-top:80px; position:relative; overflow:hidden;">
     <div style="position:absolute; top:0; left:0; width:100%; height:5px; background:var(--gold-gradient);"></div>
     <div class="container">
-      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:50px; margin-bottom:60px;">
+      <div
+        style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:50px; margin-bottom:60px;">
         <div class="footer-brand">
           <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
-            <img src="logo.jpeg" style="width:50px; height:50px; border-radius:12px; border:2px solid var(--gold);" alt="Total Lakay" onerror="this.style.display='none';">
+            <img src="logo.jpeg" style="width:50px; height:50px; border-radius:12px; border:2px solid var(--gold);"
+              alt="Total Lakay" onerror="this.style.display='none';">
             <h2 style="color:white; margin:0; letter-spacing:1px;">TOTAL LAKAY</h2>
           </div>
-          <p style="opacity:0.7; line-height:1.8; font-size:0.95rem;">Pi gwo boutik an liy an Ayiti ki ofri w pi bon pwodwi yo ak yon sèvis livrezon rapid ak sekirize.</p>
+          <p data-i18n="footerSlogan" style="opacity:0.7; line-height:1.8; font-size:0.95rem;">Pi gwo boutik an liy an
+            Ayiti ki ofri w pi bon pwodwi yo ak yon sèvis livrezon rapid ak sekirize.</p>
           <div style="display:flex; gap:15px; margin-top:25px;">
-             <a href="#" style="width:40px; height:40px; background:rgba(255,255,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; transition:var(--transition);" onmouseover="this.style.background='var(--gold)'; this.style.color='var(--blue-deep)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.color='white'"><i class="fab fa-facebook-f"></i></a>
-             <a href="#" style="width:40px; height:40px; background:rgba(255,255,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; transition:var(--transition);" onmouseover="this.style.background='var(--gold)'; this.style.color='var(--blue-deep)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.color='white'"><i class="fab fa-instagram"></i></a>
-             <a href="#" style="width:40px; height:40px; background:rgba(255,255,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; transition:var(--transition);" onmouseover="this.style.background='var(--gold)'; this.style.color='var(--blue-deep)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.color='white'"><i class="fab fa-tiktok"></i></a>
+            <a href="#"
+              style="width:40px; height:40px; background:rgba(255,255,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; transition:var(--transition);"
+              onmouseover="this.style.background='var(--gold)'; this.style.color='var(--blue-deep)'"
+              onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.color='white'"><i
+                class="fab fa-facebook-f"></i></a>
+            <a href="#"
+              style="width:40px; height:40px; background:rgba(255,255,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; transition:var(--transition);"
+              onmouseover="this.style.background='var(--gold)'; this.style.color='var(--blue-deep)'"
+              onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.color='white'"><i
+                class="fab fa-instagram"></i></a>
+            <a href="#"
+              style="width:40px; height:40px; background:rgba(255,255,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; transition:var(--transition);"
+              onmouseover="this.style.background='var(--gold)'; this.style.color='var(--blue-deep)'"
+              onmouseout="this.style.background='rgba(255,255,255,0.1)'; this.style.color='white'"><i
+                class="fab fa-tiktok"></i></a>
           </div>
         </div>
-        
+
         <div>
           <h3 style="color:var(--gold); margin-bottom:25px; font-size:1.2rem;">LIEN RAPID</h3>
           <div style="display:flex; flex-direction:column; gap:15px;">
-            <a href="#" onclick="renderView('shop')" style="color:white; opacity:0.8; text-decoration:none; transition:var(--transition);" onmouseover="this.style.opacity='1'; this.style.paddingLeft='10px'" onmouseout="this.style.opacity='0.8'; this.style.paddingLeft='0'"><span data-i18n="shop">Boutik</span></a>
-            <a href="#" onclick="renderView('aiPage')" style="color:white; opacity:0.8; text-decoration:none; transition:var(--transition);" onmouseover="this.style.opacity='1'; this.style.paddingLeft='10px'" onmouseout="this.style.opacity='0.8'; this.style.paddingLeft='0'"><span data-i18n="aiAssistant">Asistan AI</span></a>
-            <a href="#" onclick="renderView('specialOffers')" style="color:white; opacity:0.8; text-decoration:none; transition:var(--transition);" onmouseover="this.style.opacity='1'; this.style.paddingLeft='10px'" onmouseout="this.style.opacity='0.8'; this.style.paddingLeft='0'"><span data-i18n="specialOffers">Pwomosyon</span></a>
+            <a href="#" onclick="renderView('shop')"
+              style="color:white; opacity:0.8; text-decoration:none; transition:var(--transition);"
+              onmouseover="this.style.opacity='1'; this.style.paddingLeft='10px'"
+              onmouseout="this.style.opacity='0.8'; this.style.paddingLeft='0'"><span data-i18n="shop">Boutik</span></a>
+            <a href="#" onclick="renderView('aiPage')"
+              style="color:white; opacity:0.8; text-decoration:none; transition:var(--transition);"
+              onmouseover="this.style.opacity='1'; this.style.paddingLeft='10px'"
+              onmouseout="this.style.opacity='0.8'; this.style.paddingLeft='0'"><span data-i18n="aiAssistant">Asistan
+                AI</span></a>
+            <a href="#" onclick="renderView('specialOffers')"
+              style="color:white; opacity:0.8; text-decoration:none; transition:var(--transition);"
+              onmouseover="this.style.opacity='1'; this.style.paddingLeft='10px'"
+              onmouseout="this.style.opacity='0.8'; this.style.paddingLeft='0'"><span
+                data-i18n="specialOffers">Pwomosyon</span></a>
           </div>
         </div>
 
         <div>
           <h3 style="color:var(--gold); margin-bottom:25px; font-size:1.2rem;">LIGAL</h3>
           <div style="display:flex; flex-direction:column; gap:15px;">
-            <a href="#" id="footerPrivacy" style="color:white; opacity:0.8; text-decoration:none; transition:var(--transition);" onmouseover="this.style.opacity='1'; this.style.paddingLeft='10px'" onmouseout="this.style.opacity='0.8'; this.style.paddingLeft='0'"><span data-i18n="privacyTitle">Konfidansyalite</span></a>
-            <a href="#" id="footerTerms" style="color:white; opacity:0.8; text-decoration:none; transition:var(--transition);" onmouseover="this.style.opacity='1'; this.style.paddingLeft='10px'" onmouseout="this.style.opacity='0.8'; this.style.paddingLeft='0'"><span data-i18n="termsTitle">Kondisyon</span></a>
-            <a href="#" id="footerServices" style="color:white; opacity:0.8; text-decoration:none; transition:var(--transition);" onmouseover="this.style.opacity='1'; this.style.paddingLeft='10px'" onmouseout="this.style.opacity='0.8'; this.style.paddingLeft='0'"><span data-i18n="servicesTitle">Sèvis nou yo</span></a>
+            <a href="#" id="footerPrivacy"
+              style="color:white; opacity:0.8; text-decoration:none; transition:var(--transition);"
+              onmouseover="this.style.opacity='1'; this.style.paddingLeft='10px'"
+              onmouseout="this.style.opacity='0.8'; this.style.paddingLeft='0'"><span
+                data-i18n="privacyTitle">Konfidansyalite</span></a>
+            <a href="#" id="footerTerms"
+              style="color:white; opacity:0.8; text-decoration:none; transition:var(--transition);"
+              onmouseover="this.style.opacity='1'; this.style.paddingLeft='10px'"
+              onmouseout="this.style.opacity='0.8'; this.style.paddingLeft='0'"><span
+                data-i18n="termsTitle">Kondisyon</span></a>
+            <a href="#" id="footerServices"
+              style="color:white; opacity:0.8; text-decoration:none; transition:var(--transition);"
+              onmouseover="this.style.opacity='1'; this.style.paddingLeft='10px'"
+              onmouseout="this.style.opacity='0.8'; this.style.paddingLeft='0'"><span data-i18n="servicesTitle">Sèvis
+                nou yo</span></a>
           </div>
         </div>
 
         <div>
           <h3 style="color:var(--gold); margin-bottom:25px; font-size:1.2rem;">KTAK</h3>
           <div style="display:flex; flex-direction:column; gap:15px; opacity:0.8;">
-            <div style="display:flex; align-items:center; gap:12px;"><i class="fas fa-phone" style="color:var(--gold);"></i> +509 3882-4664</div>
-            <div style="display:flex; align-items:center; gap:12px;"><i class="fas fa-envelope" style="color:var(--gold);"></i> support@totallakay.com</div>
-            <div style="display:flex; align-items:center; gap:12px;"><i class="fas fa-map-marker-alt" style="color:var(--gold);"></i> Pòtoprens, Ayiti</div>
+            <div style="display:flex; align-items:center; gap:12px;"><i class="fas fa-phone"
+                style="color:var(--gold);"></i> +509 3882-4664</div>
+            <div style="display:flex; align-items:center; gap:12px;"><i class="fas fa-envelope"
+                style="color:var(--gold);"></i> support@totallakay.com</div>
+            <div style="display:flex; align-items:center; gap:12px;"><i class="fas fa-map-marker-alt"
+                style="color:var(--gold);"></i> Pòtoprens, Ayiti</div>
           </div>
         </div>
       </div>
-      
-      <div style="padding-top:40px; border-top:1px solid rgba(255,255,255,0.1); text-align:center; font-size:0.9rem; opacity:0.6;">
-        <p>Total Lakay © 2026. Tout dwa rezève. Deziyen ak ❤️ pou Ayiti.</p>
+
+      <div
+        style="padding-top:40px; border-top:1px solid rgba(255,255,255,0.1); text-align:center; font-size:0.9rem; opacity:0.6;">
+        <p data-i18n="footerCopy">Total Lakay © 2026. Tout dwa rezève. Deziyen ak ❤️ pou Ayiti.</p>
       </div>
     </div>
   </footer>
@@ -484,6 +538,51 @@
     }
   </style>
   <!-- ============================================ -->
+
+  <!-- Side Drawer (Cart) -->
+  <div id="drawerOverlay" class="drawer-overlay" onclick="toggleCartDrawer()"></div>
+  <aside id="cartDrawer" class="drawer">
+    <div class="drawer-header">
+      <h2 style="margin:0; font-size: 1.4rem;"><span data-i18n="cart">Panyen</span> 🛒</h2>
+      <button class="btn-menu" onclick="toggleCartDrawer()"
+        style="background: var(--gray-100); color: var(--text-main);">✕</button>
+    </div>
+    <div id="drawerContent" class="drawer-content">
+      <!-- JS will populate -->
+    </div>
+    <div id="drawerFooter" class="drawer-footer hidden">
+      <div style="display:flex; justify-content:space-between; margin-bottom:20px; font-weight:800; font-size:1.2rem;">
+        <span data-i18n="total">Total</span>
+        <span id="drawerTotal">0 HTG</span>
+      </div>
+      <button onclick="toggleCartDrawer(); renderView('checkout');" class="btn btn-gold"
+        style="width:100%; padding:15px;" data-i18n="checkout">Peye kounye a</button>
+    </div>
+  </aside>
+
+  <!-- Quick View Modal -->
+  <div id="quickViewModal" class="modal hidden">
+    <div class="modal-content"
+      style="max-width: 800px; display: flex; flex-direction: row; gap: 30px; padding: 0; overflow: hidden;">
+      <span class="close-modal" onclick="closeQuickView()" style="z-index: 10;">&times;</span>
+      <div style="flex: 1; background: #f8f8f8;">
+        <img id="qvImage" src="" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+      <div style="flex: 1; padding: 40px; display: flex; flex-direction: column;">
+        <span id="qvCategory" class="product-category"></span>
+        <h2 id="qvTitle" style="margin: 10px 0 20px;"></h2>
+        <div class="product-price-row">
+          <span id="qvPrice" class="product-price"></span>
+          <span id="qvOldPrice" class="old-price"></span>
+        </div>
+        <p id="qvDescription" style="color: var(--text-soft); flex: 1; margin-bottom: 30px;"></p>
+        <div id="qvStockBadge"></div>
+        <button id="qvAddToCartBtn" class="btn btn-gold" style="width: 100%; padding: 15px; margin-top: 20px;">
+          🛒 <span data-i18n="addToCart">Ajoute nan panyen</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Floating AI Bubble -->
   <button id="aiBubble" class="ai-bubble" onclick="toggleChatbot()">
