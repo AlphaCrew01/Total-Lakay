@@ -13,50 +13,50 @@
   --blue-dark: #0a1428;
   --blue-medium: #112240;
   --blue-light: #1e3a8a;
-  
+
   --gold: #c8963e;
   --gold-light: #d4a853;
   --gold-dark: #a67c32;
   --gold-bright: #fcd34d;
   --gold-gradient: linear-gradient(135deg, #c8963e 0%, #fcd34d 100%);
-  
+
   --white: #ffffff;
   --white-soft: #f8fafc;
   --gray-100: #f1f5f9;
   --gray-200: #e2e8f0;
   --gray-300: #cbd5e1;
   --gray-400: #94a3b8;
-  
+
   --text-main: #1e293b;
   --text-soft: #64748b;
   --text-white: #f8fafc;
   --text-gold: #c8963e;
-  
+
   --danger: #ef4444;
   --success: #10b981;
   --warning: #f59e0b;
-  
+
   /* Depth & Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --shadow-gold: 0 10px 25px -5px rgba(200, 150, 62, 0.3);
-  
+
   /* Borders & Radius */
   --radius-sm: 8px;
   --radius: 12px;
   --radius-lg: 20px;
   --radius-xl: 32px;
-  
+
   /* Glassmorphism */
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(255, 255, 255, 0.4);
   --glass-blur: blur(12px);
-  
+
   --glass-dark-bg: rgba(5, 10, 20, 0.8);
   --glass-dark-border: rgba(200, 150, 62, 0.2);
-  
+
   /* Transitions */
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -97,12 +97,18 @@ body {
   color: var(--text-main);
   line-height: 1.6;
   min-height: 100vh;
-  padding-top: 80px; /* Space for fixed navbar */
+  padding-top: 80px;
+  /* Space for fixed navbar */
   overflow-x: hidden;
   width: 100%;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   line-height: 1.2;
@@ -223,7 +229,8 @@ button {
   transition: var(--transition);
 }
 
-.nav-item:hover, .nav-item.active {
+.nav-item:hover,
+.nav-item.active {
   background: rgba(200, 150, 62, 0.15);
   border-color: rgba(200, 150, 62, 0.3);
   color: var(--gold-bright);
@@ -233,7 +240,8 @@ button {
   font-size: 1.1rem;
 }
 
-.cart-badge, .notif-badge {
+.cart-badge,
+.notif-badge {
   background: var(--gold);
   color: var(--blue-deep);
   font-size: 0.7rem;
@@ -313,7 +321,7 @@ button {
   min-width: 240px;
   border: 1px solid var(--glass-dark-border);
   border-radius: var(--radius);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(200, 150, 62, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(200, 150, 62, 0.1);
   padding: 12px 0;
   z-index: 1100;
   margin-top: 12px;
@@ -322,8 +330,15 @@ button {
 }
 
 @keyframes dropdownFade {
-  from { opacity: 0; transform: translateY(10px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .dropdown-content a {
@@ -418,8 +433,15 @@ button {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .hero-title {
@@ -479,7 +501,8 @@ button {
   align-items: center;
 }
 
-.filter-select, .price-input {
+.filter-select,
+.price-input {
   background: var(--gray-100);
   border: 1px solid var(--gray-200);
   padding: 10px 16px;
@@ -489,7 +512,8 @@ button {
   transition: var(--transition);
 }
 
-.filter-select:focus, .price-input:focus {
+.filter-select:focus,
+.price-input:focus {
   border-color: var(--gold);
   background: var(--white);
 }
@@ -659,8 +683,15 @@ button {
 }
 
 @keyframes modalSlideUp {
-  from { transform: translateY(40px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Login Card Specifics */
@@ -721,7 +752,8 @@ button {
   color: var(--gray-300);
 }
 
-.separator::before, .separator::after {
+.separator::before,
+.separator::after {
   content: '';
   flex: 1;
   border-bottom: 1px solid var(--gray-200);
@@ -823,7 +855,7 @@ button {
   .navbar {
     padding: 0 20px;
   }
-  
+
   .nav-item:not(#navHome):not(#navShop) {
     display: none;
   }
@@ -833,27 +865,27 @@ button {
   body {
     padding-top: 70px;
   }
-  
+
   .navbar {
     height: 70px;
   }
-  
+
   .logo-text {
     font-size: 1.1rem;
   }
-  
+
   .logo-text small {
     display: none;
   }
-  
+
   .nav-links {
     gap: 5px;
   }
-  
+
   .nav-item {
     display: none !important;
   }
-  
+
   .btn.btn-sm span {
     display: none;
   }
@@ -861,7 +893,7 @@ button {
   .notif-btn {
     font-size: 1.5rem;
   }
-  
+
   .btn.btn-sm {
     padding: 8px 12px;
     font-size: 1.1rem;
@@ -872,15 +904,16 @@ button {
     justify-content: center;
     border-radius: 50%;
   }
-  
-  .lang-select, .currency-select {
+
+  .lang-select,
+  .currency-select {
     display: none;
   }
-  
+
   .mobile-only {
     display: block !important;
   }
-  
+
   .desktop-only {
     display: none !important;
   }
@@ -888,23 +921,24 @@ button {
   .hero-title {
     font-size: 1.8rem;
   }
-  
+
   .search-container {
     flex-direction: row;
     gap: 8px;
   }
-  
+
   .search-input {
     padding: 10px 16px;
     font-size: 0.9rem;
   }
-  
+
   .filter-container {
     justify-content: center;
     gap: 8px;
   }
-  
-  .filter-select, .price-input {
+
+  .filter-select,
+  .price-input {
     padding: 8px 12px;
     font-size: 0.8rem;
   }
@@ -914,7 +948,7 @@ button {
   .logo-text {
     display: none;
   }
-  
+
   .navbar {
     padding: 0 10px;
   }
@@ -937,7 +971,8 @@ button {
 /* ============================================
    WHATSAPP & AI BUBBLES
    ============================================ */
-.whatsapp-float, .ai-bubble {
+.whatsapp-float,
+.ai-bubble {
   position: fixed;
   right: 20px;
   width: 60px;
@@ -963,7 +998,8 @@ button {
   font-size: 1.8rem;
 }
 
-.whatsapp-float:hover, .ai-bubble:hover {
+.whatsapp-float:hover,
+.ai-bubble:hover {
   transform: scale(1.1) translateY(-5px);
 }
 
@@ -983,24 +1019,51 @@ button {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(20px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Scrollbar Style */
@@ -1029,8 +1092,13 @@ button {
 }
 
 @keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .skeleton-card {
@@ -1059,7 +1127,9 @@ button {
   border-radius: 4px;
 }
 
-.skeleton-text.short { width: 60%; }
+.skeleton-text.short {
+  width: 60%;
+}
 
 /* Side Drawer (Cart) */
 .drawer {
@@ -1069,7 +1139,7 @@ button {
   width: 400px;
   height: 100%;
   background: var(--white);
-  box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
   z-index: 3000;
   transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
@@ -1133,10 +1203,23 @@ button {
   display: none;
 }
 
-.field-container.valid .validation-icon.success { display: block; color: var(--success); }
-.field-container.invalid .validation-icon.error { display: block; color: var(--danger); }
-.field-container.valid input { border-color: var(--success); }
-.field-container.invalid input { border-color: var(--danger); }
+.field-container.valid .validation-icon.success {
+  display: block;
+  color: var(--success);
+}
+
+.field-container.invalid .validation-icon.error {
+  display: block;
+  color: var(--danger);
+}
+
+.field-container.valid input {
+  border-color: var(--success);
+}
+
+.field-container.invalid input {
+  border-color: var(--danger);
+}
 
 /* Stock Badge */
 .stock-warning {
@@ -1178,3 +1261,105 @@ button {
   font-size: 0.7rem;
   color: var(--text-soft);
 }
+
+/* --- Tracking Stepper --- */
+.stepper {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 40px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stepper::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 5%;
+  width: 90%;
+  height: 2px;
+  background: var(--gray-200);
+  z-index: 1;
+}
+
+.step {
+  width: 15%;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.step-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--white);
+  border: 2px solid var(--gray-300);
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  transition: var(--transition);
+}
+
+.step.active .step-icon {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: var(--blue-deep);
+  box-shadow: 0 0 15px rgba(200, 150, 62, 0.4);
+}
+
+.step.completed .step-icon {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+}
+
+.step-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-soft);
+  display: block;
+}
+
+.step.active .step-label {
+  color: var(--blue-deep);
+}
+
+/* --- Maps --- */
+.map-container {
+  height: 300px;
+  width: 100%;
+  border-radius: var(--radius);
+  margin: 15px 0;
+  border: 1px solid var(--gray-200);
+  z-index: 100;
+}
+
+/* --- New Status Badges --- */
+.status-validated { background: var(--blue-light) !important; color: white !important; }
+.status-processing { background: #6366f1 !important; color: white !important; }
+.status-transit { background: var(--warning) !important; color: var(--blue-deep) !important; }
+.status-completed { background: var(--success) !important; color: white !important; }
+
+/* --- Review Bubbles --- */
+.review-item {
+  background: var(--gray-100);
+  padding: 15px;
+  border-radius: var(--radius);
+  margin-bottom: 15px;
+  border-left: 4px solid var(--gold);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+}
+
+.review-author { font-weight: 700; color: var(--blue-deep); }
+.review-date { opacity: 0.6; }
+.review-stars { color: var(--gold); }
