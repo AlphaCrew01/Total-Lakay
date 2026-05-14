@@ -1746,7 +1746,34 @@ async function renderAdminDashboard(app) {
           </div>
           <button id="saveMcConfig" class="btn-gold" style="width:100%; padding:15px;">💾 ${t('saveConfig')}</button>
         </div>
+        <div class="card-premium" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); border:1px solid var(--gray-200);">
+        <h3 style="margin-bottom:20px;">🤖 Configuration IA Gemini</h3>
+        <div style="display:flex; flex-direction:column; gap:15px;">
+          <div>
+            <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-soft);">Clé API Gemini</label>
+            <input id="aiApiKey" class="search-input" style="width:100%; background:var(--gray-100);" type="password" value="${AIConfig.apiKey || ''}" placeholder="AIzaSy..." />
+          </div>
+          <div>
+            <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-soft);">Modèle</label>
+            <select id="aiModel" class="filter-select" style="width:100%;">
+              <option value="gemini-1.5-flash" ${AIConfig.model === 'gemini-1.5-flash' ? 'selected' : ''}>Gemini 1.5 Flash (Rapide)</option>
+              <option value="gemini-1.5-pro" ${AIConfig.model === 'gemini-1.5-pro' ? 'selected' : ''}>Gemini 1.5 Pro (Puissant)</option>
+            </select>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <label class="switch">
+              <input type="checkbox" id="aiEnabledToggle" ${AIConfig.enabled ? 'checked' : ''}>
+              <span class="slider"></span>
+            </label>
+            <span style="font-weight:600;">Activer l'IA</span>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <button id="saveAiConfig" class="btn-gold" style="padding:12px;">💾 Sauvegarder</button>
+            <button id="testAiConfig" class="btn-outline" style="padding:12px;">🧪 Tester</button>
+          </div>
+        </div>
       </div>
+    </div>
 
       <div class="card-premium" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); border:1px solid var(--gray-200);">
         <h3 style="margin-bottom:20px;">⚡ ${t('quickActions')}</h3>
@@ -2090,6 +2117,43 @@ async function renderAdminDashboard(app) {
       moncashConfig = { clientId, clientSecret, mode };
       showMessage('✅ Konfigirasyon MonCash sove!', 'success');
     } catch (e) { showMessage('Erreur: ' + e.message, 'error'); }
+  });
+
+  document.getElementById('saveAiConfig')?.addEventListener('click', async () => {
+    const config = {
+      apiKey: document.getElementById('aiApiKey').value.trim(),
+      model: document.getElementById('aiModel').value,
+      enabled: document.getElementById('aiEnabledToggle').checked,
+      maxTokens: AIConfig.maxTokens || 500,
+      temperature: AIConfig.temperature || 0.7,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    try {
+      await db.collection('settings').doc('ai_config').set(config);
+      Object.assign(AIConfig, config);
+      showMessage("✅ Konfigirasyon IA sove!", "success");
+    } catch (e) { showMessage('Erreur: ' + e.message, 'error'); }
+  });
+
+  document.getElementById('testAiConfig')?.addEventListener('click', async () => {
+    const testKey = document.getElementById('aiApiKey').value.trim();
+    if (!testKey) { showMessage("Tanpri mete yon kle API", "error"); return; }
+    
+    showMessage("Test IA an kous...", "info");
+    const originalKey = AIConfig.apiKey;
+    const originalEnabled = AIConfig.enabled;
+    
+    try {
+      AIConfig.apiKey = testKey;
+      AIConfig.enabled = true;
+      const res = await callAI("Di 'Bonjou' an Kreyòl trè kout.");
+      showMessage("✅ Siksè! IA reponn: " + res, "success");
+    } catch (e) {
+      showMessage("❌ Erè: " + e.message, "error");
+    } finally {
+      AIConfig.apiKey = originalKey;
+      AIConfig.enabled = originalEnabled;
+    }
   });
 
   // Refund Order
@@ -3216,40 +3280,22 @@ let AIConfig = {
 // Initialisation sécurisée depuis Firebase Remote Config
 async function initAIConfig() {
   try {
-    const remoteConfig = firebase.remoteConfig();
-    
-    // Configuration pour le développement
-    remoteConfig.settings = {
-      minimumFetchIntervalMillis: 3600000, // 1 heure en production
-      fetchTimeoutMillis: 10000
-    };
-    
-    // Pour le développement : intervalle plus court
-    if (window.location.hostname === 'localhost') {
-      remoteConfig.settings.minimumFetchIntervalMillis = 0;
+    const doc = await db.collection('settings').doc('ai_config').get();
+    if (doc.exists) {
+      const data = doc.data();
+      AIConfig.apiKey = data.apiKey || AIConfig.apiKey;
+      AIConfig.model = data.model || AIConfig.model;
+      AIConfig.maxTokens = data.maxTokens || AIConfig.maxTokens;
+      AIConfig.enabled = data.enabled !== undefined ? data.enabled : AIConfig.enabled;
+      AIConfig.temperature = data.temperature || AIConfig.temperature;
+      console.log('✅ Configuration IA Firestore chargée');
+    } else {
+      console.warn('⚠️ ai_config non trouvé dans Firestore, utilisation des valeurs par défaut');
+      // On utilise la clé Firebase par défaut si l'utilisateur ne l'a pas encore configurée
+      AIConfig.apiKey = firebaseConfig.apiKey;
     }
-    
-    // Fetch et activation
-    await remoteConfig.fetchAndActivate();
-    
-    // Récupération des valeurs
-    AIConfig.apiKey = remoteConfig.getString('gemini_api_key');
-    AIConfig.model = remoteConfig.getString('gemini_model');
-    AIConfig.maxTokens = remoteConfig.getNumber('gemini_max_tokens');
-    AIConfig.enabled = remoteConfig.getBoolean('ai_enabled');
-    
-    console.log('✅ Configuration IA chargée avec succès');
-    
-    // Valeurs par défaut si Remote Config échoue
-    if (!AIConfig.apiKey) {
-      console.warn('⚠️ Clé API non trouvée dans Remote Config, utilisation des valeurs par défaut');
-      AIConfig.apiKey = 'AIzaSyB1DeWg50GnDttlYBJZsMzzBKoW4w-87uA'; // Fallback
-    }
-    
   } catch (e) {
-    console.error('❌ Erreur chargement Remote Config:', e);
-    // Fallback en cas d'erreur
-    AIConfig.apiKey = 'AIzaSyB1DeWg50GnDttlYBJZsMzzBKoW4w-87uA';
+    console.error('❌ Erreur chargement config IA Firestore:', e);
   }
 }
 
@@ -3468,9 +3514,18 @@ async function callAI(prompt) {
       }
 
       const data = await response.json();
+      
+      // Gestion des filtres de sécurité ou réponses vides
+      if (data.promptFeedback?.blockReason) {
+        throw new Error('Message bloqué par les filtres de sécurité Google.');
+      }
+
       if (!data.candidates || !data.candidates[0]?.content?.parts?.[0]?.text) {
+        if (data.candidates?.[0]?.finishReason === 'SAFETY') {
+          throw new Error('Réponse bloquée pour raisons de sécurité.');
+        }
         console.error('Réponse Gemini inattendue:', data);
-        throw new Error('Réponse IA invalide');
+        throw new Error('Réponse IA invalide ou vide');
       }
       return data.candidates[0].content.parts[0].text;
       
