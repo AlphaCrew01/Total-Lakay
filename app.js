@@ -238,7 +238,8 @@ const i18n = {
     logistics: "Lojistik", logisticsDashboard: "Tablodbò Lojistik",
     liveFleet: "Flòt an Tan Reyèl", activeOrders: "Kòmand Aktiv",
     trackOrder: "Suiv Kòmand", in_transit: "Nan wout", completed: "Konplete",
-    validated: "Valide", processing: "Nan preparasyon", returnLogistics: "Retounen Lojistik"
+    validated: "Valide", processing: "Nan preparasyon", returnLogistics: "Retounen Lojistik",
+    enableAi: "Aktive IA", test: "Teste", amount: "Montan", actions: "Aksyon"
   },
   fr: {
     home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -429,7 +430,8 @@ const i18n = {
     logistics: "Logistique", logisticsDashboard: "Tableau de Bord Logistique",
     liveFleet: "Flotte en Temps Réel", activeOrders: "Commandes Actives",
     trackOrder: "Suivre Commande", in_transit: "En transit", completed: "Complété",
-    validated: "Validé", processing: "En préparation", returnLogistics: "Retour Logistique"
+    validated: "Validé", processing: "En préparation", returnLogistics: "Retour Logistique",
+    enableAi: "Activer l'IA", test: "Tester", amount: "Montant", actions: "Actions"
   },
   en: {
     home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -612,15 +614,15 @@ const i18n = {
     termsPriceDesc: "Prices may change without notice. We strive for accurate descriptions.",
     termsMod: "Updates:",
     termsModDesc: "Total Lakay may modify these terms and we will notify you.",
-    validated: "Validated",
-    processing: "Processing",
-    in_transit: "In Transit",
-    completed: "Completed",
-    orderTracking: "Order Tracking",
-    orderCode: "Order Code",
+    logistics: "Logistics", logisticsDashboard: "Logistics Dashboard",
+    liveFleet: "Live Fleet", activeOrders: "Active Orders",
+    trackOrder: "Track Order", in_transit: "In Transit", completed: "Completed",
+    validated: "Validated", processing: "Processing", returnLogistics: "Return to Logistics",
+    enableAi: "Enable AI", test: "Test", amount: "Amount", actions: "Actions",
+    orderTracking: "Order Tracking", orderCode: "Order Code",
     allowLocation: "Allow Geolocation",
     locationDesc: "Enable this for more precise delivery via GPS tracking.",
-    urgentDeliveries: "Urgent Deliveries",
+    urgentDeliveries: "Urgent Deliveries"
   },
   es: {
     home: "Inicio", shop: "Tienda", orders: "Pedidos", admin: "Admin",
@@ -801,6 +803,11 @@ const i18n = {
     termsConsentTitle: "Condiciones de Uso",
     termsConsentDesc: "Para continuar usando Total Lakay, debe aceptar nuestros términos de uso y nuestra política de privacidad.",
     accept: "Aceptar", decline: "Rechazar",
+    logistics: "Logística", logisticsDashboard: "Panel de Logística",
+    liveFleet: "Flota en Vivo", activeOrders: "Pedidos Activos",
+    trackOrder: "Rastrear Pedido", in_transit: "En tránsito", completed: "Completado",
+    validated: "Validado", processing: "En proceso", returnLogistics: "Volver a Logística",
+    enableAi: "Activar IA", test: "Probar", amount: "Monto", actions: "Acciones"
   }
 };
 
@@ -1735,7 +1742,7 @@ async function renderAdminDashboard(app) {
       <div class="card-premium" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); border:1px solid var(--gray-200);">
         <h3 style="margin-bottom:20px;">💰 ${t('revenue')} & MonCash</h3>
         <div style="font-size:2rem; font-weight:900; color:var(--success); margin-bottom:20px;">${formatPrice(totalRevenue)}</div>
-        <div style="display:flex; flex-direction:column; gap:15px; border-top:1px solid #eee; pt-20">
+        <div style="display:flex; flex-direction:column; gap:15px; border-top:1px solid #eee; padding-top:20px;">
           <div>
             <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-soft);">Client ID</label>
             <input id="mcClientId" class="search-input" style="width:100%; background:var(--gray-100);" value="${moncashConfig.clientId || ''}" placeholder="Client ID MonCash" />
@@ -1746,8 +1753,10 @@ async function renderAdminDashboard(app) {
           </div>
           <button id="saveMcConfig" class="btn-gold" style="width:100%; padding:15px;">💾 ${t('saveConfig')}</button>
         </div>
-        <div class="card-premium" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); border:1px solid var(--gray-200);">
-        <h3 style="margin-bottom:20px;">🤖 Configuration IA Gemini</h3>
+      </div>
+
+      <div class="card-premium" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); border:1px solid var(--gray-200);">
+        <h3 style="margin-bottom:20px;">🤖 ${t('aiAssistant')} Gemini</h3>
         <div style="display:flex; flex-direction:column; gap:15px;">
           <div>
             <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-soft);">Clé API Gemini</label>
@@ -1765,15 +1774,14 @@ async function renderAdminDashboard(app) {
               <input type="checkbox" id="aiEnabledToggle" ${AIConfig.enabled ? 'checked' : ''}>
               <span class="slider"></span>
             </label>
-            <span style="font-weight:600;">Activer l'IA</span>
+            <span style="font-weight:600;">${t('enableAi')}</span>
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <button id="saveAiConfig" class="btn-gold" style="padding:12px;">💾 Sauvegarder</button>
-            <button id="testAiConfig" class="btn-outline" style="padding:12px;">🧪 Tester</button>
+            <button id="saveAiConfig" class="btn-gold" style="padding:12px;">💾 ${t('save')}</button>
+            <button id="testAiConfig" class="btn-outline" style="padding:12px;">🧪 ${t('test')}</button>
           </div>
         </div>
       </div>
-    </div>
 
       <div class="card-premium" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); border:1px solid var(--gray-200);">
         <h3 style="margin-bottom:20px;">⚡ ${t('quickActions')}</h3>
@@ -2512,7 +2520,12 @@ async function sendAIPageMessage() {
     messages.scrollTop = messages.scrollHeight;
   } catch (err) {
     if (typingEl) typingEl.remove();
-    showMessage(t('errorOccurred'), 'error');
+    const errorMsg = document.createElement('div');
+    errorMsg.className = 'message bot error';
+    errorMsg.style = 'background: #ffe5e5; color: #d32f2f; align-self: flex-start; border-radius: 16px; padding: 1rem; font-size: 0.9rem;';
+    errorMsg.textContent = t('aiError') + " (" + err.message + ")";
+    messages.appendChild(errorMsg);
+    messages.scrollTop = messages.scrollHeight;
   }
 }
 
@@ -4166,11 +4179,11 @@ async function renderLogisticsDashboard(app) {
           <table style="width:100%; border-collapse:collapse; min-width:600px;">
             <thead>
               <tr style="background:var(--gray-100); border-bottom:2px solid var(--gray-200); text-align:left;">
-                <th style="padding:15px;">Code</th>
-                <th style="padding:15px;">Client</th>
-                <th style="padding:15px;">Statut</th>
-                <th style="padding:15px;">Montant</th>
-                <th style="padding:15px;">Actions</th>
+                <th style="padding:15px;">${t('orderCode')}</th>
+                <th style="padding:15px;">${t('client')}</th>
+                <th style="padding:15px;">${t('status')}</th>
+                <th style="padding:15px;">${t('amount')}</th>
+                <th style="padding:15px;">${t('actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -4224,6 +4237,10 @@ async function renderLogisticsDashboard(app) {
     // Init Live Map
     const mapEl = document.getElementById('adminLiveMap');
     if (mapEl) {
+      if (mapEl._leaflet_id) {
+        mapEl.innerHTML = "";
+        mapEl._leaflet_id = null;
+      }
       const liveMap = L.map('adminLiveMap').setView([18.5392, -72.3350], 12);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(liveMap);
       
@@ -4287,8 +4304,12 @@ async function renderOrderTracking(app) {
   });
 
   setTimeout(() => {
-    const mapEl = document.getElementById('liveTrackingMap');
     if (!mapEl) return;
+    
+    if (mapEl._leaflet_id) {
+      mapEl.innerHTML = "";
+      mapEl._leaflet_id = null;
+    }
     
     const destCoords = order.coords || [18.5392, -72.3350];
     const map = L.map('liveTrackingMap').setView(destCoords, 14);
