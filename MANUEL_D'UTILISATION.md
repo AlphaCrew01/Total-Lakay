@@ -1,93 +1,86 @@
-# 📘 MANUEL D'UTILISATION COMPLET - TOTAL LAKAY
+# 📘 GUIDE ULTIME DE L'UTILISATEUR - TOTAL LAKAY
 
-Bienvenue sur **Total Lakay**, votre plateforme e-commerce premium de nouvelle génération en Haïti. "Tout bagay lakay ou nan yon sèl klike."
-
----
-
-## 🎯 1. NOS OBJECTIFS & SERVICES
-Total Lakay n'est pas seulement une boutique, c'est un écosystème technologique conçu pour faciliter la vie des Haïtiens :
-- **E-Commerce Intelligent** : Une large gamme de produits (Électronique, Mode, Maison, École) avec des recommandations par IA.
-- **Accessibilité Totale (PWA)** : Installez notre site comme une application. Elle fonctionne même avec une connexion instable et vous envoie des notifications pour vos commandes.
-- **Paiements Locaux** : Intégration complète de MonCash et gestion du Cash (Lajan Kach).
-- **Livraison Suivie** : Nous utilisons la géolocalisation pour assurer une livraison précise partout en Haïti.
+Bienvenue dans l'univers de **Total Lakay**, l'excellence du e-commerce en Haïti. Ce manuel vous explique en détail comment tirer le meilleur parti de notre plateforme intelligente.
 
 ---
 
-## 👤 2. GUIDE POUR LES CLIENTS
-
-### 🔐 Création de Compte & Sécurité
-1. **Inscription** : Cliquez sur **Konekte**, puis **Kreye yon kont**.
-2. **Vérification** : Un email de vérification vous est envoyé. **Vous devez valider votre email** pour pouvoir passer une commande (sécurité anti-fraude).
-3. **Profil** : Complétez votre profil avec votre numéro de téléphone et votre adresse pour accélérer vos futurs achats.
-
-### 🛒 Processus d'Achat
-1. **Recherche** : Utilisez la barre de recherche ou les filtres par catégorie/prix.
-2. **Panier** : Vous pouvez ajouter plusieurs produits au panier avant de valider.
-3. **Variations** : Pour certains produits (vêtements, chaussures), n'oubliez pas de choisir la **couleur** et la **taille**.
-4. **Commande** :
-   - Vérifiez votre adresse et téléphone.
-   - Choisissez **MonCash** (paiement immédiat) ou **Cash** (paiement à la livraison).
-   - Cliquez sur **✅ Kòmande**.
-
-### 📦 Suivi & Notifications
-- Consultez l'onglet **Istwa** ou **Profil** pour voir l'état de vos commandes :
-  - **An atant** : Commande reçue.
-  - **Konfime** : Paiement vérifié / Commande validée.
-  - **Nan preparasyon** : Nous emballons vos produits.
-  - **Nan wout** : Le livreur est en chemin.
-  - **Livre** : Commande terminée.
-- **Notifications Push** : Activez-les dans votre profil pour savoir exactement quand votre colis arrive.
+## 🌟 1. LA RÉVOLUTION TOTAL LAKAY
+Total Lakay n'est pas qu'un site de vente, c'est une expérience augmentée par l'Intelligence Artificielle.
+- **Vitesse Éclair** : Grâce à notre technologie PWA, le site se charge instantanément.
+- **IA LakayGPT** : Un assistant personnel qui connaît vos goûts et vous aide 24h/24.
+- **Transparence Totale** : Suivez votre colis en temps réel sur la carte depuis votre profil.
 
 ---
 
-## ⚙️ 3. GUIDE POUR LES ADMINISTRATEURS
+## 👤 2. VOTRE COMPTE : SÉCURITÉ & AVANTAGES
 
-### 📊 Tableau de Bord (Dashboard)
-L'admin a accès à des statistiques en temps réel :
-- **Chiffre d'affaires** (calculé automatiquement en HTG).
-- **Nombre de clients et commandes**.
-- **Graphiques d'évolution**.
+### Inscription et Validation (Crucial)
+Pour protéger nos clients contre la fraude, nous imposons un protocole strict :
+1. Créez votre compte avec un email valide.
+2. **Vérifiez votre boîte de réception** : Un lien d'activation vous est envoyé. 
+3. **Sans validation**, vous ne pourrez pas utiliser le bouton "Achte". C'est notre garantie de sécurité pour vous.
 
-### 📦 Gestion des Produits
-- **Ajout** : Titre, description, prix, image (URL), stock, catégories, et options (couleurs/tailles).
-- **Promo** : Mettez un "Ancien prix" pour afficher une étiquette de réduction automatiquement.
-- **Stock** : Le stock diminue automatiquement à chaque achat validé.
-
-### 👥 Gestion des Utilisateurs & Notifications
-- **Rôles** : Vous pouvez nommer d'autres administrateurs ou repasser un compte en client.
-- **Notifications Globales** : Envoyez des messages à tous les clients, uniquement aux administrateurs, ou à un client spécifique.
-- **Recherche** : Utilisez la barre de recherche dans le sélecteur de destinataires pour trouver un client par son nom ou email.
-
-### 🛠️ Diagnostic IA & MonCash
-- **Diagnostic IA** : Si l'IA ne répond pas, utilisez le bouton de diagnostic dans les paramètres IA pour lister les modèles disponibles avec votre clé.
-- **MonCash Config** : Permet de passer du mode "Sandbox" (test) au mode "Live" (réel).
+### Gestion du Profil
+Dans votre espace personnel (icône 👤), vous pouvez :
+- Enregistrer plusieurs adresses de livraison.
+- Lier votre numéro **MonCash** pour des remboursements ultra-rapides.
+- Gérer vos préférences de notifications (Push, Email).
 
 ---
 
-## ⚖️ 4. CONDITIONS GÉNÉRALES & CONFIDENTIALITÉ
+## 🛍️ 3. L'ART DE L'ACHAT SUR TOTAL LAKAY
 
-### Protection des Données
-- Nous collectons uniquement votre nom, email, téléphone et adresse pour la livraison.
-- Vos données sont sécurisées sur Firebase et ne sont jamais partagées.
+### Navigation et Recherche
+Utilisez notre moteur de recherche sémantique. Vous pouvez taper "vêtements pour l'école" et l'IA vous filtrera les meilleurs résultats. Utilisez les filtres de prix pour respecter votre budget.
 
-### RÈGLES DE LA PLATEFORME
-- **Annulation** : Vous pouvez annuler une commande tant qu'elle n'est pas "En route". Une raison est obligatoire.
-- **Retours** : Les retours sont acceptés sous 48h si le produit ne correspond pas à la description ou est défectueux.
-- **IA** : L'assistant IA est là pour aider, mais pour les litiges financiers, contactez toujours le support WhatsApp.
-
----
-
-## ❓ 5. FOIRE AUX QUESTIONS (FAQ)
-
-**Q : Je ne reçois pas l'email de vérification.**
-R : Vérifiez vos spams. Si vous ne le trouvez toujours pas, cliquez sur "Renvoyer l'email" dans votre profil.
-
-**Q : Comment installer l'application ?**
-R : Sur Android (Chrome), cliquez sur les 3 points en haut à droite -> "Installer l'application". Sur iPhone (Safari), cliquez sur le bouton "Partager" -> "Sur l'écran d'accueil".
-
-**Q : Est-ce que MonCash est sécurisé ?**
-R : Oui, nous utilisons l'API officielle de MonCash. Nous ne voyons jamais votre code secret MonCash.
+### Passer une Commande Perfectionnée
+1. **Détails du Produit** : Lisez bien la description. Pour les vêtements, choisissez la **couleur** et la **taille** exactes.
+2. **Le Panier** : Vous pouvez modifier les quantités directement dans le tiroir latéral à droite.
+3. **Validation (Checkout)** : 
+    - Assurez-vous que votre numéro de téléphone commence par le code pays (ex: +509).
+    - L'adresse doit être la plus précise possible (Zone, Rue, No).
 
 ---
 
-*Total Lakay - L'innovation au service d'Haïti.*
+## 💳 4. PAIEMENTS LOCAUX & SÉCURISÉS
+
+### MonCash (Le choix recommandé)
+Payer avec MonCash est instantané. Une fois le paiement validé sur votre téléphone, votre commande passe automatiquement en statut **"Konfime"**. C'est le moyen le plus sûr d'éviter les délais de traitement manuels.
+
+### Cash (Lajan Kach)
+Disponible pour certains produits et zones. Vous payez directement au livreur. **Important** : Préparez le montant exact pour faciliter la transaction.
+
+---
+
+## 📦 5. EXPÉDITION & LOGISTIQUE
+
+### Suivi en Temps Réel
+Dès que votre commande passe au statut **"Nan wout"**, vous recevez une notification. Vous pouvez alors ouvrir votre historique de commande pour voir la position estimée de votre colis.
+
+### Délais de Livraison
+- **Standard** : 24h à 48h selon la zone.
+- **Express** : Livraison le jour même pour certains articles sélectionnés.
+
+---
+
+## 🤖 6. LAKAYGPT : VOTRE CONSEILLER PERSONNEL
+LakayGPT est né le **15 Mai 2026**. Il évolue chaque jour pour mieux vous comprendre.
+- Posez-lui des questions comme : *"Quels sont les meilleurs écouteurs en stock ?"* ou *"Aidez-moi à choisir un cadeau pour un étudiant"*.
+- Il est là pour vous, mais il respecte une politique de confidentialité stricte. Il ne pourra jamais divulguer vos données privées à d'autres.
+
+---
+
+## ❓ 7. SOLUTIONS AUX PROBLÈMES COURANTS
+
+**Q : Mon panier se vide tout seul.**
+R : Assurez-vous d'accepter les cookies et que votre navigateur n'est pas en mode "Navigation privée" stricte.
+
+**Q : L'IA ne me répond plus.**
+R : Vérifiez votre connexion internet. Si vous êtes hors-ligne, vous pouvez toujours voir vos anciennes commandes, mais l'IA a besoin de réseau pour réfléchir.
+
+**Q : Comment retourner un article ?**
+R : Contactez-nous via WhatsApp dans les 48h suivant la réception. L'IA peut vous aider à préparer votre demande de retour.
+
+---
+
+*Total Lakay - Tout bagay lakay ou nan yon sèl klike! Version 2.1 - Mai 2026.*
