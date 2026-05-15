@@ -1770,9 +1770,10 @@ async function renderAdminDashboard(app) {
           <div>
             <label style="display:block; margin-bottom:8px; font-weight:600; color:var(--text-soft);">Modèle</label>
             <select id="aiModel" class="filter-select" style="width:100%;">
+              <option value="gemini-flash-latest" ${AIConfig.model === 'gemini-flash-latest' ? 'selected' : ''}>Gemini Flash (Plus stable)</option>
               <option value="gemini-2.5-flash" ${AIConfig.model === 'gemini-2.5-flash' ? 'selected' : ''}>Gemini 2.5 Flash (Ultra Rapide)</option>
               <option value="gemini-2.0-flash" ${AIConfig.model === 'gemini-2.0-flash' ? 'selected' : ''}>Gemini 2.0 Flash (Stable)</option>
-              <option value="gemini-3.1-flash-lite" ${AIConfig.model === 'gemini-3.1-flash-lite' ? 'selected' : ''}>Gemini 3.1 Lite (Léger)</option>
+              <option value="gemini-2.0-flash-lite" ${AIConfig.model === 'gemini-2.0-flash-lite' ? 'selected' : ''}>Gemini 2.0 Lite (Économe)</option>
               <option value="gemini-3.1-pro-preview" ${AIConfig.model === 'gemini-3.1-pro-preview' ? 'selected' : ''}>Gemini 3.1 Pro (Expérimental)</option>
             </select>
           </div>
