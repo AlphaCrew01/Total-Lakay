@@ -3398,32 +3398,67 @@ Recommande 4 produits que ce client devrait acheter. Réponds UNIQUEMENT en JSON
   }
 }
 
+const ADMIN_GUIDE = `
+GUIDE ADMIN :
+- Gestion : Ajouter produits (btn btn-gold), gérer stock, modifier rôles.
+- Notifications : Utiliser @all, @clients, @admins. Barre de recherche active.
+- Financier : Stats en temps réel, calcul HTG automatique.
+- IA : Outil de diagnostic pour tester les clés.
+`;
+
+const CLIENT_GUIDE = `
+GUIDE CLIENT :
+- Achat : Vérifier email avant achat. Choisir taille/couleur.
+- Paiement : MonCash (rapide) ou Cash (livraison).
+- Suivi : Statuts (An atant -> Konfime -> Nan wout -> Livre).
+- PWA : Installer via menu navigateur pour accès hors-ligne.
+- Engagement : Favoris ❤️ et Avis ⭐ après achat.
+`;
+
+// ---------- BASE DE CONNAISSANCES IA ----------
+const PLATFORM_KNOWLEDGE = `
+NOM : Total Lakay (Tout bagay lakay ou nan yon sèl klike).
+MISSION : Boutique e-commerce #1 en Haïti. Propose Électronique, Mode, Maison, École.
+SERVICES :
+- PWA : Site installable, accès hors-ligne, notifications push.
+- IA : Assistant intelligent, recommandations, détection de fraude.
+- LIVRAISON : Partout en Haïti avec suivi en temps réel.
+- PAIEMENT : MonCash (API officielle) et Cash (Lajan Kach).
+`;
+
 // ============================================
 // 2. CHATBOT ASSISTANT CLIENT
 // ============================================
 async function askAIAssistant(question) {
+  // Sélection du guide selon le rôle
+  const roleGuide = isAdmin ? ADMIN_GUIDE : CLIENT_GUIDE;
+  const roleName = isAdmin ? 'Administrateur' : 'Client';
+
   const context = `
-Tu es l'assistant virtuel de Total Lakay, la boutique en ligne #1 en Haïti.
-"Tout bagay lakay ou nan yon sèl klike."
+Tu es l'assistant virtuel expert de Total Lakay. Ton rôle est d'aider les clients et les administrateurs avec précision et courtoisie.
 
-CONNAISSANCES RÉCENTES (MANUEL) :
-- Objectifs : Vendre Électronique, Vêtements, Maison, École partout en Haïti.
-- Paiement : MonCash et Cash (Lajan Kach).
-- WhatsApp : +509 38824664.
-- Commande : Cliquer sur Achte, remplir adresse et téléphone, choisir paiement.
-- Inscription : Obligatoire pour acheter, validation par email nécessaire.
+CONNAISSANCES GÉNÉRALES :
+${PLATFORM_KNOWLEDGE}
 
-Langue actuelle : ${currentLang}
-Devise : ${currentCurrency}
+GUIDE SPÉCIFIQUE AU RÔLE (${roleName}) :
+${roleGuide}
 
-Règles :
-- Réponds UNIQUEMENT dans la langue ${currentLang} (ou créole si demandé).
-- Sois TRÈS CONCIS (max 2 phrases).
-- Utilise les infos du manuel ci-dessus pour répondre aux questions sur le site.
-- Sois amical et professionnel 🤖.
+CONTEXTE ACTUEL :
+- Langue : ${currentLang}
+- Devise : ${currentCurrency}
+- Utilisateur : ${currentUser ? currentUser.displayName || currentUser.email : 'Visiteur'}
+- Rôle : ${roleName}
+
+DIRECTIVES DE RÉPONSE :
+1. Réponds de manière COMPLÈTE et CHALEUREUSE. Adapte tes conseils au rôle (${roleName}).
+2. Si tu parles à un Admin, donne des conseils techniques sur la gestion du site.
+3. Si tu parles à un Client, guide-le dans ses achats et son suivi.
+4. Utilise des emojis 🚀.
+5. Réponds TOUJOURS dans la langue de l'utilisateur (Priorité Kreyòl).
+6. Support WhatsApp : +509 38824664.
 `;
 
-  const fullPrompt = `${context}\n\nQuestion Client: ${question}\nAssistant Total Lakay:`;
+  const fullPrompt = `${context}\n\nQuestion de l'utilisateur : ${question}\nAssistant Total Lakay :`;
   return await callAI(fullPrompt);
 }
 
