@@ -1772,7 +1772,6 @@ async function renderAdminDashboard(app) {
             <select id="aiModel" class="filter-select" style="width:100%;">
               <option value="gemini-1.5-flash" ${AIConfig.model === 'gemini-1.5-flash' ? 'selected' : ''}>Gemini 1.5 Flash (Rapide)</option>
               <option value="gemini-1.5-pro" ${AIConfig.model === 'gemini-1.5-pro' ? 'selected' : ''}>Gemini 1.5 Pro (Puissant)</option>
-              <option value="gemini-pro" ${AIConfig.model === 'gemini-pro' ? 'selected' : ''}>Gemini Pro (Ultra Compatible)</option>
             </select>
           </div>
           <div style="display:flex; align-items:center; gap:10px;">
@@ -1786,6 +1785,7 @@ async function renderAdminDashboard(app) {
             <button id="saveAiConfig" class="btn-gold" style="padding:12px;">💾 ${t('save')}</button>
             <button id="testAiConfig" class="btn-outline" style="padding:12px;">🧪 ${t('test')}</button>
           </div>
+          <button id="diagAiConfig" class="btn-outline" style="width:100%; padding:10px; font-size:0.8rem; opacity:0.7;">🔍 Diagnostic (Liste des modèles)</button>
         </div>
       </div>
 
@@ -2082,7 +2082,7 @@ async function renderAdminDashboard(app) {
   document.getElementById('sendNotifBtn')?.addEventListener('click', async () => {
     const target = document.getElementById('notifTarget')?.value;
     const title = document.getElementById('notifTitle')?.value.trim();
-    const reason = document.getElementById('notifReason')?.value.trim();
+    const reason = document.getElementById('notifReason')?.value?.trim() || '';
     const message = document.getElementById('notifMessage')?.value.trim();
 
     if (!title || !message) { showMessage(t('fillAllFields'), 'error'); return; }
@@ -2101,7 +2101,7 @@ async function renderAdminDashboard(app) {
         title: titleTrans,
         reason: reasonTrans,
         message: messageTrans,
-        type: reason.toLowerCase().includes('promo') ? 'promo' : 'info',
+        type: reason ? (reason.toLowerCase().includes('promo') ? 'promo' : 'info') : 'info',
         targetUserId: (target === 'all' || target.startsWith('role_')) ? null : target,
         targetRole: target === 'all' ? 'all' : (target.startsWith('role_') ? target.replace('role_', '') : null),
         read: false,
@@ -2120,7 +2120,7 @@ async function renderAdminDashboard(app) {
 
       showMessage(t('notifSent'), 'success');
       document.getElementById('notifTitle').value = '';
-      document.getElementById('notifReason').value = '';
+      const nr = document.getElementById('notifReason'); if(nr) nr.value = '';
       document.getElementById('notifMessage').value = '';
       document.getElementById('adminSendNotifForm').classList.add('hidden');
     } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
@@ -2172,6 +2172,24 @@ async function renderAdminDashboard(app) {
     } finally {
       AIConfig.apiKey = originalKey;
       AIConfig.enabled = originalEnabled;
+    }
+  });
+
+  document.getElementById('diagAiConfig')?.addEventListener('click', async () => {
+    const key = document.getElementById('aiApiKey').value.trim();
+    if (!key) { showMessage("Entrez une clé pour le diagnostic", "error"); return; }
+    showMessage("Récupération des modèles...", "info");
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
+      const data = await res.json();
+      if (data.models) {
+        const list = data.models.map(m => m.name.replace('models/', '')).join(', ');
+        alert("Modèles disponibles pour votre clé :\\n\\n" + list);
+      } else {
+        alert("Aucun modèle trouvé ou erreur: " + JSON.stringify(data));
+      }
+    } catch (e) {
+      alert("Erreur diagnostic: " + e.message);
     }
   });
 
@@ -3529,7 +3547,7 @@ async function callAI(prompt) {
   if (AIConfig.provider === 'gemini') {
     try {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1/models/${AIConfig.model}:generateContent?key=${AIConfig.apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${AIConfig.model}:generateContent?key=${AIConfig.apiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
