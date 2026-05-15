@@ -30,8 +30,8 @@ const storage = firebase.storage();
 let currentUser = null;
 let userRole = null;
 let isAdmin = false;
-let currentLang = 'ht';
-let currentCurrency = 'HTG';
+let currentLang = localStorage.getItem('totalLakayLang') || 'ht';
+let currentCurrency = localStorage.getItem('totalLakayCurrency') || 'HTG';
 let currentView = 'home';
 let products = [];
 let orders = [];
@@ -66,6 +66,7 @@ const i18n = {
     welcome: "Byenveni nan Total Lakay", slogan: "Tout bagay lakay ou nan yon sèl klike.",
     shopSlogan: "Jwenn tout kalite pwodwi nou yo nan yon sèl plas.",
     featured: "Pwodui rekòmande", goShop: "Ale nan boutik",
+    locationLabel: "Pòtoprens, Ayiti",
     buy: "Achte", price: "Pri", noProducts: "Pa gen pwodui ankò",
     loading: "Chajman...",
     address: "Adrès ou", addressPlaceholder: "Rue, Ville, Kòd postal",
@@ -249,7 +250,8 @@ const i18n = {
     aiLimitReached: "Ou rive nan limit demand gratis pou jodi a.",
     upgradeToPremium: "Pase nan Premium pou diskite san limit ak yon IA ki pi entèlijan.",
     currentPlan: "Plan aktyèl", freePlan: "Gratis", premiumPlan: "Premium ✨",
-    premiumFeatures: ["Diskisyon san limit", "Repons ki pi pwofon", "Modèl IA siperyè", "Sipò priyoritè"]
+    premiumFeatures: ["Diskisyon san limit", "Repons ki pi pwofon", "Modèl IA siperyè", "Sipò priyoritè"],
+    locationLabel: "Port-au-Prince, Haïti"
   },
   fr: {
     home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -448,7 +450,8 @@ const i18n = {
     aiLimitReached: "Vous avez atteint votre limite de demandes gratuites pour aujourd'hui.",
     upgradeToPremium: "Passez au Premium pour discuter sans limite avec une IA plus intelligente.",
     currentPlan: "Plan actuel", freePlan: "Gratuit", premiumPlan: "Premium ✨",
-    premiumFeatures: ["Discussions illimitées", "Réponses plus profondes", "Modèle IA supérieur", "Support prioritaire"]
+    premiumFeatures: ["Discussions illimitées", "Réponses plus profondes", "Modèle IA supérieur", "Support prioritaire"],
+    locationLabel: "Port-au-Prince, Haïti"
   },
   en: {
     home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -1396,20 +1399,24 @@ async function markNotifAsRead(notifId) {
 // ============================================
 document.getElementById('langSwitch')?.addEventListener('change', (e) => {
   currentLang = e.target.value;
+  localStorage.setItem('totalLakayLang', currentLang);
   applyLanguage();
 });
 document.getElementById('langSwitchMobile')?.addEventListener('change', (e) => {
   currentLang = e.target.value;
+  localStorage.setItem('totalLakayLang', currentLang);
   applyLanguage();
   document.getElementById('dropdownMenu')?.classList.add('hidden');
 });
 
 document.getElementById('currencySwitch')?.addEventListener('change', (e) => {
   currentCurrency = e.target.value;
+  localStorage.setItem('totalLakayCurrency', currentCurrency);
   renderView(currentView);
 });
 document.getElementById('currencySwitchMobile')?.addEventListener('change', (e) => {
   currentCurrency = e.target.value;
+  localStorage.setItem('totalLakayCurrency', currentCurrency);
   renderView(currentView);
   document.getElementById('dropdownMenu')?.classList.add('hidden');
 });
