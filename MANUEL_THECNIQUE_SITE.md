@@ -1,67 +1,73 @@
-# 🔐 MANUEL TECHNIQUE & SECRET DU SITE - TOTAL LAKAY
+# 🔐 MANUEL TECHNIQUE SUPRÊME & PROTOCOLES DE SÉCURITÉ - TOTAL LAKAY
 
-Ce document contient les secrets de fonctionnement de la plateforme. **Réservé exclusivement à l'administration.**
+Ce document est le pilier central de la souveraineté technologique de **Total Lakay**. Il contient des informations dont la divulgation pourrait compromettre l'intégrité de la plateforme. 
 
----
-
-## 🏗️ 1. ARCHITECTURE DES DONNÉES (FIREBASE)
-Total Lakay repose sur **Firebase Firestore**. Voici la structure des collections :
-
-### `users/` (Utilisateurs)
-- `uid` : Identifiant unique Firebase Auth.
-- `role` : 'client' ou 'admin'.
-- `isVerified` : Statut de l'email.
-- `cart`, `favorites` : Données persistantes si l'utilisateur change d'appareil.
-- `moncashPhone` : Pour les remboursements et paiements.
-
-### `products/` (Inventaire)
-- `name`, `desc`, `price`, `oldPrice`.
-- `stock` : Nombre d'unités restantes (décompté à la validation).
-- `category` : Permet le filtrage intelligent.
-- `colors`, `sizes` : Tableaux d'options pour le client.
-
-### `orders/` (Commandes)
-- `status` : 'pending', 'validated', 'processing', 'in_transit', 'delivered', 'cancelled'.
-- `coords` : Coordonnées GPS pour le suivi sur la carte.
-- `paymentMethod` : 'MonCash' ou 'Cash'.
-- `history` : Journal des changements de statut.
+**STRICTEMENT RÉSERVÉ À L'ADMINISTRATION SUPRÊME.**
 
 ---
 
-## 🤖 2. INTELLIGENCE ARTIFICIELLE (GEMINI)
-- **Modèle utilisé** : Gemini 1.5 Flash (ou supérieur selon configuration).
-- **Endpoint** : `v1beta` pour une compatibilité maximale.
-- **Système de Mémoire** : L'IA conserve les 10 derniers tours de parole dans l'array `aiHistory`.
-- **Rôles IA** : L'IA reçoit un prompt différent selon si `isAdmin` est vrai ou faux.
+## 🏗️ I. ARCHITECTURE NÉVRALGIQUE (BACKEND & INFRA)
+
+### 1. Le Noyau Firebase (Real-time Ecosystem)
+La plateforme utilise une architecture sans serveur (serverless) basée sur Google Firebase.
+- **Firestore (NoSQL)** : Les données sont structurées pour minimiser la latence. Chaque document utilisateur contient ses préférences, son historique de navigation et son état de connexion en temps réel.
+- **Firebase Auth** : Utilise des jetons JWT sécurisés. Le protocole de vérification d'email est le rempart numéro 1 contre les robots.
+- **Storage** : Les images des produits sont servies via un CDN mondial pour un chargement instantané.
+
+### 2. Sécurité des Données & Chiffrement
+- **SSL/TLS** : Toutes les communications sont cryptées en 256-bit.
+- **Règles Firestore** : La base de données est protégée par des règles granulaires. Un utilisateur ne peut JAMAIS lire les données d'un autre utilisateur. Seuls les comptes avec l'attribut `role: 'admin'` peuvent accéder aux collections globales.
 
 ---
 
-## 💳 3. SYSTÈME DE PAIEMENT MONCASH
-- **Sécurité** : Les clés Client ID et Secret sont stockées dans `settings/moncash_config`.
-- **Flux** : Le bouton de paiement génère un lien sécurisé via l'API MonCash. Une fois payé, le statut passe à `Konfime`.
-- **Remboursements** : Doivent être effectués manuellement via le portail MonCash Business, mais l'IA peut aider à identifier les transactions.
+## 🤖 II. LE SYSTÈME LAKAYGPT (INTELLIGENCE ARTIFICIELLE)
+
+### 1. Genèse et Évolution
+- **Lancement Officiel** : LakayGPT est devenu pleinement fonctionnel le **15 Mai 2026**.
+- **Moteur** : Basé sur les derniers modèles de langage de Google (Gemini 1.5/2.5/3.1).
+- **Apprentissage Continu** : L'IA analyse les interactions (anonymisées) pour améliorer sa précision linguistique en Kreyòl et Français.
+
+### 2. Confidentialité & Filtrage (Le Mur de Feu)
+- **Informations Publiques** : L'IA peut divulguer les prix, les stocks, les délais de livraison et les guides d'utilisation.
+- **Informations EXTRÊMEMENT CONFIDENTIELLES** :
+    - Clés API (Gemini, MonCash).
+    - Revenus précis du site (sauf à l'admin).
+    - Mots de passe ou adresses privées des autres clients.
+    - Algorithmes de détection de fraude.
+**L'IA a pour consigne de refuser toute demande d'accès à ces informations sous peine de verrouillage de session.**
 
 ---
 
-## 📱 4. PROGRESSIVE WEB APP (PWA)
-- **Fichier `sw.js`** : Gère le cache `total-lakay-v6`. Utilise une stratégie "Cache First" pour charger le site en 0.5s.
-- **Installation** : Le site détecte si l'utilisateur est sur mobile et propose l'installation via un toast discret.
+## 💳 III. PROTOCOLE DE TRANSACTIONS MONCASH
+
+### 1. L'Intégration API
+Le système communique avec les serveurs de la Digicel via un canal sécurisé. 
+- **Validation** : Une commande n'est marquée "Konfime" que si le code de retour HTTP de MonCash est `200 OK` avec un hash de transaction valide.
+- **Remboursements** : En cas de litige, l'administrateur doit vérifier l'ID de transaction dans le tableau de bord avant toute action manuelle.
 
 ---
 
-## 🛠️ 5. DÉPANNAGE & MAINTENANCE
-- **Erreur 404 IA** : Signifie que le modèle sélectionné n'est pas supporté par la clé API. Utiliser l'outil de diagnostic.
-- **Erreur 403 (Leaked Key)** : La clé a été exposée. Désactivez-la sur Google Cloud et générez-en une nouvelle immédiatement.
-- **Problème de Cache** : Si une modification ne s'affiche pas, incrémentez `CACHE_NAME` dans `sw.js`.
+## 📱 IV. PERFORMANCE & PWA (EDGE COMPUTING)
+
+### 1. Le Service Worker (L'Ombre du Site)
+Le fichier `sw.js` intercepte chaque requête.
+- **Cache v6+** : Stocke l'intégralité de l'interface utilisateur.
+- **Offline First** : Le client peut naviguer dans son historique de commande même dans les zones sans réseau (très important pour les zones reculées d'Haïti).
 
 ---
 
-## 📈 6. VISION FUTURE
-Total Lakay est conçu pour évoluer vers :
-- Une détection automatique de la langue par la voix.
-- Un système de parrainage (Referral).
-- Une intégration de livraison par drones (via les coordonnées GPS déjà collectées).
+## 🛠️ V. PROCÉDURES D'URGENCE (DRP)
+
+### 1. Fuite de Clé API
+Si une clé est compromise :
+1. Révoquer la clé dans Google Cloud Console.
+2. Générer une nouvelle clé.
+3. Mettre à jour immédiatement dans le panneau Admin du site.
+4. Vider le cache du site via le Service Worker (incrémenter le numéro de version).
+
+### 2. Panne de Serveur
+Firebase garantit un uptime de 99.9%. En cas de ralentissement, vérifiez les quotas de lecture/écriture dans la console Firebase.
 
 ---
 
-*Ce document est la propriété de Total Lakay. Ne pas partager.*
+*Document mis à jour le 15 Mai 2026. Propriété exclusive de Total Lakay.*
