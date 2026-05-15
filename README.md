@@ -1,44 +1,38 @@
-# Total Lakay 🇭🇹🛒 - Plateforme E-commerce Intelligente
+# Total Lakay 🇭🇹🛒
 
-**Total Lakay** ("Tout bagay lakay ou") est une plateforme e-commerce premium de nouvelle génération, intégrant l'Intelligence Artificielle et les technologies web modernes pour offrir une expérience d'achat fluide, sécurisée et ultra-rapide.
+**Total Lakay** ("Tout bagay lakay ou") est une plateforme e-commerce de nouvelle génération, conçue pour offrir une expérience d'achat ultra-moderne, sécurisée et intelligente en Haïti.
 
-## 🌟 Fonctionnalités Phares
+## 🌟 Fonctionnalités Premium
 
-- **🤖 Intelligence Artificielle (Gemini 1.5 Flash) :**
-    - **Assistant IA :** Support client 24/7 pour répondre aux questions sur les produits et la plateforme.
-    - **Rekòmandasyon Entèlijan :** Système suggérant des produits basés sur les préférences de l'utilisateur.
-    - **Détection de Fraude :** Analyse en temps réel des commandes pour protéger les vendeurs et acheteurs.
-- **📱 Technologie PWA (Progressive Web App) :**
-    - Installation sur smartphone et ordinateur comme une application native.
-    - **Mode Hors-ligne :** Consultation du catalogue même sans connexion internet.
-    - **Notifications Push :** Alertes instantanées pour les nouvelles offres et mises à jour de commandes.
-- **💳 Paiements Locaux Intégrés :**
-    - Support complet de **MonCash** pour des transactions rapides et sécurisées en Haïti.
-    - Gestion multidevise dynamique (HTG, USD, EUR).
-- **🎨 Interface Premium (Glassmorphism) :**
-    - Design moderne, épuré et vivant avec des micro-animations fluides.
-    - Entièrement responsive et optimisé pour le SEO.
-- **🌍 Multilingue :** Support complet du Kreyòl, Français, Anglais et Espagnol.
+- **Tableau de Bord Administrateur (BI) :** Analyses avancées avec **Chart.js** pour visualiser les ventes, le stock et l'activité des clients en temps réel.
+- **Intelligence Artificielle :** Assistant IA intégré pour guider les utilisateurs, répondre aux questions et faciliter la recherche de produits.
+- **Expérience PWA (Progressive Web App) :** Installation sur mobile, accès rapide, mode hors ligne partiel et notifications push pour ne rater aucune commande.
+- **Interface UI/UX de pointe :** Design sophistiqué utilisant le **Glassmorphism**, des effets de transparence, des chargeurs "skeleton" et une navigation fluide via Side Drawer.
+- **Multilingue & Multidevise :** Support complet du Kreyòl (HT), Français (FR), Anglais (EN) et Espagnol (ES). Conversion dynamique des prix en HTG, USD et EUR.
+- **Gestion d'Inventaire Avancée :** Support des variations (couleurs, tailles) et suivi précis du stock par les administrateurs.
+- **Paiements Sécurisés :** Intégration du système MonCash pour des transactions rapides et locales.
+- **Transparence Totale :** Suivi détaillé des commandes avec motifs d'annulation et avis clients étoilés.
 
 ## 🛠️ Stack Technique
 
-- **Frontend :** HTML5 sémantique, CSS3 (Variables, Flex/Grid, Animations), JS ES6+.
-- **IA :** Google Gemini API (Modèle 1.5 Flash).
-- **Backend :** Firebase (Auth, Firestore, Storage, Hosting).
-- **PWA :** Service Workers, Web App Manifest.
+- **Frontend :** HTML5 Sémantique, CSS3 (Variables, Flexbox, Grid, Animations), JavaScript ES6+.
+- **Backend (Serverless) :** Firebase (Authentication, Firestore Real-time Database, Storage, Remote Config).
+- **Analytique :** Chart.js pour les graphiques de performance.
+- **PWA :** Service Workers & Manifest pour une installation native.
 
 ## 📂 Structure du Projet
 
-- `index (1).html` : Architecture principale et système de vues dynamique.
-- `app.js` : Cerveau de l'application (IA, I18n, Logique Firebase).
-- `style.css` : Système de design premium et animations.
-- `sw.js` : Gestion du cache et des fonctionnalités hors-ligne.
+- `index.html` : Architecture de l'application, modales dynamiques et système de vues.
+- `style.css` : Système de design premium avec variables CSS centralisées.
+- `app.js` : Cœur de l'application (logique métier, Firebase, i18n, routage dynamique).
+- `sw.js` : Gestionnaire de cache et de notifications PWA.
 
-## 🚀 Installation & Lancement
+## 🛡️ Sécurité & Confidentialité
 
-1. Clonez le dépôt.
-2. Ouvrez `index (1).html` avec un serveur local (ex: Live Server).
-3. Pour la PWA, assurez-vous d'utiliser une connexion HTTPS (ou localhost).
+La plateforme repose sur des règles de sécurité Firestore strictes (`firestore.rules`) garantissant que :
+1. Les utilisateurs ne peuvent modifier que leurs propres données.
+2. Seuls les administrateurs authentifiés peuvent gérer le stock, les commandes et les rôles utilisateurs.
+3. La vérification d'email est obligatoire pour valider un compte.
 
 ---
-*Total Lakay &copy; 2026 - Inovasyon pou fasilite lavi w.*
+*Total Lakay &copy; 2026 - Tout bagay lakay ou nan yon sèl klike.*
