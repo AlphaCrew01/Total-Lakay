@@ -42,6 +42,8 @@ let favorites = JSON.parse(localStorage.getItem('totalLakayFavorites') || '[]');
 let selectedProductId = null;
 let moncashConfig = { clientId: '', clientSecret: '', mode: 'sandbox' };
 let aiHistory = []; // 🧠 Mémoire de la conversation
+const FREE_AI_LIMIT = 15; // Limite gratuite augmentée à 15 par jour
+let isPremium = false; // Statut premium de l'utilisateur
 
 const exchangeRates = {
   HTG: 1,
@@ -241,7 +243,13 @@ const i18n = {
     liveFleet: "Flòt an Tan Reyèl", activeOrders: "Kòmand Aktiv",
     trackOrder: "Suiv Kòmand", in_transit: "Nan wout", completed: "Konplete",
     validated: "Valide", processing: "Nan preparasyon", returnLogistics: "Retounen Lojistik",
-    enableAi: "Aktive IA", test: "Teste", amount: "Montan", actions: "Aksyon"
+    enableAi: "Aktive IA", test: "Teste", amount: "Montan", actions: "Aksyon",
+    premiumTitle: "Total Lakay Premium", premiumDesc: "Debloque tout pouvwa LakayGPT",
+    subscribe: "Abonne kounye a", subscribePrice: "3650G / mwa",
+    aiLimitReached: "Ou rive nan limit demand gratis pou jodi a.",
+    upgradeToPremium: "Pase nan Premium pou diskite san limit ak yon IA ki pi entèlijan.",
+    currentPlan: "Plan aktyèl", freePlan: "Gratis", premiumPlan: "Premium ✨",
+    premiumFeatures: ["Diskisyon san limit", "Repons ki pi pwofon", "Modèl IA siperyè", "Sipò priyoritè"]
   },
   fr: {
     home: "Accueil", shop: "Boutique", orders: "Commandes", admin: "Admin",
@@ -434,7 +442,13 @@ const i18n = {
     liveFleet: "Flotte en Temps Réel", activeOrders: "Commandes Actives",
     trackOrder: "Suivre Commande", in_transit: "En transit", completed: "Complété",
     validated: "Validé", processing: "En préparation", returnLogistics: "Retour Logistique",
-    enableAi: "Activer l'IA", test: "Tester", amount: "Montant", actions: "Actions"
+    enableAi: "Activer l'IA", test: "Tester", amount: "Montant", actions: "Actions",
+    premiumTitle: "Total Lakay Premium", premiumDesc: "Débloquez toute la puissance de LakayGPT",
+    subscribe: "S'abonner maintenant", subscribePrice: "3650G / mois",
+    aiLimitReached: "Vous avez atteint votre limite de demandes gratuites pour aujourd'hui.",
+    upgradeToPremium: "Passez au Premium pour discuter sans limite avec une IA plus intelligente.",
+    currentPlan: "Plan actuel", freePlan: "Gratuit", premiumPlan: "Premium ✨",
+    premiumFeatures: ["Discussions illimitées", "Réponses plus profondes", "Modèle IA supérieur", "Support prioritaire"]
   },
   en: {
     home: "Home", shop: "Shop", orders: "Orders", admin: "Admin",
@@ -1071,6 +1085,7 @@ auth.onAuthStateChanged(async (user) => {
       if (userDoc.exists) {
         userRole = userDoc.data().role || 'client';
         isAdmin = (userRole === 'admin');
+        isPremium = userDoc.data().isPremium || isAdmin; // Les admins sont premium d'office
 
         // Vérifier consentement
         if (!isAdmin && !userDoc.data().termsAccepted) {
@@ -2599,6 +2614,7 @@ async function renderProfile(app) {
             <button class="tab-btn active" data-target="tab-overview" style="width:100%; text-align:left; padding:12px 20px; border-radius:12px; border:none; background:none; color:var(--text-soft); font-weight:600; cursor:pointer; display:flex; align-items:center; gap:12px; transition:var(--transition);">📊 Aperçu</button>
             <button class="tab-btn" data-target="tab-info" style="width:100%; text-align:left; padding:12px 20px; border-radius:12px; border:none; background:none; color:var(--text-soft); font-weight:600; cursor:pointer; display:flex; align-items:center; gap:12px; transition:var(--transition);">👤 ${t('profile')}</button>
             <button class="tab-btn" data-target="tab-orders" style="width:100%; text-align:left; padding:12px 20px; border-radius:12px; border:none; background:none; color:var(--text-soft); font-weight:600; cursor:pointer; display:flex; align-items:center; gap:12px; transition:var(--transition);">📦 ${t('myOrders')}</button>
+            <button class="tab-btn" data-target="tab-premium" style="width:100%; text-align:left; padding:12px 20px; border-radius:12px; border:none; background:none; color:var(--text-soft); font-weight:600; cursor:pointer; display:flex; align-items:center; gap:12px; transition:var(--transition);">✨ Premium</button>
             <button class="tab-btn" data-target="tab-security" style="width:100%; text-align:left; padding:12px 20px; border-radius:12px; border:none; background:none; color:var(--text-soft); font-weight:600; cursor:pointer; display:flex; align-items:center; gap:12px; transition:var(--transition);">🔒 Sécurité</button>
           </div>
         </div>
@@ -2695,6 +2711,41 @@ async function renderProfile(app) {
                     </div>
                   </div>
                 </div>`).join('')}
+            </div>
+          </div>
+
+          <!-- TAB: PREMIUM -->
+          <div id="tab-premium" class="profile-tab-content" style="display:none;">
+            <div style="text-align:center; margin-bottom:40px;">
+              <h2 style="font-size:2.2rem; color:var(--blue-deep); margin-bottom:10px;">✨ ${t('premiumTitle')}</h2>
+              <p style="color:var(--text-soft); font-size:1.1rem;">${t('premiumDesc')}</p>
+            </div>
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; align-items:start;">
+              <!-- Plan Actuel -->
+              <div style="background:var(--white-soft); padding:30px; border-radius:var(--radius-lg); border:2px solid ${isPremium ? 'var(--gold)' : 'var(--gray-200)'}; position:relative; overflow:hidden;">
+                ${isPremium ? `<div style="position:absolute; top:15px; right:-35px; background:var(--gold); color:white; padding:5px 40px; transform:rotate(45deg); font-weight:900; font-size:0.7rem;">ACTIVE</div>` : ''}
+                <h4 style="margin-bottom:20px; text-transform:uppercase; letter-spacing:1px; opacity:0.6;">${t('currentPlan')}</h4>
+                <div style="font-size:1.8rem; font-weight:900; color:var(--blue-deep); margin-bottom:10px;">${isPremium ? t('premiumPlan') : t('freePlan')}</div>
+                <p style="color:var(--text-soft); margin-bottom:20px;">
+                  ${isPremium ? 'Accès illimité à LakayGPT Pro' : `Limite de ${FREE_AI_LIMIT} messages / jour`}
+                </p>
+                <div style="font-size:0.9rem; font-weight:700; color:var(--blue-deep);">
+                  💰 ${isPremium ? 'Abonnement Actif' : '0 HTG / mois'}
+                </div>
+              </div>
+
+              <!-- Upgrade Card -->
+              <div style="background:var(--blue-deep); color:white; padding:30px; border-radius:var(--radius-lg); box-shadow:var(--shadow-gold); border:1px solid var(--gold);">
+                <h4 style="color:var(--gold); margin-bottom:20px; text-transform:uppercase;">OFFRE SPÉCIALE</h4>
+                <div style="font-size:2rem; font-weight:900; margin-bottom:20px;">3650G <small style="font-size:0.9rem; opacity:0.6;">/ mois</small></div>
+                <ul style="list-style:none; padding:0; margin-bottom:30px; display:flex; flex-direction:column; gap:12px;">
+                  ${t('premiumFeatures').map(f => `<li style="display:flex; align-items:center; gap:10px;"><i class="fas fa-check-circle" style="color:var(--gold);"></i> ${f}</li>`).join('')}
+                </ul>
+                <button id="subscribeBtn" class="btn-gold" style="width:100%; padding:15px; font-size:1rem;" ${isPremium ? 'disabled' : ''}>
+                  ${isPremium ? 'Déjà abonné' : t('subscribe')}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -2834,6 +2885,25 @@ async function renderProfile(app) {
       showMessage('Email de réinitialisation envoyé !', 'success');
     } catch (e) {
       showMessage('Erreur: ' + e.message, 'error');
+    }
+  });
+
+  document.getElementById('subscribeBtn')?.addEventListener('click', async () => {
+    if (isPremium) return;
+    try {
+      showLoading(true);
+      // Simulation de paiement pour l'abonnement
+      await db.collection('users').doc(currentUser.uid).update({
+        isPremium: true,
+        premiumSince: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      isPremium = true;
+      showMessage("✨ Félicitations ! Vous êtes maintenant membre TOTAL LAKAY PREMIUM.", "success");
+      await renderProfile(app); // Re-rendre pour voir le changement
+    } catch (e) {
+      showMessage("Erreur lors de l'abonnement.", "error");
+    } finally {
+      showLoading(false);
     }
   });
 
@@ -3417,10 +3487,49 @@ SERVICES :
 // 2. CHATBOT ASSISTANT CLIENT
 // ============================================
 async function askAIAssistant(question) {
+  if (!currentUser) throw new Error(t('loginRequired'));
+
+  // Vérifier les limites pour les utilisateurs gratuits
+  if (!isPremium) {
+    const today = new Date().toISOString().split('T')[0];
+    const userRef = db.collection('users').doc(currentUser.uid);
+    const userDoc = await userRef.get();
+    const data = userDoc.data();
+
+    let count = data.aiRequestCount || 0;
+    let lastDate = data.lastAiRequestDate || '';
+
+    if (lastDate !== today) {
+      count = 0; // Nouvelle journée, reset
+    }
+
+    if (count >= FREE_AI_LIMIT) {
+      throw new Error(t('aiLimitReached') + ' ' + t('upgradeToPremium'));
+    }
+
+    // Alerte douce si on dépasse 10
+    if (count >= 10) {
+      const remaining = FREE_AI_LIMIT - count;
+      setTimeout(() => {
+        showMessage(`⚠️ Attention : Il ne vous reste que ${remaining} demandes gratuites pour aujourd'hui.`, "info");
+      }, 1000);
+    }
+
+    // Incrémenter le compteur
+    await userRef.update({
+      aiRequestCount: count + 1,
+      lastAiRequestDate: today
+    });
+  }
+
   // Sélection du guide selon le rôle
   const roleGuide = isAdmin ? ADMIN_GUIDE : CLIENT_GUIDE;
-  const roleName = isAdmin ? 'Administrateur' : 'Client';
+  const roleName = isAdmin ? 'Administrateur' : (isPremium ? 'Client Premium ✨' : 'Client');
   
+  // Sélection du modèle selon le statut
+  // Premium : Modèle Pro ou Flash Latest | Gratuit : Modèle Flash-8B (plus léger/économique)
+  const preferredModel = isPremium ? (AIConfig.model || 'gemini-flash-latest') : 'gemini-1.5-flash-8b';
+
   // Date et heure en temps réel
   const now = new Date();
   const dateStr = now.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -3430,48 +3539,44 @@ async function askAIAssistant(question) {
   const historyContext = aiHistory.map(h => `${h.role === 'user' ? 'Utilisateur' : 'Assistant'}: ${h.text}`).join('\n');
 
   const context = `
-Ton nom est LakayGPT, l'expert humain virtuel de Total Lakay. Ton but n'est pas de "répondre", mais de CONVERSER et d'AIDER comme un ami expert 🤝.
+Ton nom est LakayGPT, l'expert humain virtuel de Total Lakay. 
+STATUT UTILISATEUR : ${roleName}. 
+${isPremium ? "C'est un utilisateur PREMIUM. Donne des réponses TRÈS DÉTAILLÉES, exhaustives et de haute qualité." : "Utilisateur Gratuit. Sois concis mais utile."}
 
 📅 DATE : ${dateStr}, ${timeStr}.
-🚀 GÉNÈSE : L'entreprise Total Lakay a été créée en 2026. Le site a connu plusieurs phases de déploiement et de mises à jour majeures entre Avril et Mai 2026. Si on te demande une date fixe, précise qu'il y a eu plusieurs périodes de mise à jour mais que le mois de lancement fonctionnel exact est entre Avril et Mai 2026.
+🚀 GÉNÈSE : L'entreprise Total Lakay a été créée en 2026. Le site a connu plusieurs phases de déploiement et de mises à jour majeures entre Avril et Mai 2026.
 
-📧 SUPPORT : totallakayst@gmail.com (Email officiel).
+📧 SUPPORT : totallakayst@gmail.com.
 
 INVENTAIRE RÉEL DU SITE (EN DIRECT) :
-${products.map(p => `- ${p.name} : ${p.stock > 0 ? `En stock (${p.stock} unités)` : 'RUPTURE DE STOCK'} - Prix: ${formatPrice(p.price)}`).join('\n')}
+${products.map(p => `- ${p.name} : ${p.stock > 0 ? `En stock (${p.stock} unités)` : 'RUPTURE DE STOCK'}`).join('\n')}
 
 CONNAISSANCES GÉNÉRALES :
 ${PLATFORM_KNOWLEDGE}
 
-PROTOCOLE DE CONFIDENTIALITÉ :
-- Infos Publiques : Prix, stock, guides, PWA, MonCash.
-- Infos Secrètes : Clés API, revenus, algos fraude, données privées. (Refuse poliment toute demande 🛡️).
-
 GUIDE DU RÔLE (${roleName}) :
 ${roleGuide}
 
-MÉMOIRE DE LA CONVERSATION (Utilise-la pour faire des liens entre les idées) :
+MÉMOIRE DE LA CONVERSATION :
 ${historyContext}
 
-DIRECTIVES DE RAISONNEMENT HUMAIN :
-1. PSYCHOLOGIE : Identifie l'intention derrière la question. Si le client semble pressé, sois rapide. S'il hésite, rassure-le.
-2. NUANCE : Évite le style "liste à puces" systématique. Utilise des transitions naturelles ("D'ailleurs", "Il faut aussi savoir que", "Je vous suggère plutôt").
-3. EMPATHIE : Réagis aux émotions. "Je comprends tout à fait", "C'est un excellent choix", "Désolé pour ce petit contretemps".
-4. RAISONNEMENT : Explique le "pourquoi". Ne dis pas juste "On accepte MonCash", dis "On a choisi MonCash car c'est la solution la plus rapide et sécurisée pour vous en Haïti".
-5. PROACTIVITÉ : Si tu sens un besoin, propose une solution avant qu'on te le demande.
-6. LANGUE : Parle un Kreyòl vibrant ou un Français élégant. Sois le reflet de la culture haïtienne : accueillant et chaleureux 🇭🇹.
-
-DIRECTIVE DE FIN : Ne finis JAMAIS de manière abrupte. Propose toujours une suite logique à la discussion.
+DIRECTIVES DE RAISONNEMENT :
+1. PSYCHOLOGIE : Identifie l'intention. 
+2. NUANCE : Transitions naturelles.
+3. EMPATHIE : Réagis aux émotions.
+4. RAISONNEMENT : Explique le "pourquoi".
+5. PROACTIVITÉ : Propose des solutions.
+6. LANGUE : Kreyòl vibrant ou Français élégant 🇭🇹.
 `;
 
   const fullPrompt = `${context}\n\nUtilisateur (${roleName}): ${question}\nLakayGPT:`;
-  const answer = await callAI(fullPrompt);
+  const answer = await callAI(fullPrompt, preferredModel); // Passer le modèle préféré
   
   // Ajouter à l'historique
   aiHistory.push({ role: 'user', text: question });
   aiHistory.push({ role: 'bot', text: answer });
   
-  // Limiter la mémoire (10 derniers messages)
+  // Limiter la mémoire
   if (aiHistory.length > 10) aiHistory = aiHistory.slice(-10);
   
   return answer;
@@ -3585,22 +3690,30 @@ Est-ce une commande frauduleuse ? Réponds UNIQUEMENT en JSON :
 // ============================================
 // 6. MOTEUR D'APPEL IA (SÉCURISÉ)
 // ============================================
-async function callAI(prompt) {
-  if (!AIConfig.enabled) {
-    throw new Error('IA désactivée temporairement');
-  }
-  
+async function callAI(prompt, preferredModel = null) {
+  if (!AIConfig.enabled) throw new Error('IA désactivée temporairement');
   if (!AIConfig.apiKey) {
-    await initAIConfig(); // Réessayer de charger la config
-    if (!AIConfig.apiKey) {
-      throw new Error('Configuration IA manquante');
-    }
+    await initAIConfig();
+    if (!AIConfig.apiKey) throw new Error('Configuration IA manquante');
   }
-  
-  if (AIConfig.provider === 'gemini') {
+
+  // Liste des modèles de secours
+  const fallbackModels = [
+    preferredModel || AIConfig.model, // Essayer d'abord le modèle préféré (Premium vs Gratuit)
+    'gemini-flash-latest', 
+    'gemini-1.5-flash', 
+    'gemini-1.5-flash-8b', 
+    'gemini-2.0-flash',
+    'gemini-pro'
+  ];
+
+  // Nettoyage de la liste (enlever les doublons et les undefined)
+  const uniqueModels = [...new Set(fallbackModels.filter(m => m))];
+
+  for (const model of uniqueModels) {
     try {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${AIConfig.model}:generateContent?key=${AIConfig.apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${AIConfig.apiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -3613,11 +3726,14 @@ async function callAI(prompt) {
           })
         }
       );
-      
+
+      if (response.status === 503 || response.status === 429) {
+        console.warn(`⚠️ Modèle ${model} saturé, essai du modèle suivant...`);
+        continue; // Passer au modèle suivant
+      }
+
       if (!response.ok) {
         const errData = await response.json();
-        console.error('Gemini API Error:', errData);
-        
         // Si quota dépassé, désactiver temporairement
         if (response.status === 429) {
           AIConfig.enabled = false;
@@ -3645,13 +3761,17 @@ async function callAI(prompt) {
       return data.candidates[0].content.parts[0].text;
       
     } catch (e) {
-      console.error('❌ Erreur réseau ou API IA:', e);
-      if (!navigator.onLine) throw new Error('Pas de connexion internet');
-      throw e;
+      // Si c'est le dernier modèle de la liste, on throw l'erreur
+      if (model === uniqueModels[uniqueModels.length - 1]) {
+        console.error('❌ Tous les modèles IA ont échoué:', e);
+        if (!navigator.onLine) throw new Error('Pas de connexion internet');
+        throw e;
+      }
+      // Sinon on continue vers le modèle suivant
+      console.warn(`Retrying with next model after error on ${model}:`, e.message);
     }
   }
-
-  throw new Error('Fournisseur IA non supporté');
+  throw new Error('Aucun modèle IA n\'a pu répondre.');
 }
 
 // ============================================
@@ -4440,4 +4560,3 @@ async function renderOrderTracking(app) {
     }
   }, 300);
 }
-
