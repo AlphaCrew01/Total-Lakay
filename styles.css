@@ -325,6 +325,8 @@ button {
   padding: 12px 0;
   z-index: 1100;
   margin-top: 12px;
+  max-height: 80vh;
+  overflow-y: auto;
   transform-origin: top right;
   animation: dropdownFade 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
