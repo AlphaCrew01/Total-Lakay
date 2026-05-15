@@ -2347,27 +2347,12 @@ async function renderHome(app) {
       </div>
     </section>
 
-    <!-- Testimonials Section -->
-    <section class="glass-dark" style="padding: 80px 0; margin: 60px 0; color: white;">
+    <!-- Testimonials Section - Now Dynamic or Removed as requested -->
+    <section id="reviewsSection" class="glass-dark" style="padding: 80px 0; margin: 60px 0; color: white; display: none;">
       <div class="container" style="text-align: center;">
         <h2 style="color: var(--gold); font-size: 2rem; margin-bottom: 50px;">🌟 ${t('testimonialsTitle')}</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
-          <div class="glass" style="padding: 30px; border-radius: var(--radius-lg); text-align: left;">
-             <div style="color: var(--gold); margin-bottom: 15px;">⭐⭐⭐⭐⭐</div>
-             <p style="font-style: italic; opacity: 0.9; margin-bottom: 20px;">"Sèvis la rapid anpil, epi pwodwi yo se kalite siperyè. Mwen rekòmande Total Lakay bay tout moun!"</p>
-             <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 40px; height: 40px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--blue-deep);">JB</div>
-                <div><strong style="display: block;">Jean-Baptiste L.</strong> <small style="opacity: 0.6;">Kliyan verifye</small></div>
-             </div>
-          </div>
-          <div class="glass" style="padding: 30px; border-radius: var(--radius-lg); text-align: left;">
-             <div style="color: var(--gold); margin-bottom: 15px;">⭐⭐⭐⭐⭐</div>
-             <p style="font-style: italic; opacity: 0.9; margin-bottom: 20px;">"La meilleure expérience d'achat en ligne en Haïti. Le support client est réactif et très aimable."</p>
-             <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 40px; height: 40px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--blue-deep);">MD</div>
-                <div><strong style="display: block;">Marie Desrosiers</strong> <small style="opacity: 0.6;">Cliente vérifiée</small></div>
-             </div>
-          </div>
+        <div id="dynamicReviews" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+          <!-- Real reviews will be injected here -->
         </div>
       </div>
     </section>
@@ -3448,7 +3433,12 @@ async function askAIAssistant(question) {
 Ton nom est LakayGPT, l'expert humain virtuel de Total Lakay. Ton but n'est pas de "répondre", mais de CONVERSER et d'AIDER comme un ami expert 🤝.
 
 📅 DATE : ${dateStr}, ${timeStr}.
-🚀 GÉNÈSE : Fonctionnel depuis le 15 Mai 2026.
+🚀 GÉNÈSE : L'entreprise Total Lakay a été créée en 2026. Le site a connu plusieurs phases de déploiement et de mises à jour majeures entre Avril et Mai 2026. Si on te demande une date fixe, précise qu'il y a eu plusieurs périodes de mise à jour mais que le mois de lancement fonctionnel exact est entre Avril et Mai 2026.
+
+📧 SUPPORT : totallakayst@gmail.com (Email officiel).
+
+INVENTAIRE RÉEL DU SITE (EN DIRECT) :
+${products.map(p => `- ${p.name} : ${p.stock > 0 ? `En stock (${p.stock} unités)` : 'RUPTURE DE STOCK'} - Prix: ${formatPrice(p.price)}`).join('\n')}
 
 CONNAISSANCES GÉNÉRALES :
 ${PLATFORM_KNOWLEDGE}
@@ -4450,3 +4440,4 @@ async function renderOrderTracking(app) {
     }
   }, 300);
 }
+
