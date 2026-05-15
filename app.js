@@ -41,6 +41,7 @@ let cart = JSON.parse(localStorage.getItem('totalLakayCart') || '[]');
 let favorites = JSON.parse(localStorage.getItem('totalLakayFavorites') || '[]');
 let selectedProductId = null;
 let moncashConfig = { clientId: '', clientSecret: '', mode: 'sandbox' };
+let aiHistory = []; // 🧠 Mémoire de la conversation
 
 const exchangeRates = {
   HTG: 1,
@@ -3433,33 +3434,53 @@ async function askAIAssistant(question) {
   // Sélection du guide selon le rôle
   const roleGuide = isAdmin ? ADMIN_GUIDE : CLIENT_GUIDE;
   const roleName = isAdmin ? 'Administrateur' : 'Client';
+  
+  // Date et heure en temps réel
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+  // Construction de la mémoire (limité aux 10 derniers messages)
+  const historyContext = aiHistory.map(h => `${h.role === 'user' ? 'Utilisateur' : 'Assistant'}: ${h.text}`).join('\n');
 
   const context = `
-Tu es l'assistant virtuel expert de Total Lakay. Ton rôle est d'aider les clients et les administrateurs avec précision et courtoisie.
+Ton nom est LakayGPT, l'IA officielle de Total Lakay. Tu es la plus évoluée du marché.
+Aujourd'hui nous sommes le ${dateStr}, et il est ${timeStr}.
 
-CONNAISSANCES GÉNÉRALES :
+CONNAISSANCES GÉNÉRALES DU SITE :
 ${PLATFORM_KNOWLEDGE}
+
+ARCHITECTURE TECHNIQUE (POUR TON INFORMATION) :
+- Base : Firebase Firestore / Auth.
+- PWA : Cache v6 actif, mode hors-ligne disponible.
+- Paiement : API MonCash stable.
+- Localisation : Suivi GPS intégré aux commandes.
 
 GUIDE SPÉCIFIQUE AU RÔLE (${roleName}) :
 ${roleGuide}
 
-CONTEXTE ACTUEL :
-- Langue : ${currentLang}
-- Devise : ${currentCurrency}
-- Utilisateur : ${currentUser ? currentUser.displayName || currentUser.email : 'Visiteur'}
-- Rôle : ${roleName}
+MÉMOIRE DE LA CONVERSATION :
+${historyContext}
 
-DIRECTIVES DE RÉPONSE :
-1. Réponds de manière COMPLÈTE et CHALEUREUSE. Adapte tes conseils au rôle (${roleName}).
-2. Si tu parles à un Admin, donne des conseils techniques sur la gestion du site.
-3. Si tu parles à un Client, guide-le dans ses achats et son suivi.
-4. Utilise des emojis 🚀.
-5. Réponds TOUJOURS dans la langue de l'utilisateur (Priorité Kreyòl).
-6. Support WhatsApp : +509 38824664.
+DIRECTIVES DE PERFECTION :
+1. TON : Très poli, empathique et expert. Ton but ultime est la SATISFACTION du client 🏆.
+2. INTELLIGENCE : Utilise l'historique pour ne jamais te répéter et pour approfondir les explications.
+3. PRÉCISION : Si l'utilisateur demande quelque chose de technique (s'il est admin), sois très précis sur Firebase ou le Service Worker.
+4. LANGUE : Parle couramment le Kreyòl, le Français, l'Anglais ou l'Espagnol selon l'utilisateur.
+5. FIN : Termine toujours par une petite phrase encourageante ou une proposition d'aide supplémentaire.
 `;
 
-  const fullPrompt = `${context}\n\nQuestion de l'utilisateur : ${question}\nAssistant Total Lakay :`;
-  return await callAI(fullPrompt);
+  const fullPrompt = `${context}\n\nUtilisateur (${roleName}): ${question}\nLakayGPT:`;
+  const answer = await callAI(fullPrompt);
+  
+  // Ajouter à l'historique
+  aiHistory.push({ role: 'user', text: question });
+  aiHistory.push({ role: 'bot', text: answer });
+  
+  // Limiter la mémoire (10 derniers messages)
+  if (aiHistory.length > 10) aiHistory = aiHistory.slice(-10);
+  
+  return answer;
 }
 
 // ============================================
