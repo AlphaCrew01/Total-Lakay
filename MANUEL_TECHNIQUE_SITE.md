@@ -1,4 +1,4 @@
-# 🔐 MANUEL TECHNIQUE SUPRÊME & PROTOCOLES DE SÉCURITÉ - TOTAL LAKAY
+# 🔐 MANUEL TECHNIQUE & PROTOCOLES DE SÉCURITÉ - TOTAL LAKAY
 
 Ce document est le pilier central de la souveraineté technologique de **Total Lakay**. Il contient des informations dont la divulgation pourrait compromettre l'intégrité de la plateforme. 
 
@@ -15,7 +15,7 @@ La plateforme utilise une architecture sans serveur (serverless) basée sur Goog
 - **Storage** : Les images des produits sont servies via un CDN mondial pour un chargement instantané.
 
 ### 2. Sécurité des Données & Chiffrement
-- **SSL/TLS** : Toutes les communications sont cryptées en 256-bit.
+- **SSL/TLS** : Toutes les communications sont chiffrées en AES-256.
 - **Règles Firestore** : La base de données est protégée par des règles granulaires. Un utilisateur ne peut JAMAIS lire les données d'un autre utilisateur. Seuls les comptes avec l'attribut `role: 'admin'` peuvent accéder aux collections globales.
 
 ---
@@ -24,7 +24,7 @@ La plateforme utilise une architecture sans serveur (serverless) basée sur Goog
 
 ### 1. Genèse et Évolution
 - **Lancement Officiel** : LakayGPT est devenu pleinement fonctionnel le **15 Mai 2026**.
-- **Moteur** : Basé sur les derniers modèles de langage de Google (Gemini 1.5/2.5/3.1).
+- **Moteur** : Basé sur les derniers modèles de langage de Google (Gemini 1.5/2.0/2.5).
 - **Apprentissage Continu** : L'IA analyse les interactions (anonymisées) pour améliorer sa précision linguistique en Kreyòl et Français.
 
 ### 2. Confidentialité & Filtrage (Le Mur de Feu)
@@ -34,7 +34,7 @@ La plateforme utilise une architecture sans serveur (serverless) basée sur Goog
     - Revenus précis du site (sauf à l'admin).
     - Mots de passe ou adresses privées des autres clients.
     - Algorithmes de détection de fraude.
-**L'IA a pour consigne de refuser toute demande d'accès à ces informations sous peine de verrouillage de session.**
+**L'IA a pour consigne de refuser toute demande d'accès à ces informations grâce aux filtres de sécurité applicatifs côté client et aux directives du prompt système.**
 
 ---
 
@@ -62,7 +62,7 @@ Le fichier `sw.js` intercepte chaque requête.
 Si une clé est compromise :
 1. Révoquer la clé dans Google Cloud Console.
 2. Générer une nouvelle clé.
-3. Mettre à jour immédiatement dans le panneau Admin du site.
+3. Mettre à jour immédiatement dans le panneau Admin du site (via Remote Config).
 4. Vider le cache du site via le Service Worker (incrémenter le numéro de version).
 
 ### 2. Panne de Serveur
@@ -70,4 +70,4 @@ Firebase garantit un uptime de 99.9%. En cas de ralentissement, vérifiez les qu
 
 ---
 
-*Document mis à jour le 15 Mai 2026. Propriété exclusive de Total Lakay.*
+*Document mis à jour le 19 Mai 2026. Propriété exclusive de Total Lakay.*
