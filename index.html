@@ -108,46 +108,71 @@
         <option value="EUR">🇪🇺 EUR</option>
       </select>
 
-      <div class="dropdown" id="menuDropdown">
-        <button id="menuBtn" class="btn-menu">☰</button>
-        <div id="dropdownMenu" class="dropdown-content hidden">
-          <a href="#" id="menuHome">🏠 <span data-i18n="home">Akèy</span></a>
-          <a href="#" id="menuShop">🛍️ <span data-i18n="shop">Boutik</span></a>
-          <a href="#" id="menuFavorites">❤️ <span data-i18n="favorites">Favori</span></a>
-          <a href="#" id="menuAI">🤖 <span data-i18n="aiAssistant">Asistan IA</span></a>
-          <a href="#" id="menuSpecial">🎉 <span data-i18n="specialOffers">Òf espesyal</span></a>
-          <a href="#" id="menuHistory">📋 <span data-i18n="history">Istwa</span></a>
-          <a href="#" id="menuSettings">⚙️ <span data-i18n="settings">Paramèt</span></a>
-
-          <div class="menu-divider mobile-only"></div>
-
-          <div class="mobile-only">
-            <label>Lang / Langue</label>
-            <select id="langSwitchMobile" class="lang-select-mobile">
-              <option value="ht">🇭🇹 Kreyòl</option>
-              <option value="fr">🇫🇷 Français</option>
-              <option value="en">🇺🇸 English</option>
-              <option value="es">🇪🇸 Español</option>
-            </select>
-            <label>Lajan / Devise</label>
-            <select id="currencySwitchMobile" class="lang-select-mobile">
-              <option value="HTG">🇭🇹 HTG</option>
-              <option value="USD">🇺🇸 USD</option>
-              <option value="EUR">🇪🇺 EUR</option>
-            </select>
-          </div>
-
-          <div class="menu-divider"></div>
-          <a href="#" id="menuLogistics" class="admin-only hidden">🚚 <span data-i18n="logistics">Logistique</span></a>
-
-
-          <a href="#" id="linkServices">🛠️ <span data-i18n="servicesTitle">Sèvis</span></a>
-          <a href="#" id="linkPrivacy">🔒 <span data-i18n="privacyTitle">Konfidansyalite</span></a>
-          <a href="#" id="linkTerms">📜 <span data-i18n="termsTitle">Kondisyon</span></a>
-        </div>
-      </div>
+      <!-- Bouton menu mobile -->
+      <button id="menuBtn" class="btn-menu" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="sideDrawer">☰</button>
     </nav>
   </header>
+
+  <!-- Overlay du tiroir -->
+  <div id="drawerOverlay" class="drawer-overlay" role="presentation"></div>
+
+  <!-- Tiroir de navigation latéral -->
+  <aside id="sideDrawer" class="side-drawer" role="navigation" aria-label="Menu principal">
+    <div class="drawer-header">
+      <div class="logo-area" style="gap:0.5rem;">
+        <img src="logo.jpeg" alt="Total Lakay" style="width:35px;height:35px;border-radius:8px;border:2px solid var(--gold);" onerror="this.style.display='none'">
+        <span style="font-weight:700;font-size:1.1rem;">Total Lakay</span>
+      </div>
+      <button id="closeDrawer" class="close-drawer" aria-label="Fermer le menu">&times;</button>
+    </div>
+    <div class="drawer-content">
+      <nav class="drawer-nav">
+        <button class="drawer-item" id="menuHome">🏠 <span data-i18n="home">Akèy</span></button>
+        <button class="drawer-item" id="menuShop">🛍️ <span data-i18n="shop">Boutik</span></button>
+        <button class="drawer-item" id="menuAI">🤖 <span data-i18n="aiAssistant">Asistan IA</span></button>
+        <button class="drawer-item user-only hidden" id="menuProfile">👤 <span data-i18n="profile">Profil</span></button>
+        <button class="drawer-item user-only hidden" id="menuFavorites">❤️ <span data-i18n="favorites">Favori</span></button>
+        <button class="drawer-item user-only hidden" id="menuHistory">📋 <span data-i18n="history">Istwa</span></button>
+        <button class="drawer-item user-only hidden" id="menuSpecial">🎉 <span data-i18n="specialOffers">Òf espesyal</span></button>
+        <button class="drawer-item user-only hidden" id="menuSettings">⚙️ <span data-i18n="settings">Paramèt</span></button>
+        <button class="drawer-item admin-only hidden" id="menuAdmin">⚙️ <span data-i18n="admin">Admin</span></button>
+        <button class="drawer-item admin-only hidden" id="menuLogistics">🚚 <span data-i18n="logistics">Logistique</span></button>
+      </nav>
+
+      <div class="drawer-divider"></div>
+
+      <div class="drawer-settings">
+        <label style="font-size:0.8rem;font-weight:600;color:var(--text-soft);">Lang / Langue</label>
+        <select id="langSwitchMobile" class="drawer-select">
+          <option value="ht">🇭🇹 Kreyòl</option>
+          <option value="fr">🇫🇷 Français</option>
+          <option value="en">🇺🇸 English</option>
+          <option value="es">🇪🇸 Español</option>
+        </select>
+        <label style="font-size:0.8rem;font-weight:600;color:var(--text-soft);">Lajan / Devise</label>
+        <select id="currencySwitchMobile" class="drawer-select">
+          <option value="HTG">🇭🇹 HTG</option>
+          <option value="USD">🇺🇸 USD</option>
+          <option value="EUR">🇪🇺 EUR</option>
+        </select>
+      </div>
+
+      <div class="drawer-divider"></div>
+
+      <nav class="drawer-nav">
+        <button class="drawer-item" id="linkServices">🛠️ <span data-i18n="servicesTitle">Sèvis</span></button>
+        <button class="drawer-item" id="linkPrivacy">🔒 <span data-i18n="privacyTitle">Konfidansyalite</span></button>
+        <button class="drawer-item" id="linkTerms">📜 <span data-i18n="termsTitle">Kondisyon</span></button>
+      </nav>
+
+      <div class="drawer-auth">
+        <button id="authBtnDrawer" class="btn btn-gold btn-full">🔐 <span data-i18n="login">Konekte</span></button>
+        <button id="logoutBtnDrawer" class="btn btn-outline btn-full hidden">🚪 <span data-i18n="logout">Dekonekte</span></button>
+      </div>
+    </div>
+  </aside>
+
+
 
   <!-- Barre de Recherche & Filtres -->
   <div id="searchFilterBar" class="container hidden">
@@ -565,9 +590,8 @@
   </style>
   <!-- ============================================ -->
 
-  <!-- Side Drawer (Cart) -->
-  <div id="drawerOverlay" class="drawer-overlay" onclick="toggleCartDrawer()"></div>
-  <aside id="cartDrawer" class="drawer">
+  <!-- Tiroir du Panier -->
+  <aside id="cartDrawer" class="side-drawer" style="left:auto;right:0;">
     <div class="drawer-header">
       <h2 style="margin:0; font-size: 1.4rem;"><span data-i18n="cart">Panyen</span> 🛒</h2>
       <button class="btn-menu" onclick="toggleCartDrawer()"
