@@ -4136,6 +4136,13 @@ function toggleCartDrawer() {
   }
 }
 
+function toggleDrawer() {
+  toggleCartDrawer();
+}
+
+window.toggleCartDrawer = toggleCartDrawer;
+window.toggleDrawer = toggleDrawer;
+
 function renderCartDrawer() {
   const content = document.getElementById('drawerContent');
   const footer = document.getElementById('drawerFooter');
