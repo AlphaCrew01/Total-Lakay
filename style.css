@@ -146,6 +146,15 @@ h6 {
   font-family: 'Poppins', sans-serif;
   font-weight: 700;
   line-height: 1.2;
+  color: var(--text-main);
+}
+
+:root[data-theme='light'] h1,
+:root[data-theme='light'] h2,
+:root[data-theme='light'] h3,
+:root[data-theme='light'] h4,
+:root[data-theme='light'] h5,
+:root[data-theme='light'] h6 {
   color: var(--blue-deep);
 }
 
@@ -503,7 +512,7 @@ button {
 
 .hero-title {
   font-size: 2.5rem;
-  color: var(--blue-deep);
+  color: var(--text-main);
   margin-bottom: 12px;
 }
 
@@ -700,7 +709,7 @@ button {
 .product-price {
   font-size: 1.4rem;
   font-weight: 800;
-  color: var(--blue-deep);
+  color: var(--gold);
 }
 
 .old-price {
@@ -737,6 +746,12 @@ button {
   box-shadow: var(--shadow-xl);
   border: 1px solid var(--glass-dark-border);
   animation: modalSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text-main);
+}
+
+:root[data-theme='dark'] .modal-content {
+  background: var(--white-soft);
+  color: var(--text-main);
 }
 
 @keyframes modalSlideUp {
@@ -774,7 +789,7 @@ button {
 .login-header h2 {
   font-size: 1.6rem;
   margin-bottom: 8px;
-  color: var(--blue-deep);
+  color: var(--text-main);
 }
 
 .login-header p {
@@ -820,6 +835,18 @@ button {
   padding: 0 10px;
   font-size: 0.8rem;
   text-transform: uppercase;
+}
+
+input,
+textarea,
+select {
+  color: var(--text-main);
+  background-color: var(--white-soft);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-soft);
 }
 
 .login-card input {
@@ -1122,6 +1149,38 @@ button {
 
 .hidden {
   display: none !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-200);
+  color: var(--text-main);
+}
+
+:root[data-theme='dark'] .card {
+  background: var(--white-soft);
+  border-color: var(--gray-300);
+}
+
+.card-premium {
+  background: var(--white);
+  padding: 30px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--gray-200);
+  color: var(--text-main);
+}
+
+:root[data-theme='dark'] .card-premium {
+  background: var(--white-soft);
+  border-color: var(--gray-300);
 }
 
 .view-fade-in {
@@ -1470,6 +1529,6 @@ button {
   font-size: 0.85rem;
 }
 
-.review-author { font-weight: 700; color: var(--blue-deep); }
+.review-author { font-weight: 700; color: var(--text-main); }
 .review-date { opacity: 0.6; }
 .review-stars { color: var(--gold); }
