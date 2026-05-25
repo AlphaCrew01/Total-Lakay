@@ -1519,7 +1519,7 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
   if (!currentUser) { showMessage(t('loginRequired'), 'error'); return; }
   if (!currentUser.emailVerified) { showMessage(t('emailNotVerified'), 'error'); return; }
   const address = document.getElementById('orderAddress')?.value.trim();
-  const payment = document.getElementById('orderPayment')?.value;
+  const paymentMethod = document.getElementById('orderPayment')?.value || 'Cash';
   if (!address || address.length < 5) { showMessage(t('invalidAddress'), 'error'); return; }
   const product = products.find(p => p.id === selectedProductId);
   if (!product) return;
@@ -1531,12 +1531,18 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
     const phone = document.getElementById('orderPhone')?.value.trim();
     if (!phone) { showMessage(t('phoneRequired') || "Telefòn obligatwa", 'error'); return; }
 
-    if (payment === 'MonCash') {
+    const userDoc = await db.collection('users').doc(currentUser.uid).get();
+    const userData = userDoc.exists ? userDoc.data() : {};
+    const moncashPhone = userData?.moncashPhone || phone;
+
+    if (paymentMethod === 'MonCash') {
       if (!moncashConfig.clientId || !moncashConfig.clientSecret) {
-        showMessage('⚠️ Konfigirasyon MonCash manke nan Admin an!', 'error');
-      } else {
-        showMessage('💳 Inisyalize peman MonCash Reyèl...', 'info');
-        console.log('Appel API MonCash avec ClientID:', moncashConfig.clientId);
+        showMessage('⚠️ La configuration MonCash est manquante. Configurez-la depuis l’administration.', 'error');
+        return;
+      }
+      if (!moncashPhone) {
+        showMessage('⚠️ Vous devez lier un numéro MonCash dans votre profil ou entrer votre numéro MonCash.', 'error');
+        return;
       }
     }
 
@@ -1549,21 +1555,45 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
       }
     }
 
-    const orderRef = await db.collection('orders').add({
-      userId: currentUser.uid, userEmail: currentUser.email,
-      productId: product.id, productName: product.name,
-      price: product.price, quantity, color, size,
+    const orderData = {
+      userId: currentUser.uid,
+      userEmail: currentUser.email,
+      productId: product.id,
+      productName: product.name,
+      price: product.price,
+      quantity,
+      color,
+      size,
       totalPrice: product.price * quantity,
-      currency: currentCurrency, image: product.image || '',
-      address, phone, payment, status: 'pending',
+      currency: currentCurrency,
+      image: product.image || '',
+      address,
+      phone,
+      paymentMethod,
+      paymentStatus: paymentMethod === 'MonCash' ? 'pending_payment' : 'cash_due',
+      status: paymentMethod === 'MonCash' ? 'awaiting_payment' : 'pending',
       orderCode: generateOrderCode(),
       deliveryEstimate: '',
       coords: deliveryCoords,
       originCoords: DEFAULT_WAREHOUSE_COORDS,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    };
 
-    const orderCode = (await orderRef.get()).data()?.orderCode || '';
+    const orderRef = await db.collection('orders').add(orderData);
+
+    if (paymentMethod === 'MonCash') {
+      await createMoncashPaymentRequest({
+        orderId: orderRef.id,
+        userId: currentUser.uid,
+        userEmail: currentUser.email,
+        phone: moncashPhone,
+        amount: orderData.totalPrice,
+        currency: currentCurrency,
+        mode: moncashConfig.mode
+      });
+    }
+
+    const orderCode = orderData.orderCode;
     const confirmationTitle = `✅ Commande ${orderCode || ''} reçue`;
     const confirmationMessage = `Bonjour ${currentUser.displayName || currentUser.email}, votre commande ${orderCode || ''} pour ${product.name} a bien été reçue. Nous vous envoyons une confirmation par email et SMS.`;
 
@@ -1601,7 +1631,10 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
 
     document.getElementById('buyModal')?.classList.add('hidden');
     document.getElementById('orderAddress').value = '';
-    showMessage(t('orderSuccess'), 'success');
+    const successMessage = paymentMethod === 'MonCash'
+      ? '✅ Commande enregistrée. Complétez votre paiement MonCash depuis votre application MonCash.'
+      : t('orderSuccess');
+    showMessage(successMessage, 'success');
   } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
 });
 
@@ -1962,6 +1995,8 @@ async function renderAdminDashboard(app) {
             </select>
           </div>
           <div><label style="display:block; margin-bottom:8px;">${t('stock')}</label><input id="adminProdStock" class="search-input" style="width:100%;" type="number" placeholder="0"></div>
+          <div><label style="display:block; margin-bottom:8px;">${t('productColors')} (ex: rouge, bleu)</label><input id="adminProdColors" class="search-input" style="width:100%;" placeholder="rouge, bleu"></div>
+          <div><label style="display:block; margin-bottom:8px;">${t('productSizes')} (ex: S, M, L)</label><input id="adminProdSizes" class="search-input" style="width:100%;" placeholder="S, M, L"></div>
           <div><label style="display:block; margin-bottom:8px;">${t('productImage')} (URL)</label><input id="adminProdImage" class="search-input" style="width:100%;" placeholder="${t('productImagePlaceholder')}"></div>
         </div>
         <div style="margin-top:20px;">
@@ -2115,10 +2150,10 @@ async function renderAdminDashboard(app) {
     const oldPrice = parseFloat(document.getElementById('adminProdOldPrice')?.value) || null;
     const category = document.getElementById('adminProdCategory')?.value;
     const stock = parseInt(document.getElementById('adminProdStock')?.value) || 0;
-    const colorsRaw = document.getElementById('adminProdColors')?.value.trim();
-    const sizesRaw = document.getElementById('adminProdSizes')?.value.trim();
-    const image = document.getElementById('adminProdImage')?.value.trim();
-    const description = document.getElementById('adminProdDesc')?.value.trim();
+    const colorsRaw = document.getElementById('adminProdColors')?.value?.trim() || '';
+    const sizesRaw = document.getElementById('adminProdSizes')?.value?.trim() || '';
+    const image = document.getElementById('adminProdImage')?.value?.trim() || '';
+    const description = document.getElementById('adminProdDesc')?.value?.trim() || '';
 
     if (!name || !price) { showMessage(t('fillAllFields'), 'error'); return; }
 
@@ -2383,6 +2418,25 @@ async function loadMoncashConfig() {
     const doc = await db.collection('settings').doc('moncash').get();
     if (doc.exists) moncashConfig = doc.data();
   } catch (e) { console.error('Erreur config MonCash:', e); }
+}
+
+async function createMoncashPaymentRequest({ orderId, userId, userEmail, phone, amount, currency, mode }) {
+  try {
+    await db.collection('moncash_requests').add({
+      orderId,
+      userId,
+      userEmail,
+      phone,
+      amount,
+      currency,
+      provider: 'MonCash',
+      mode: mode || moncashConfig.mode || 'production',
+      status: 'pending',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } catch (e) {
+    console.error('Erreur création demande MonCash:', e);
+  }
 }
 
 async function refundUser(userId, amount, orderId) {
@@ -4401,8 +4455,11 @@ async function renderCheckout(app) {
           <label style="margin-top:20px; display:block;">💳 <span data-i18n="payment">Mwayen peman</span></label>
           <select id="checkoutPayment" class="filter-select" style="width:100%;">
             <option value="MonCash">MonCash</option>
-            <option value="Cash">Cash</option>
+            <option value="Cash">Cash à la livraison</option>
           </select>
+          <p style="margin:0.75rem 0 0; font-size:0.95rem; color:var(--text-soft);">
+            Choisissez MonCash pour un paiement en ligne sécurisé. Si vous préférez, sélectionnez Cash pour régler à la livraison.
+          </p>
 
           ${localStorage.getItem('allowLocation') === 'true' ? `
           <div style="margin-top:20px;">
@@ -4471,11 +4528,25 @@ async function renderCheckout(app) {
       return;
     }
 
-    // Logic for order creation (multi-product)
+    const userDoc = await db.collection('users').doc(currentUser.uid).get();
+    const userData = userDoc.exists ? userDoc.data() : {};
+    const moncashPhone = userData?.moncashPhone || phone;
+
+    if (payment === 'MonCash') {
+      if (!moncashConfig.clientId || !moncashConfig.clientSecret) {
+        showMessage('⚠️ La configuration MonCash est manquante. Configurez-la depuis l’administration.', 'error');
+        return;
+      }
+      if (!moncashPhone) {
+        showMessage('⚠️ Vous devez lier un numéro MonCash dans votre profil ou entrer votre numéro MonCash.', 'error');
+        return;
+      }
+    }
+
     try {
-      const orderPromises = cart.map(item => {
+      const orderPromises = cart.map(async item => {
         const p = products.find(x => x.id === item.id);
-        return db.collection('orders').add({
+        const orderData = {
           userId: currentUser.uid,
           userEmail: currentUser.email,
           productId: item.id,
@@ -4484,28 +4555,42 @@ async function renderCheckout(app) {
           quantity: item.quantity,
           address,
           phone,
-          status: 'pending',
+          paymentMethod: payment,
+          paymentStatus: payment === 'MonCash' ? 'pending_payment' : 'cash_due',
+          status: payment === 'MonCash' ? 'awaiting_payment' : 'pending',
           orderCode: generateOrderCode(),
           coords: orderCoords,
-          paymentMethod: payment,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        };
+
+        const orderRef = await db.collection('orders').add(orderData);
+
+        if (payment === 'MonCash') {
+          await createMoncashPaymentRequest({
+            orderId: orderRef.id,
+            userId: currentUser.uid,
+            userEmail: currentUser.email,
+            phone: moncashPhone,
+            amount: orderData.price,
+            currency: currentCurrency,
+            mode: moncashConfig.mode
+          });
+        }
       });
 
       await Promise.all(orderPromises);
       cart = [];
       saveCart();
       updateCartCount();
-      showMessage(t('orderSuccess'), 'success');
+      const successMessage = payment === 'MonCash'
+        ? '✅ Commande enregistrée. Complétez votre paiement MonCash depuis votre application MonCash.'
+        : t('orderSuccess');
+      showMessage(successMessage, 'success');
       renderView('home');
     } catch (e) {
       showMessage('Erreur: ' + e.message, 'error');
     }
   });
-
-  if (localStorage.getItem('allowLocation') === 'true') {
-    setTimeout(() => initOrderMap('checkoutMap'), 200);
-  }
 }
 
 function renderStepper(currentStatus) {
