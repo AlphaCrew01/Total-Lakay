@@ -51,6 +51,32 @@ const exchangeRates = {
   EUR: 1 / 140
 };
 
+const DEFAULT_PORT_AU_PRINCE = [18.5392, -72.3350];
+const DEFAULT_WAREHOUSE_COORDS = [18.55, -72.30];
+const AI_PROMPT_PRODUCT_LIMIT = 12;
+
+function escapeHtml(text) {
+  return String(text || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function getLocationPromise() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      return reject(new Error('Geolocation unsupported'));
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve([pos.coords.latitude, pos.coords.longitude]),
+      (err) => reject(err),
+      { timeout: 8000 }
+    );
+  });
+}
+
 // ---------- TRADUCTIONS COMPLÈTES ----------
 const i18n = {
   ht: {
@@ -1514,6 +1540,15 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
       }
     }
 
+    let deliveryCoords = null;
+    if (localStorage.getItem('allowLocation') === 'true') {
+      try {
+        deliveryCoords = await getLocationPromise();
+      } catch (err) {
+        console.warn('Unable to obtain delivery coordinates:', err.message);
+      }
+    }
+
     await db.collection('orders').add({
       userId: currentUser.uid, userEmail: currentUser.email,
       productId: product.id, productName: product.name,
@@ -1523,6 +1558,8 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
       address, phone, payment, status: 'pending',
       orderCode: generateOrderCode(),
       deliveryEstimate: '',
+      coords: deliveryCoords,
+      originCoords: DEFAULT_WAREHOUSE_COORDS,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
     document.getElementById('buyModal')?.classList.add('hidden');
@@ -2185,10 +2222,10 @@ async function renderAdminDashboard(app) {
 
       await db.collection('notifications').add(notifData);
 
-      // Simulation Notification Push (Navigateur)
-      if (Notification.permission === "granted") {
+      // Push browser notification if user already granted permission.
+      if (Notification.permission === 'granted') {
         new Notification(gt(titleTrans), {
-          body: (reason ? gt(reasonTrans) + ": " : "") + gt(messageTrans),
+          body: (reason ? gt(reasonTrans) + ': ' : '') + gt(messageTrans),
           icon: 'logo.jpeg'
         });
       }
@@ -2613,7 +2650,7 @@ async function sendAIPageMessage() {
     const botMsg = document.createElement('div');
     botMsg.className = 'message bot';
     botMsg.style = 'background: var(--gray-100); align-self: flex-start; border-radius: 16px 16px 16px 4px; padding: 1rem; max-width: 80%; line-height: 1.5; animation: fadeIn 0.3s ease;';
-    botMsg.innerHTML = answer;
+    botMsg.innerHTML = escapeHtml(answer).replace(/\n/g, '<br>');
     messages.appendChild(botMsg);
     messages.scrollTop = messages.scrollHeight;
   } catch (err) {
@@ -2948,7 +2985,6 @@ async function renderProfile(app) {
     if (isPremium) return;
     try {
       showLoading(true);
-      // Simulation de paiement pour l'abonnement
       await db.collection('users').doc(currentUser.uid).update({
         isPremium: true,
         premiumSince: firebase.firestore.FieldValue.serverTimestamp()
@@ -3457,21 +3493,44 @@ let AIConfig = {
 // Initialisation sécurisée depuis Firebase Remote Config
 async function initAIConfig() {
   try {
+    if (firebase.remoteConfig) {
+      try {
+        const remoteConfig = firebase.remoteConfig();
+        remoteConfig.settings = { minimumFetchIntervalMillis: 3600000 };
+        remoteConfig.defaultConfig = {
+          ai_api_key: '',
+          ai_model: AIConfig.model,
+          ai_enabled: String(AIConfig.enabled),
+          ai_max_tokens: String(AIConfig.maxTokens),
+          ai_temperature: String(AIConfig.temperature)
+        };
+
+        await remoteConfig.fetchAndActivate();
+        AIConfig.apiKey = remoteConfig.getString('ai_api_key') || AIConfig.apiKey;
+        AIConfig.model = remoteConfig.getString('ai_model') || AIConfig.model;
+        AIConfig.enabled = remoteConfig.getString('ai_enabled') !== 'false';
+        AIConfig.maxTokens = parseInt(remoteConfig.getString('ai_max_tokens'), 10) || AIConfig.maxTokens;
+        AIConfig.temperature = parseFloat(remoteConfig.getString('ai_temperature')) || AIConfig.temperature;
+        console.log('✅ Configuration IA Remote Config chargée');
+      } catch (remoteError) {
+        console.warn('⚠️ Échec de chargement Remote Config IA :', remoteError);
+      }
+    }
+
     const doc = await db.collection('settings').doc('ai_config').get();
     if (doc.exists) {
       const data = doc.data();
-      AIConfig.apiKey = data.apiKey || firebaseConfig.apiKey || AIConfig.apiKey;
+      AIConfig.apiKey = data.apiKey || AIConfig.apiKey;
       AIConfig.model = data.model || AIConfig.model;
       AIConfig.maxTokens = data.maxTokens || AIConfig.maxTokens;
       AIConfig.enabled = data.enabled !== undefined ? data.enabled : AIConfig.enabled;
       AIConfig.temperature = data.temperature || AIConfig.temperature;
       console.log('✅ Configuration IA Firestore chargée');
-    } else {
-      console.warn('⚠️ ai_config non trouvé dans Firestore, utilisation des valeurs par défaut');
-      AIConfig.apiKey = firebaseConfig.apiKey || AIConfig.apiKey;
+    } else if (!AIConfig.apiKey) {
+      console.warn('⚠️ ai_config non trouvé dans Firestore et aucune clé IA définie. LIA restera désactivée.');
     }
   } catch (e) {
-    console.error('❌ Erreur chargement config IA Firestore:', e);
+    console.error('❌ Erreur chargement config IA :', e);
   }
 }
 
@@ -3487,11 +3546,16 @@ async function getAIRecommendations() {
     return p ? p.name : '';
   }).filter(Boolean).join(', ');
 
+  const activeProducts = products.slice(0, AI_PROMPT_PRODUCT_LIMIT);
+  const inventorySummary = activeProducts.length
+    ? activeProducts.map(p => `${p.id}:${p.name} (${p.category || 'Autre'}, ${p.price} G)`).join(' | ')
+    : 'Aucun produit disponible';
+
   const prompt = `
 En tant qu'expert e-commerce pour Total Lakay en Haïti, analyse :
 - Historique d'achats : ${userHistory || 'Aucun'}
 - Favoris : ${userFavorites || 'Aucun'}
-- Produits disponibles : ${products.map(p => `${p.name} (${p.category}, ${p.price} G)`).join(' | ')}
+- Produits disponibles : ${inventorySummary}
 
 Recommande 4 produits que ce client devrait acheter. Réponds UNIQUEMENT en JSON : 
 {"recommendations": ["id_produit_1", "id_produit_2", "id_produit_3", "id_produit_4"]}
@@ -3499,10 +3563,10 @@ Recommande 4 produits que ce client devrait acheter. Réponds UNIQUEMENT en JSON
 
   try {
     const response = await callAI(prompt);
-    // Nettoyage de la réponse au cas où le markdown JSON est inclus
     const cleanedResponse = response.replace(/```json|```/g, '').trim();
-    const { recommendations } = JSON.parse(cleanedResponse);
-    return recommendations.map(id => products.find(p => p.id === id)).filter(Boolean);
+    const jsonMatch = cleanedResponse.match(/\{[\s\S]*\}/);
+    const parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(cleanedResponse);
+    return parsed.recommendations.map(id => products.find(p => p.id === id)).filter(Boolean);
   } catch (e) {
     console.error('Erreur IA recommandations:', e);
     return products.slice(0, 4); // Fallback
@@ -3544,15 +3608,14 @@ SERVICES :
 async function askAIAssistant(question) {
   if (!currentUser) throw new Error(t('loginRequired'));
 
-  // Vérifier les limites pour les utilisateurs gratuits
-  if (!isPremium) {
-    const today = new Date().toISOString().split('T')[0];
-    const userRef = db.collection('users').doc(currentUser.uid);
-    const userDoc = await userRef.get();
-    const data = userDoc.data();
+  const today = new Date().toISOString().split('T')[0];
+  const userRef = db.collection('users').doc(currentUser.uid);
+  const userDoc = await userRef.get();
+  const data = userDoc.exists ? userDoc.data() : {};
 
+  if (!isPremium) {
     let count = data.aiRequestCount || 0;
-    let lastDate = data.lastAiRequestDate || '';
+    const lastDate = data.lastAiRequestDate || '';
 
     if (lastDate !== today) {
       count = 0; // Nouvelle journée, reset
@@ -3562,35 +3625,27 @@ async function askAIAssistant(question) {
       throw new Error(t('aiLimitReached') + ' ' + t('upgradeToPremium'));
     }
 
-    // Alerte douce si on dépasse 10
     if (count >= 10) {
       const remaining = FREE_AI_LIMIT - count;
       setTimeout(() => {
-        showMessage(`⚠️ Attention : Il ne vous reste que ${remaining} demandes gratuites pour aujourd'hui.`, "info");
+        showMessage(`⚠️ Attention : Il ne vous reste que ${remaining} demandes gratuites pour aujourd'hui.`, 'info');
       }, 1000);
     }
-
-    // Incrémenter le compteur
-    await userRef.update({
-      aiRequestCount: count + 1,
-      lastAiRequestDate: today
-    });
   }
 
-  // Sélection du guide selon le rôle
   const roleGuide = isAdmin ? ADMIN_GUIDE : CLIENT_GUIDE;
   const roleName = isAdmin ? 'Administrateur' : (isPremium ? 'Client Premium ✨' : 'Client');
-  
-  // Sélection du modèle selon le statut
-  // Premium : Modèle Pro ou Flash Latest | Gratuit : Modèle Flash-8B (plus léger/économique)
   const preferredModel = isPremium ? (AIConfig.model || 'gemini-flash-latest') : 'gemini-1.5-flash-8b';
 
-  // Date et heure en temps réel
   const now = new Date();
   const dateStr = now.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
-  // Construction de la mémoire (limité aux 10 derniers messages)
+  const inventoryProducts = products.slice(0, AI_PROMPT_PRODUCT_LIMIT);
+  const inventoryLines = inventoryProducts.length
+    ? inventoryProducts.map(p => `- ${p.name} : ${p.stock > 0 ? `En stock (${p.stock} unités)` : 'RUPTURE DE STOCK'}`).join('\n')
+    : 'Aucun produit disponible pour le moment.';
+
   const historyContext = aiHistory.map(h => `${h.role === 'user' ? 'Utilisateur' : 'Assistant'}: ${h.text}`).join('\n');
 
   const context = `
@@ -3599,12 +3654,12 @@ STATUT UTILISATEUR : ${roleName}.
 ${isPremium ? "C'est un utilisateur PREMIUM. Donne des réponses TRÈS DÉTAILLÉES, exhaustives et de haute qualité." : "Utilisateur Gratuit. Sois concis mais utile."}
 
 📅 DATE : ${dateStr}, ${timeStr}.
-🚀 GÉNÈSE : L'entreprise Total Lakay a été créée en 2026. Le site a connu plusieurs phases de déploiement et de mises à jour majeures entre Avril et Mai 2026.
+🚀 GÉNÈSE : L'entreprise Total Lakay a été créée en 2026.
 
 📧 SUPPORT : totallakayst@gmail.com.
 
 INVENTAIRE RÉEL DU SITE (EN DIRECT) :
-${products.map(p => `- ${p.name} : ${p.stock > 0 ? `En stock (${p.stock} unités)` : 'RUPTURE DE STOCK'}`).join('\n')}
+${inventoryLines}
 
 CONNAISSANCES GÉNÉRALES :
 ${PLATFORM_KNOWLEDGE}
@@ -3616,24 +3671,29 @@ MÉMOIRE DE LA CONVERSATION :
 ${historyContext}
 
 DIRECTIVES DE RAISONNEMENT :
-1. PSYCHOLOGIE : Identifie l'intention. 
+1. PSYCHOLOGIE : Identifie l'intention.
 2. NUANCE : Transitions naturelles.
 3. EMPATHIE : Réagis aux émotions.
 4. RAISONNEMENT : Explique le "pourquoi".
 5. PROACTIVITÉ : Propose des solutions.
-6. LANGUE : Kreyòl vibrant ou Français élégant 🇭🇹.
+6. LANGUE : Kreyòl vibrant ou Français élégant.
 `;
 
   const fullPrompt = `${context}\n\nUtilisateur (${roleName}): ${question}\nLakayGPT:`;
-  const answer = await callAI(fullPrompt, preferredModel); // Passer le modèle préféré
-  
-  // Ajouter à l'historique
+  const answer = await callAI(fullPrompt, preferredModel);
+
+  if (!isPremium) {
+    const currentCount = data.aiRequestCount || 0;
+    await userRef.set({
+      aiRequestCount: currentCount + 1,
+      lastAiRequestDate: today
+    }, { merge: true });
+  }
+
   aiHistory.push({ role: 'user', text: question });
   aiHistory.push({ role: 'bot', text: answer });
-  
-  // Limiter la mémoire
   if (aiHistory.length > 10) aiHistory = aiHistory.slice(-10);
-  
+
   return answer;
 }
 
@@ -3920,7 +3980,7 @@ async function sendChatbotMessage() {
     const botDiv = document.createElement('div');
     botDiv.className = 'message bot';
     botDiv.style.animation = 'fadeIn 0.3s ease';
-    botDiv.textContent = answer;
+    botDiv.innerHTML = escapeHtml(answer).replace(/\n/g, '<br>');
     messages.appendChild(botDiv);
   } catch (e) {
     if (typingDiv) typingDiv.remove();
@@ -4103,9 +4163,20 @@ function renderAdminCharts() {
     last7Days.push(d.toLocaleDateString('fr-FR', { weekday: 'short' }));
   }
 
-  // Calculer les ventes simulées par jour à partir des commandes réelles
+  // Calculer les ventes réelles par jour à partir des commandes livrées
   const salesData = last7Days.map((day, idx) => {
-    const value = orders.filter(o => o.status === 'delivered').length * (Math.random() * 50 + 10); 
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() - (6 - idx));
+    const dateKey = targetDate.toISOString().slice(0, 10);
+
+    const value = orders
+      .filter(o => o.status === 'delivered')
+      .filter(o => {
+        const deliveredDate = o.createdAt?.toDate?.();
+        return deliveredDate && deliveredDate.toISOString().slice(0, 10) === dateKey;
+      })
+      .reduce((sum, o) => sum + ((o.totalPrice != null ? o.totalPrice : o.price) || 0), 0);
+
     return { day, value };
   });
 
@@ -4431,7 +4502,7 @@ function initOrderMap(containerId, initialCoords = null) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  const defaultPos = initialCoords || [18.5392, -72.3350]; // Port-au-Prince
+  const defaultPos = initialCoords || DEFAULT_PORT_AU_PRINCE;
   
   // Clean existing map instance if any
   const existingMap = container._leaflet_id;
@@ -4641,7 +4712,7 @@ async function renderOrderTracking(app) {
       mapEl._leaflet_id = null;
     }
     
-    const destCoords = order.coords || [18.5392, -72.3350];
+    const destCoords = order.coords || DEFAULT_PORT_AU_PRINCE;
     const map = L.map('liveTrackingMap').setView(destCoords, 14);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
@@ -4652,14 +4723,12 @@ async function renderOrderTracking(app) {
       iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
     })}).addTo(map).bindPopup("Destination");
 
-    // Live Delivery Simulation if in transit
     if (order.status === 'in_transit') {
-      const startCoords = [18.55, -72.30]; // Port-au-Prince Center (simulated warehouse)
+      const startCoords = order.originCoords || DEFAULT_WAREHOUSE_COORDS;
       let currentLoc = [...startCoords];
       
       const driverMarker = L.marker(currentLoc).addTo(map).bindPopup("Livreur en route").openPopup();
       
-      // Calculate steps
       const steps = 100;
       const stepLat = (destCoords[0] - startCoords[0]) / steps;
       const stepLng = (destCoords[1] - startCoords[1]) / steps;
