@@ -2694,13 +2694,13 @@ async function renderProfile(app) {
       <div style="display:grid; grid-template-columns: 300px 1fr; gap:40px;">
         <!-- SIDEBAR -->
         <div style="background:var(--white); padding:30px; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); height:fit-content; border:1px solid var(--gray-200);">
-          <div style="text-align:center; margin-bottom:30px;">
+          <div class="avatar-container" style="text-align:center; margin-bottom:30px;">
             <div class="avatar" id="profileAvatar" style="width:120px; height:120px; background:var(--gold-gradient); color:var(--blue-deep); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:2.5rem; font-weight:900; position:relative; cursor:pointer; border:4px solid var(--white); box-shadow:var(--shadow-md);">
               ${currentUser.photoURL ? `<img src="${currentUser.photoURL}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">` : initials}
               <div style="position:absolute; bottom:5px; right:5px; background:var(--blue-deep); color:white; width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1rem; border:2px solid var(--white);">📷</div>
             </div>
             <input type="file" id="profPhotoInput" accept="image/*" style="display:none;">
-            <h3 style="color:var(--blue-deep); margin-bottom:5px;">${currentUser.displayName || t('clientLabel')}</h3>
+            <h3 class="profile-avatar-name" style="color:var(--blue-deep); margin-bottom:5px;">${currentUser.displayName || t('clientLabel')}</h3>
             <p style="font-size:0.85rem; color:var(--text-soft); word-break:break-all;">${currentUser.email}</p>
           </div>
           <div style="display:flex; flex-direction:column; gap:10px;">
@@ -2902,13 +2902,13 @@ async function renderProfile(app) {
       await currentUser.updateProfile({ displayName: name });
       showMessage(t('profileUpdated'), 'success');
       // Update UI without full reload
-      const avatarNameEl = document.querySelector('.avatar-container h3');
+      const avatarNameEl = document.querySelector('.profile-avatar-name');
       if (avatarNameEl) {
         avatarNameEl.textContent = name || t('clientLabel');
       }
 
       const avatarEl = document.querySelector('.avatar');
-      if (!currentUser.photoURL) {
+      if (avatarEl && !currentUser.photoURL) {
         avatarEl.innerHTML = `<span id="avatarInitials">${(name || currentUser.email || 'U').substring(0, 2).toUpperCase()}</span><div style="position:absolute; bottom:0; right:0; background:var(--gold); color:white; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; border:2px solid var(--white);">📷</div>`;
       }
     } catch (e) { showMessage(t('errorOccurred') + e.message, 'error'); }
