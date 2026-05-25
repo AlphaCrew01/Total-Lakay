@@ -512,7 +512,13 @@
                       window.location.reload();
                     });
                     document.body.appendChild(updateToast);
-                    setTimeout(() => updateToast.remove(), 10000);
+                    const autoReloadTimeout = setTimeout(() => {
+                      if (document.body.contains(updateToast)) {
+                        updateToast.remove();
+                        window.location.reload();
+                      }
+                    }, 15000);
+                    updateToast.addEventListener('remove', () => clearTimeout(autoReloadTimeout));
                   }
                 });
               }
