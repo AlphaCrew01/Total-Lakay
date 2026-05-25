@@ -295,6 +295,33 @@ button {
 }
 
 /* Auth Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 700;
+  padding: 10px 22px;
+  text-align: center;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: var(--white);
+  box-shadow: 0 12px 24px rgba(239, 68, 68, 0.18);
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
 .btn-gold {
   background: var(--gold-gradient);
   color: var(--blue-deep);
