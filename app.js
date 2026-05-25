@@ -1549,7 +1549,7 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
       }
     }
 
-    await db.collection('orders').add({
+    const orderRef = await db.collection('orders').add({
       userId: currentUser.uid, userEmail: currentUser.email,
       productId: product.id, productName: product.name,
       price: product.price, quantity, color, size,
@@ -1562,6 +1562,43 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
       originCoords: DEFAULT_WAREHOUSE_COORDS,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
+
+    const orderCode = (await orderRef.get()).data()?.orderCode || '';
+    const confirmationTitle = `✅ Commande ${orderCode || ''} reçue`;
+    const confirmationMessage = `Bonjour ${currentUser.displayName || currentUser.email}, votre commande ${orderCode || ''} pour ${product.name} a bien été reçue. Nous vous envoyons une confirmation par email et SMS.`;
+
+    await db.collection('notifications').add({
+      title: confirmationTitle,
+      reason: 'order_confirmation',
+      message: confirmationMessage,
+      type: 'info',
+      targetUserId: currentUser.uid,
+      targetRole: null,
+      read: false,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      metadata: {
+        orderId: orderRef.id,
+        productId: product.id,
+        orderCode
+      }
+    });
+
+    await db.collection('communications').add({
+      userId: currentUser.uid,
+      userEmail: currentUser.email,
+      phone,
+      orderId: orderRef.id,
+      orderCode,
+      type: 'order_confirmation',
+      channels: ['email', 'sms'],
+      status: 'pending',
+      payload: {
+        subject: `Confirmation de votre commande ${orderCode || ''}`,
+        body: confirmationMessage
+      },
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
     document.getElementById('buyModal')?.classList.add('hidden');
     document.getElementById('orderAddress').value = '';
     showMessage(t('orderSuccess'), 'success');
@@ -3266,11 +3303,6 @@ function attachBuyButtons() {
 }
 
 // Event Listeners Panier
-document.getElementById('cartBtn')?.addEventListener('click', () => {
-  document.getElementById('cartModal').classList.remove('hidden');
-  renderCart();
-});
-
 
 
 document.getElementById('closeCartModal')?.addEventListener('click', () => {
