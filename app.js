@@ -2902,7 +2902,10 @@ async function renderProfile(app) {
       await currentUser.updateProfile({ displayName: name });
       showMessage(t('profileUpdated'), 'success');
       // Update UI without full reload
-      document.querySelector('.avatar-container h3').textContent = name || t('clientLabel');
+      const avatarNameEl = document.querySelector('.avatar-container h3');
+      if (avatarNameEl) {
+        avatarNameEl.textContent = name || t('clientLabel');
+      }
 
       const avatarEl = document.querySelector('.avatar');
       if (!currentUser.photoURL) {
@@ -3165,15 +3168,15 @@ function updateNotifUI() {
   if (Notification.permission === 'granted') {
     label.textContent = t('notifGranted');
     label.style.color = "var(--success)";
-    btn.style.display = 'none';
+    if (btn) btn.style.display = 'none';
   } else if (Notification.permission === 'denied') {
     label.textContent = t('notifBlocked');
     label.style.color = "var(--danger)";
-    btn.style.display = 'none';
+    if (btn) btn.style.display = 'none';
   } else {
     label.textContent = "Non configuré";
     label.style.color = "#f39c12";
-    btn.style.display = 'inline-block';
+    if (btn) btn.style.display = 'inline-block';
   }
 }
 
