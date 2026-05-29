@@ -943,7 +943,7 @@ function renderCart() {
     total += item.price * quantity;
     return `
       <div class="cart-item" style="display:flex; align-items:center; gap:1rem; padding:0.8rem; border-bottom:1px solid #eee;">
-        <img src="${item.image || 'logo.jpeg'}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; border-radius:8px;" loading="lazy" onerror="this.src='logo.jpeg'">
+        <img src="${item.image || 'placeholder-image.svg'}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; border-radius:8px;" loading="lazy" onerror="this.src='placeholder-image.svg'">
         <div style="flex:1;">
           <div style="font-weight:700; color:var(--blue-deep);">${item.name}</div>
           <div style="color:var(--gold); font-weight:600;">${formatPrice(item.price * quantity)} (${quantity}x ${formatPrice(item.price)})</div>
@@ -1905,7 +1905,7 @@ function productCardHTML(product) {
         <button class="wishlist-btn ${favorites.includes(product.id) ? 'active' : ''}" onclick="toggleFavorite('${product.id}')">
           <i class="fas fa-heart"></i> ❤️
         </button>
-        <img src="${product.image || 'logo.jpeg'}" alt="${gt(product.name)}" class="product-img" loading="lazy" onerror="this.src='logo.jpeg'">
+        <img src="${product.image || 'placeholder-image.svg'}" alt="${gt(product.name)}" class="product-img" loading="lazy" onerror="this.src='placeholder-image.svg'">
       </div>
       <div class="product-info">
         <div class="product-category">${t('category' + category.charAt(0).toUpperCase() + category.slice(1)) || category}</div>
@@ -2029,6 +2029,7 @@ async function renderAdminDashboard(app) {
       <div class="card-premium" style="background:var(--white); padding:30px; border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); border:1px solid var(--gray-200);">
         <h3 style="margin-bottom:20px;">⚡ ${t('quickActions')}</h3>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+          <button class="btn-gold" id="adminManageProductsBtn">📦 Gérer Produits</button>
           <button class="btn-gold" id="adminAddProductBtn">➕ ${t('addProduct')}</button>
           <button class="btn-outline" id="adminManageOrdersBtn">📦 ${t('manageOrders')}</button>
           <button class="btn-outline" id="adminManageClientsBtn">👥 ${t('manageClients')}</button>
@@ -2089,7 +2090,7 @@ async function renderAdminDashboard(app) {
           ${products.map(p => `
             <div style="display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-bottom:1px solid var(--gray-100);">
               <div style="display:flex; align-items:center; gap:12px;">
-                <img src="${p.image || 'logo.jpeg'}" style="width:45px; height:45px; object-fit:cover; border-radius:8px; border:1px solid var(--gray-200);">
+                <img src="${p.image || 'placeholder-image.svg'}" style="width:45px; height:45px; object-fit:cover; border-radius:8px; border:1px solid var(--gray-200);" onerror="this.src='placeholder-image.svg'">
                 <div>
                   <div style="font-weight:700; color:var(--blue-deep);">${gt(p.name)}</div>
                   <div style="font-size:0.85rem; color:var(--gold); font-weight:600;">${formatPrice(p.price)}</div>
@@ -2196,6 +2197,9 @@ async function renderAdminDashboard(app) {
   renderAdminCharts();
 
   // Events Admin
+  document.getElementById('adminManageProductsBtn')?.addEventListener('click', () => {
+    window.location.href = 'products-management.html';
+  });
   document.getElementById('adminAddProductBtn')?.addEventListener('click', () => {
     document.getElementById('adminAddProductForm').classList.toggle('hidden');
     document.getElementById('adminClientsList').classList.add('hidden');
