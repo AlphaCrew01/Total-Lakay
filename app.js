@@ -37,7 +37,7 @@ let products = [];
 let orders = [];
 let allUsers = [];
 let notifications = [];
-let cart = JSON.parse(localStorage.getItem('totalLakayCart') || '[]');
+let cart = JSON.parse(localStorage.getItem('totalLakayCart') || '[]').map(item => ({ ...item, quantity: item.quantity || 1 }));
 let favorites = JSON.parse(localStorage.getItem('totalLakayFavorites') || '[]');
 let selectedProductId = null;
 let moncashConfig = { clientId: '', clientSecret: '', mode: 'sandbox' };
@@ -103,7 +103,7 @@ const i18n = {
     orderSuccess: "Kòmand anrejistre ak siksè !",
     loginRequired: "Ou dwe konekte pou achte", fillAllFields: "Ranpli tout chan yo",
     myOrders: "Kòmand mwen yo", status: "Estati", delivery: "Délai livrezon",
-    noOrders: "Pa gen kòmand ankò", pending: "An atant", confirmed: "Konfime",
+    noOrders: "Pa gen kòmand ankò", pending: "An atant", awaiting_payment: "An atant peman", pending_payment: "Peman ann atant", cash_due: "Lajan kach", paid: "Peye", failed: "Echwe", confirmed: "Konfime",
     cancelled: "Anile", delivered: "Livre", waiting: "An atant...",
     addProduct: "Ajoute yon pwodui", productName: "Non pwodui",
     productNamePlaceholder: "Ex: Diri blan", productPrice: "Pri",
@@ -272,7 +272,7 @@ const i18n = {
     userMoncashConsent: "Mwen dakò pou m resevwa lajan sou kont MonCash mwen",
     logistics: "Lojistik", logisticsDashboard: "Tablodbò Lojistik",
     liveFleet: "Flòt an Tan Reyèl", activeOrders: "Kòmand Aktiv",
-    trackOrder: "Suiv Kòmand", in_transit: "Nan wout", completed: "Konplete",
+    trackOrder: "Suiv Kòmand", orderTracking: "Suiv Kòmand", in_transit: "Nan wout", completed: "Konplete",
     validated: "Valide", processing: "Nan preparasyon", returnLogistics: "Retounen Lojistik",
     enableAi: "Aktive IA", test: "Teste", amount: "Montan", actions: "Aksyon",
     premiumTitle: "Total Lakay Premium", premiumDesc: "Debloque tout pouvwa LakayGPT",
@@ -306,7 +306,7 @@ const i18n = {
     orderSuccess: "Commande enregistrée avec succès !",
     loginRequired: "Vous devez être connecté pour acheter", fillAllFields: "Remplissez tous les champs",
     myOrders: "Mes commandes", status: "Statut", delivery: "Délai de livraison",
-    noOrders: "Aucune commande", pending: "En attente", confirmed: "Confirmé",
+    noOrders: "Aucune commande", pending: "En attente", awaiting_payment: "En attente de paiement", pending_payment: "Paiement en attente", cash_due: "Cash dû", paid: "Payé", failed: "Échoué", confirmed: "Confirmé",
     cancelled: "Annulé", delivered: "Livré", waiting: "En attente...",
     addProduct: "Ajouter un produit", productName: "Nom du produit",
     productNamePlaceholder: "Ex: Riz blanc", productPrice: "Prix",
@@ -476,7 +476,7 @@ const i18n = {
     userMoncashConsent: "J'accepte de recevoir mes remboursements sur mon compte MonCash",
     logistics: "Logistique", logisticsDashboard: "Tableau de Bord Logistique",
     liveFleet: "Flotte en Temps Réel", activeOrders: "Commandes Actives",
-    trackOrder: "Suivre Commande", in_transit: "En transit", completed: "Complété",
+    trackOrder: "Suivre Commande", orderTracking: "Suivi de commande", in_transit: "En transit", completed: "Complété",
     validated: "Validé", processing: "En préparation", returnLogistics: "Retour Logistique",
     enableAi: "Activer l'IA", test: "Tester", amount: "Montant", actions: "Actions",
     premiumTitle: "Total Lakay Premium", premiumDesc: "Débloquez toute la puissance de LakayGPT",
@@ -510,7 +510,7 @@ const i18n = {
     orderSuccess: "Order successfully placed!",
     loginRequired: "You must login to purchase", fillAllFields: "Please fill all fields",
     myOrders: "My Orders", status: "Status", delivery: "Delivery estimate",
-    noOrders: "No orders yet", pending: "Pending", confirmed: "Confirmed",
+    noOrders: "No orders yet", pending: "Pending", awaiting_payment: "Awaiting payment", pending_payment: "Awaiting payment", cash_due: "Cash due", paid: "Paid", failed: "Failed", confirmed: "Confirmed",
     cancelled: "Cancelled", delivered: "Delivered", waiting: "Waiting...",
     addProduct: "Add a product", productName: "Product name",
     productNamePlaceholder: "Ex: White rice", productPrice: "Price",
@@ -675,7 +675,7 @@ const i18n = {
     termsModDesc: "Total Lakay may modify these terms and we will notify you.",
     logistics: "Logistics", logisticsDashboard: "Logistics Dashboard",
     liveFleet: "Live Fleet", activeOrders: "Active Orders",
-    trackOrder: "Track Order", in_transit: "In Transit", completed: "Completed",
+    trackOrder: "Track Order", orderTracking: "Order Tracking", in_transit: "In Transit", completed: "Completed",
     validated: "Validated", processing: "Processing", returnLogistics: "Return to Logistics",
     enableAi: "Enable AI", test: "Test", amount: "Amount", actions: "Actions",
     orderTracking: "Order Tracking", orderCode: "Order Code",
@@ -706,7 +706,7 @@ const i18n = {
     orderSuccess: "¡Pedido registrado con éxito!",
     loginRequired: "Debes iniciar sesión para comprar", fillAllFields: "Completa todos los campos",
     myOrders: "Mis pedidos", status: "Estado", delivery: "Tiempo de entrega",
-    noOrders: "No hay pedidos", pending: "Pendiente", confirmed: "Confirmado",
+    noOrders: "No hay pedidos", pending: "Pendiente", awaiting_payment: "En espera de pago", pending_payment: "Pago pendiente", cash_due: "Efectivo adeudado", paid: "Pagado", failed: "Fallido", confirmed: "Confirmado",
     cancelled: "Cancelado", delivered: "Entregado", waiting: "Esperando...",
     addProduct: "Añadir producto", productName: "Nombre del producto",
     productNamePlaceholder: "Ej: Arroz blanco", productPrice: "Precio",
@@ -869,31 +869,61 @@ const i18n = {
     accept: "Aceptar", decline: "Rechazar",
     logistics: "Logística", logisticsDashboard: "Panel de Logística",
     liveFleet: "Flota en Vivo", activeOrders: "Pedidos Activos",
-    trackOrder: "Rastrear Pedido", in_transit: "En tránsito", completed: "Completado",
+    trackOrder: "Rastrear Pedido", orderTracking: "Seguimiento de pedido", in_transit: "En tránsito", completed: "Completado",
     validated: "Validado", processing: "En proceso", returnLogistics: "Volver a Logística",
     enableAi: "Activar IA", test: "Probar", amount: "Monto", actions: "Acciones"
   }
 };
 
 // ---------- CART FUNCTIONS ----------
+function saveCart() {
+  localStorage.setItem('totalLakayCart', JSON.stringify(cart));
+  updateCartBadge();
+  renderCart();
+}
+
 function addToCart(productId) {
   const product = products.find(p => p.id === productId);
   if (!product) return;
-  cart.push(product);
-  localStorage.setItem('totalLakayCart', JSON.stringify(cart));
-  updateCartBadge();
+  const existingItem = cart.find(item => item.id === product.id);
+  if (existingItem) {
+    existingItem.quantity = Math.min(existingItem.quantity + 1, product.stock || existingItem.quantity + 1);
+  } else {
+    cart.push({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image || 'logo.jpeg',
+      quantity: 1
+    });
+  }
+  saveCart();
   showMessage(t('addToCart') + ': ' + product.name);
 }
 
 function updateCartBadge() {
   const badge = document.getElementById('cartBadge');
   if (!badge) return;
-  if (cart.length > 0) {
-    badge.textContent = cart.length;
+  const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  if (totalItems > 0) {
+    badge.textContent = totalItems;
     badge.classList.remove('hidden');
   } else {
     badge.classList.add('hidden');
   }
+}
+
+function updateCartCount() {
+  updateCartBadge();
+  renderCart();
+}
+
+async function uploadProductImage(file, fileName) {
+  if (!file) return null;
+  const safeName = (fileName || file.name || 'product').replace(/[^a-zA-Z0-9-_\.]/g, '_');
+  const storageRef = storage.ref().child(`product_images/${Date.now()}_${safeName}`);
+  const snapshot = await storageRef.put(file);
+  return await snapshot.ref.getDownloadURL();
 }
 
 function renderCart() {
@@ -909,13 +939,14 @@ function renderCart() {
 
   let total = 0;
   list.innerHTML = cart.map((item, index) => {
-    total += item.price;
+    const quantity = item.quantity || 1;
+    total += item.price * quantity;
     return `
       <div class="cart-item" style="display:flex; align-items:center; gap:1rem; padding:0.8rem; border-bottom:1px solid #eee;">
         <img src="${item.image || 'logo.jpeg'}" alt="${item.name}" style="width:50px; height:50px; object-fit:cover; border-radius:8px;" loading="lazy" onerror="this.src='logo.jpeg'">
         <div style="flex:1;">
           <div style="font-weight:700; color:var(--blue-deep);">${item.name}</div>
-          <div style="color:var(--gold); font-weight:600;">${formatPrice(item.price)}</div>
+          <div style="color:var(--gold); font-weight:600;">${formatPrice(item.price * quantity)} (${quantity}x ${formatPrice(item.price)})</div>
         </div>
         <button class="btn btn-danger btn-sm remove-cart-item" data-index="${index}">🗑️</button>
       </div>
@@ -933,9 +964,7 @@ function renderCart() {
 
 function removeFromCart(index) {
   cart.splice(index, 1);
-  localStorage.setItem('totalLakayCart', JSON.stringify(cart));
-  updateCartBadge();
-  renderCart();
+  saveCart();
 }
 
 function toggleFavorite(productId) {
@@ -1007,9 +1036,37 @@ function renderNotificationsModal() {
   });
 }
 
+function getOrderAmount(order) {
+  if (!order) return 0;
+  if (order.totalPrice != null) return order.totalPrice;
+  const quantity = order.quantity || 1;
+  return (order.price || 0) * quantity;
+}
+
+function getStatusLabel(status) {
+  if (!status) return '';
+  return t(status) || String(status).replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+function getPaymentStatusLabel(status) {
+  if (!status) return '';
+  return t(status) || String(status).replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+function updateBuyModalTotals() {
+  const product = products.find(p => p.id === selectedProductId);
+  if (!product) return;
+  const quantityInput = document.getElementById('orderQuantity');
+  const qty = Math.max(1, Math.min(product.stock || 999, parseInt(quantityInput?.value, 10) || 1));
+  if (quantityInput) quantityInput.value = qty;
+  const total = (product.price || 0) * qty;
+  const totalEl = document.getElementById('modalProductTotal');
+  if (totalEl) totalEl.textContent = formatPrice(total);
+}
+
 function formatPrice(priceBase) {
   const rate = exchangeRates[currentCurrency] || 1;
-  const converted = priceBase * rate;
+  const converted = (priceBase || 0) * rate;
   if (currentCurrency === 'USD') return `$${converted.toFixed(2)}`;
   if (currentCurrency === 'HTG') return `${Math.round(converted).toLocaleString()} G`;
   if (currentCurrency === 'EUR') return `${converted.toFixed(2)} €`;
@@ -1562,6 +1619,7 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
       productName: product.name,
       price: product.price,
       quantity,
+      items: [{ id: product.id, name: product.name, price: product.price, quantity }],
       color,
       size,
       totalPrice: product.price * quantity,
@@ -1581,21 +1639,24 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
 
     const orderRef = await db.collection('orders').add(orderData);
 
+    let paymentReference = null;
     if (paymentMethod === 'MonCash') {
-      await createMoncashPaymentRequest({
+      const requestResult = await createMoncashPaymentRequest({
         orderId: orderRef.id,
         userId: currentUser.uid,
         userEmail: currentUser.email,
         phone: moncashPhone,
         amount: orderData.totalPrice,
         currency: currentCurrency,
-        mode: moncashConfig.mode
+        mode: moncashConfig.mode,
+        description: `Paiement MonCash pour la commande ${orderData.orderCode}`
       });
+      paymentReference = requestResult.reference || requestResult.paymentReference;
     }
 
     const orderCode = orderData.orderCode;
     const confirmationTitle = `✅ Commande ${orderCode || ''} reçue`;
-    const confirmationMessage = `Bonjour ${currentUser.displayName || currentUser.email}, votre commande ${orderCode || ''} pour ${product.name} a bien été reçue. Nous vous envoyons une confirmation par email et SMS.`;
+    const confirmationMessage = `Bonjour ${currentUser.displayName || currentUser.email}, votre commande ${orderCode || ''} pour ${product.name} a bien été reçue. Nous vous envoyons une confirmation par email et SMS.${paymentReference ? ' Référence paiement : ' + paymentReference : ''}`;
 
     await db.collection('notifications').add({
       title: confirmationTitle,
@@ -1876,7 +1937,7 @@ async function renderAdminDashboard(app) {
   const totalClients = allUsers.filter(u => u.role === 'client').length;
   const pendingCount = orders.filter(o => o.status === 'pending').length;
   const urgentCount = orders.filter(o => o.status === 'processing' || o.status === 'in_transit').length;
-  const totalRevenue = orders.filter(o => ['validated', 'processing', 'in_transit', 'delivered', 'completed'].includes(o.status)).reduce((sum, o) => sum + (o.price || 0), 0);
+  const totalRevenue = orders.filter(o => ['validated', 'processing', 'in_transit', 'delivered', 'completed'].includes(o.status)).reduce((sum, o) => sum + getOrderAmount(o), 0);
 
   app.innerHTML = `
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
@@ -1997,7 +2058,12 @@ async function renderAdminDashboard(app) {
           <div><label style="display:block; margin-bottom:8px;">${t('stock')}</label><input id="adminProdStock" class="search-input" style="width:100%;" type="number" placeholder="0"></div>
           <div><label style="display:block; margin-bottom:8px;">${t('productColors')} (ex: rouge, bleu)</label><input id="adminProdColors" class="search-input" style="width:100%;" placeholder="rouge, bleu"></div>
           <div><label style="display:block; margin-bottom:8px;">${t('productSizes')} (ex: S, M, L)</label><input id="adminProdSizes" class="search-input" style="width:100%;" placeholder="S, M, L"></div>
-          <div><label style="display:block; margin-bottom:8px;">${t('productImage')} (URL)</label><input id="adminProdImage" class="search-input" style="width:100%;" placeholder="${t('productImagePlaceholder')}"></div>
+          <div>
+            <label style="display:block; margin-bottom:8px;">${t('productImage')}</label>
+            <input type="file" id="adminProdFile" accept="image/*" style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--gray-200); background:var(--white);">
+            <input id="adminProdImage" class="search-input" style="width:100%; margin-top:10px;" placeholder="${t('productImagePlaceholder')}">
+            <small style="display:block; color:var(--text-soft); margin-top:6px;">Chargez une image ou collez l'URL du visuel du produit.</small>
+          </div>
         </div>
         <div style="margin-top:20px;">
           <label style="display:block; margin-bottom:8px;">${t('productDesc')}</label>
@@ -2041,8 +2107,12 @@ async function renderAdminDashboard(app) {
           ${orders.map(o => `
             <div style="padding:20px; border-radius:var(--radius); background:var(--white-soft); border:1px solid var(--gray-200); margin-bottom:15px;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
-                <strong style="color:var(--blue-deep); font-size:1.05rem;">${o.productName}</strong>
+                <div>
+                  <strong style="color:var(--blue-deep); font-size:1.05rem;">${o.productName}</strong>
+                  <div style="font-size:0.85rem; color:var(--text-soft); margin-top:5px;">${t('payment')}: <strong>${o.paymentStatus === 'paid' ? '✅ payé' : o.paymentStatus === 'failed' ? '❌ échoué' : '⏳ en attente'}</strong></div>
+                </div>
                 <select class="status-select filter-select" data-order-id="${o.id}" style="padding:5px 15px; font-size:0.8rem; border-radius:20px;">
+                  <option value="awaiting_payment" ${o.status === 'awaiting_payment' ? 'selected' : ''}>⏳ En attente paiement</option>
                   <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>⏳ ${t('pending')}</option>
                   <option value="validated" ${o.status === 'validated' ? 'selected' : ''}>✔️ ${t('validated')}</option>
                   <option value="processing" ${o.status === 'processing' ? 'selected' : ''}>⚙️ ${t('processing')}</option>
@@ -2052,17 +2122,18 @@ async function renderAdminDashboard(app) {
                   <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>❌ ${t('cancelled')}</option>
                 </select>
                 ${o.coords ? `<button class="btn btn-sm btn-outline view-map-btn" data-coords='${JSON.stringify(o.coords)}' data-order-id="${o.id}" style="margin-top:5px;">🗺️ Map</button>` : ''}
+                ${o.paymentMethod === 'MonCash' && o.paymentStatus !== 'paid' && o.paymentReference ? `<button class="btn btn-sm btn-gold verify-payment-btn" data-order-id="${o.id}" data-payment-reference="${o.paymentReference}" style="margin-top:5px;">🔍 Vérifier paiement</button>` : ''}
               </div>
               <div id="map-order-${o.id}" class="map-container hidden" style="height:200px; margin-top:10px;"></div>
               <div style="font-size:0.85rem; color:var(--text-soft); line-height:1.6; margin-bottom:15px;">
-                <div>💰 <strong>${formatPrice(o.price)}</strong> | 👤 ${o.userEmail}</div>
+                <div>💰 <strong>${formatPrice(getOrderAmount(o))}</strong> | 👤 ${o.userEmail}</div>
                 <div>📍 ${o.address} | 📞 ${o.phone || '---'}</div>
                 ${o.items ? `<div style="margin-top:5px; padding:8px; background:white; border-radius:8px; border:1px dashed #ddd;"><strong>Articles:</strong> ${o.items.map(it => it.name).join(', ')}</div>` : ''}
               </div>
               <div style="display:flex; gap:10px; flex-wrap:wrap;">
                 <input id="delay-${o.id}" class="search-input" style="flex:1; padding:8px 15px; font-size:0.8rem; border-radius:20px;" placeholder="${t('delayPlaceholder')}" value="${o.deliveryEstimate || ''}">
                 <button class="btn-gold update-delay" data-id="${o.id}" style="padding:8px 15px; border-radius:20px;">⏱️</button>
-                <button class="btn-outline refund-order-btn" data-id="${o.id}" data-user-id="${o.userId}" data-amount="${o.price}" style="color:var(--danger); border-color:var(--danger); padding:8px 15px; border-radius:20px;">💸 ${t('refund')}</button>
+                <button class="btn-outline refund-order-btn" data-id="${o.id}" data-user-id="${o.userId}" data-amount="${getOrderAmount(o)}" style="color:var(--danger); border-color:var(--danger); padding:8px 15px; border-radius:20px;">💸 ${t('refund')}</button>
               </div>
             </div>`).join('')}
         </div>
@@ -2152,7 +2223,8 @@ async function renderAdminDashboard(app) {
     const stock = parseInt(document.getElementById('adminProdStock')?.value) || 0;
     const colorsRaw = document.getElementById('adminProdColors')?.value?.trim() || '';
     const sizesRaw = document.getElementById('adminProdSizes')?.value?.trim() || '';
-    const image = document.getElementById('adminProdImage')?.value?.trim() || '';
+    const imageUrl = document.getElementById('adminProdImage')?.value?.trim() || '';
+    const imageFile = document.getElementById('adminProdFile')?.files?.[0] || null;
     const description = document.getElementById('adminProdDesc')?.value?.trim() || '';
 
     if (!name || !price) { showMessage(t('fillAllFields'), 'error'); return; }
@@ -2164,10 +2236,17 @@ async function renderAdminDashboard(app) {
         getTranslations(description)
       ]);
 
+      const finalImage = imageFile ? await uploadProductImage(imageFile, `${name.replace(/\s+/g, '_')}.jpg`) : imageUrl;
+
       await db.collection('products').add({
         name: nameTrans,
-        price, oldPrice, category, stock, colors: colorsRaw ? colorsRaw.split(',').map(c => c.trim()) : [], sizes: sizesRaw ? sizesRaw.split(',').map(s => s.trim()) : [],
-        image: image || '',
+        price,
+        oldPrice,
+        category,
+        stock,
+        colors: colorsRaw ? colorsRaw.split(',').map(c => c.trim()) : [],
+        sizes: sizesRaw ? sizesRaw.split(',').map(s => s.trim()) : [],
+        image: finalImage || '',
         description: descTrans,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
@@ -2224,6 +2303,21 @@ async function renderAdminDashboard(app) {
         showMessage(t('statusUpdated'), 'success');
         await loadAllOrders(); // Refresh orders to ensure UI is up to date
       } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
+    });
+  });
+
+  document.querySelectorAll('.verify-payment-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const orderId = e.currentTarget.dataset.orderId;
+      const paymentReference = e.currentTarget.dataset.paymentReference;
+      try {
+        showMessage('Vérification du paiement en cours...', 'info');
+        await verifyMoncashPayment(orderId, paymentReference);
+        showMessage('✅ Statut du paiement mis à jour.', 'success');
+        await loadAllOrders(); renderView('admin');
+      } catch (error) {
+        showMessage('Erreur de vérification : ' + error.message, 'error');
+      }
     });
   });
 
@@ -2420,22 +2514,102 @@ async function loadMoncashConfig() {
   } catch (e) { console.error('Erreur config MonCash:', e); }
 }
 
-async function createMoncashPaymentRequest({ orderId, userId, userEmail, phone, amount, currency, mode }) {
+async function createMoncashPaymentRequest({ orderId, userId, userEmail, phone, amount, currency, mode, description }) {
+  const requestData = {
+    orderId,
+    userId,
+    userEmail,
+    phone,
+    amount,
+    currency,
+    description: description || `Paiement MonCash pour commande ${orderId}`,
+    provider: 'MonCash',
+    mode: mode || moncashConfig.mode || 'production'
+  };
+
+  let requestRecord = {
+    ...requestData,
+    status: 'pending',
+    reference: null,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
   try {
-    await db.collection('moncash_requests').add({
-      orderId,
-      userId,
-      userEmail,
-      phone,
-      amount,
-      currency,
-      provider: 'MonCash',
-      mode: mode || moncashConfig.mode || 'production',
-      status: 'pending',
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    const backendOrigin = window.location.origin.startsWith('file:') ? 'http://localhost:3000' : window.location.origin;
+    const backendUrl = `${backendOrigin}/api/moncash/create-payment`;
+    const response = await fetch(backendUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestData)
     });
+
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(payload.error || `MonCash create-payment failed (${response.status})`);
+    }
+
+    requestRecord = {
+      ...requestRecord,
+      reference: payload.reference || payload.paymentReference || payload.id || orderId,
+      status: payload.status || 'pending',
+      response: payload
+    };
+
+    await db.collection('orders').doc(orderId).update({
+      paymentProvider: 'MonCash',
+      paymentReference: requestRecord.reference,
+      paymentStatus: requestRecord.status === 'success' ? 'paid' : 'pending_payment',
+      status: requestRecord.status === 'success' ? 'validated' : 'awaiting_payment'
+    });
+
+    await db.collection('moncash_requests').add(requestRecord);
+    return requestRecord;
   } catch (e) {
     console.error('Erreur création demande MonCash:', e);
+    requestRecord.status = 'failed';
+    requestRecord.error = e.message;
+    await db.collection('moncash_requests').add(requestRecord);
+    throw e;
+  }
+}
+
+async function verifyMoncashPayment(orderId, paymentReference) {
+  const backendOrigin = window.location.origin.startsWith('file:') ? 'http://localhost:3000' : window.location.origin;
+  const backendUrl = `${backendOrigin}/api/moncash/verify-payment`;
+  try {
+    const response = await fetch(backendUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId, paymentReference })
+    });
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(result.error || `Verification failed (${response.status})`);
+    }
+
+    const status = result.status === 'paid' ? 'paid' : result.status === 'failed' ? 'failed' : 'pending_payment';
+    const orderStatus = status === 'paid' ? 'validated' : status === 'failed' ? 'cancelled' : 'awaiting_payment';
+
+    await db.collection('orders').doc(orderId).update({
+      paymentStatus: status,
+      status: orderStatus,
+      paymentDetails: result
+    });
+
+    await db.collection('moncash_requests').add({
+      orderId,
+      paymentReference,
+      provider: 'MonCash',
+      status,
+      response: result,
+      checkedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    return result;
+  } catch (e) {
+    console.error('Erreur verification MonCash:', e);
+    throw e;
   }
 }
 
@@ -2776,7 +2950,7 @@ async function renderProfile(app) {
 
   await loadMyOrders();
 
-  const totalSpent = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.price || 0), 0);
+  const totalSpent = orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + getOrderAmount(o), 0);
   const totalOrders = orders.length;
   const initials = (currentUser.displayName || currentUser.email || 'U').substring(0, 2).toUpperCase();
 
@@ -2885,7 +3059,7 @@ async function renderProfile(app) {
                   </div>
                   <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div style="font-size:1rem; color:var(--text-soft);">
-                      <span style="color:var(--blue-deep); font-weight:800; font-size:1.1rem;">${formatPrice(o.price)}</span>
+                      <span style="color:var(--blue-deep); font-weight:800; font-size:1.1rem;">${formatPrice(getOrderAmount(o))}</span>
                       <span style="margin:0 10px; color:var(--gray-300);">|</span>
                       <span>📅 ${o.createdAt?.toDate?.()?.toLocaleDateString() || '---'}</span>
                     </div>
@@ -3291,6 +3465,13 @@ function attachBuyButtons() {
       selectedProductId = product.id;
       document.getElementById('modalProductName').textContent = gt(product.name);
       document.getElementById('modalProductPrice').textContent = formatPrice(product.price);
+      document.getElementById('modalProductImage').src = product.image || 'logo.jpeg';
+      document.getElementById('modalProductImage').alt = gt(product.name);
+      document.getElementById('modalProductGallery').innerHTML = `
+        ${[product.image, ...(product.gallery || [])].filter(Boolean).slice(0,4).map(src => `
+          <img src="${src}" alt="${gt(product.name)}" style="width:70px; height:70px; object-fit:cover; border-radius:14px; cursor:pointer; border:1px solid var(--gray-200);" onclick="document.getElementById('modalProductImage').src='${src}'">
+        `).join('')}
+      `;
       document.getElementById('productDetailsContent').innerHTML = `<p style="margin:1rem 0; color:var(--text-soft);">${gt(product.description) || ''}</p>`;
 
       const variationContainer = document.getElementById('variationSelectors');
@@ -3332,9 +3513,13 @@ function attachBuyButtons() {
         }
 
         variationContainer.innerHTML = html;
+        document.querySelectorAll('#orderQuantity').forEach(input => {
+          input.addEventListener('input', updateBuyModalTotals);
+        });
       }
 
       document.getElementById('buyModal').classList.remove('hidden');
+      updateBuyModalTotals();
 
       try {
         const userDoc = await db.collection('users').doc(currentUser.uid).get();
@@ -3387,48 +3572,9 @@ document.getElementById('checkoutBtn')?.addEventListener('click', async () => {
     }
   } catch (e) { return; }
 
-  const userData = userDoc.data();
-  const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
-
-  try {
-    const orderRef = await db.collection('orders').add({
-      userId: currentUser.uid, userEmail: currentUser.email,
-      userName: userData.displayName || currentUser.displayName || 'Client',
-      address: userData.address, phone: userData.phone,
-      items: cart.map(item => ({ id: item.id, name: item.name, price: item.price })),
-      productName: cart.length > 1 ? `${cart[0].name} + ${cart.length - 1}` : cart[0].name,
-      price: totalPrice, currency: currentCurrency, status: 'pending',
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    // Fraud Detection Integration
-    try {
-      const fraudCheck = await detectFraudulentOrder({
-        id: orderRef.id,
-        userId: currentUser.uid,
-        userEmail: currentUser.email,
-        userName: userData.displayName || currentUser.displayName || 'Client',
-        productName: cart.length > 1 ? `${cart[0].name} + ...` : cart[0].name,
-        price: totalPrice,
-        address: userData.address,
-        phone: userData.phone
-      });
-
-      if (fraudCheck.isFraudulent && fraudCheck.riskScore > 0.7) {
-        await orderRef.update({
-          flaggedForReview: true,
-          fraudScore: fraudCheck.riskScore
-        });
-      }
-    } catch (fraudErr) { console.error("Fraud check failed:", fraudErr); }
-
-    cart = [];
-    localStorage.removeItem('totalLakayCart');
-    updateCartBadge();
-    document.getElementById('cartModal').classList.add('hidden');
-    showMessage(t('orderSuccess'), 'success');
-    renderView('profile');
-  } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
+  document.getElementById('cartModal').classList.add('hidden');
+  currentView = 'checkout';
+  renderView('checkout');
 });
 
 // Reviews Logic
@@ -4546,13 +4692,15 @@ async function renderCheckout(app) {
     try {
       const orderPromises = cart.map(async item => {
         const p = products.find(x => x.id === item.id);
+        const quantity = item.quantity || 1;
         const orderData = {
           userId: currentUser.uid,
           userEmail: currentUser.email,
           productId: item.id,
-          productName: gt(p.name),
-          price: p.price * item.quantity,
-          quantity: item.quantity,
+          productName: gt(p?.name || item.name),
+          price: p?.price * quantity || item.price * quantity,
+          quantity,
+          items: [{ id: item.id, name: gt(p?.name || item.name), price: p?.price || item.price, quantity }],
           address,
           phone,
           paymentMethod: payment,
@@ -4573,7 +4721,8 @@ async function renderCheckout(app) {
             phone: moncashPhone,
             amount: orderData.price,
             currency: currentCurrency,
-            mode: moncashConfig.mode
+            mode: moncashConfig.mode,
+            description: `Paiement MonCash pour la commande ${orderData.orderCode}`
           });
         }
       });
@@ -4594,7 +4743,7 @@ async function renderCheckout(app) {
 }
 
 function renderStepper(currentStatus) {
-  const statuses = ['pending', 'validated', 'processing', 'in_transit', 'delivered', 'completed'];
+  const statuses = ['awaiting_payment', 'pending', 'validated', 'processing', 'in_transit', 'delivered', 'completed'];
   const currentIndex = statuses.indexOf(currentStatus);
   
   if (currentStatus === 'cancelled') return `<div style="color:var(--danger); font-weight:700; text-align:center; padding:10px; border:1px dashed var(--danger); border-radius:10px;">❌ ${t('cancelled')}</div>`;
@@ -4719,7 +4868,7 @@ async function renderLogisticsDashboard(app) {
                       ${t(o.status)}
                     </span>
                   </td>
-                  <td style="padding:15px;">${formatPrice(o.price)}</td>
+                  <td style="padding:15px;">${formatPrice(getOrderAmount(o))}</td>
                   <td style="padding:15px;">
                     <button class="btn btn-sm btn-outline admin-view-track" data-id="${o.id}">${t('trackOrder')}</button>
                   </td>
@@ -4808,8 +4957,9 @@ async function renderOrderTracking(app) {
           <h3 style="margin-bottom:20px;">📄 ${t('orderInfo')}</h3>
           <p><strong>${t('productName')}:</strong> ${order.productName}</p>
           <p><strong>${t('quantity')}:</strong> ${order.quantity || 1}</p>
-          <p><strong>Total:</strong> ${formatPrice(order.price)}</p>
+          <p><strong>Total:</strong> ${formatPrice(getOrderAmount(order))}</p>
           <p><strong>${t('payment')}:</strong> ${order.paymentMethod || 'Non spécifié'}</p>
+          <p><strong>${t('payment')}:</strong> ${getPaymentStatusLabel(order.paymentStatus)}</p>
           <p><strong>${t('address')}:</strong> ${order.address}</p>
           <p><strong>${t('phone')}:</strong> ${order.phone}</p>
           ${order.deliveryEstimate ? `<div style="margin-top:20px; padding:15px; background:var(--blue-light); border-radius:8px; color:var(--blue-deep);"><strong>${t('delivery')}:</strong> ${order.deliveryEstimate}</div>` : ''}

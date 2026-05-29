@@ -16,9 +16,39 @@
 ## 🛠️ Stack Technique
 
 - **Frontend :** HTML5 Sémantique, CSS3 (Variables, Flexbox, Grid, Animations), JavaScript ES6+.
-- **Backend (Serverless) :** Firebase (Authentication, Firestore Real-time Database, Storage, Remote Config).
+- **Backend :** Firebase (Authentication, Firestore, Storage) + un helper Node.js pour la validation MonCash côté serveur.
 - **Analytique :** Chart.js pour les graphiques de performance.
 - **PWA :** Service Workers & Manifest pour une installation native.
+
+## 🔐 Backend MonCash
+
+Le dossier `backend/` contient un serveur Express minimal qui expose des routes sécurisées pour :
+
+- `POST /api/moncash/create-payment` : créer une demande de paiement MonCash côté serveur.
+- `POST /api/moncash/verify-payment` : vérifier le statut d'un paiement MonCash.
+
+### Configuration
+
+Placez les variables d'environnement suivantes dans un fichier local ou votre hébergeur de backend :
+
+- `FIREBASE_SERVICE_ACCOUNT_KEY` (JSON string)
+- `MONCASH_API_BASE_URL`
+- `MONCASH_CLIENT_ID`
+- `MONCASH_CLIENT_SECRET`
+- `MONCASH_CREATE_PATH` (optionnel, défaut `/payments`)
+- `MONCASH_VERIFY_PATH` (optionnel, défaut `/payments/verify`)
+- `MONCASH_CREATE_METHOD` (optionnel, `POST` par défaut)
+- `MONCASH_VERIFY_METHOD` (optionnel, `POST` par défaut)
+
+### Démarrage
+
+```bash
+cd backend
+npm install
+cp .env.example .env
+# remplir .env avec vos clés Firebase et MonCash
+npm start
+```
 
 ## 📂 Structure du Projet
 
