@@ -918,12 +918,51 @@ function updateCartCount() {
   renderCart();
 }
 
-async function uploadProductImage(file, fileName) {
+async function uploadProductImage(file, fileName, onProgress = null) {
   if (!file) return null;
-  const safeName = (fileName || file.name || 'product').replace(/[^a-zA-Z0-9-_\.]/g, '_');
-  const storageRef = storage.ref().child(`product_images/${Date.now()}_${safeName}`);
-  const snapshot = await storageRef.put(file);
-  return await snapshot.ref.getDownloadURL();
+  
+  // Validation du fichier
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+  
+  if (!ALLOWED_TYPES.includes(file.type)) {
+    throw new Error(`Format non autorisé. Acceptés: JPEG, PNG, WebP, GIF. Reçu: ${file.type}`);
+  }
+  
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error(`Fichier trop volumineux (${(file.size / 1024 / 1024).toFixed(2)} MB). Max: 5 MB`);
+  }
+  
+  try {
+    const safeName = (fileName || file.name || 'product').replace(/[^a-zA-Z0-9-_\.]/g, '_');
+    const storageRef = storage.ref().child(`product_images/${Date.now()}_${safeName}`);
+    
+    // Upload avec suivi de la progression
+    const uploadTask = storageRef.put(file);
+    
+    // Écouter la progression
+    uploadTask.on('state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        if (onProgress) onProgress(progress);
+        console.log(`Upload ${progress.toFixed(0)}% terminé`);
+      },
+      (error) => {
+        console.error('Erreur upload:', error);
+        throw new Error(`Erreur upload: ${error.message}`);
+      }
+    );
+    
+    // Attendre la fin de l'upload
+    const snapshot = await uploadTask;
+    const downloadURL = await snapshot.ref.getDownloadURL();
+    
+    if (onProgress) onProgress(100);
+    return downloadURL;
+  } catch (error) {
+    console.error('❌ Erreur upload image:', error.message);
+    throw error;
+  }
 }
 
 function renderCart() {
@@ -1214,12 +1253,9 @@ auth.onAuthStateChanged(async (user) => {
       adminElements.forEach(el => el.classList.add('hidden'));
     }
 
-    if (logoutBtn) {
-      logoutBtn.innerHTML = `🚪 <span>${(isAdmin ? 'Admin: ' : '') + t('logout')}</span>`;
-    }
-    listenNotifications();
-  } else {
-    if (authBtn) authBtn.classList.remove('hidden');
+    document.querySelectorAll('.admin-or-vendor-only').forEach(el => {
+      el.classList.toggle('hidden', !(isAdmin || userRole === 'vendor'));
+    });
     if (logoutBtn) logoutBtn.classList.add('hidden');
     adminElements.forEach(el => el.classList.add('hidden'));
     userElements.forEach(el => el.classList.add('hidden'));
@@ -1232,6 +1268,8 @@ auth.onAuthStateChanged(async (user) => {
   }
 
   if (currentView === 'admin' && !isAdmin) currentView = 'home';
+  if (currentView === 'logistics' && !(isAdmin || userRole === 'vendor')) currentView = 'home';
+  applyRoleBasedVisibility?.();
   renderView(currentView);
   if (isAdmin) loadAllData();
   loadNotifications();
@@ -1413,7 +1451,7 @@ document.getElementById('menuShop')?.addEventListener('click', (e) => {
 });
 document.getElementById('menuLogistics')?.addEventListener('click', (e) => {
   e.preventDefault(); document.getElementById('dropdownMenu')?.classList.add('hidden');
-  if (isAdmin) renderView('logistics');
+  if (isAdmin || userRole === 'vendor') renderView('logistics');
 });
 
 function renderSpecialOffers(app) {
@@ -1555,6 +1593,11 @@ document.getElementById('navProfile')?.addEventListener('click', (e) => {
 document.getElementById('navAdmin')?.addEventListener('click', (e) => {
   e.preventDefault(); setActiveNav('navAdmin');
   currentView = 'admin'; renderView('admin');
+});
+
+document.getElementById('navLogistics')?.addEventListener('click', (e) => {
+  e.preventDefault(); setActiveNav('navLogistics');
+  currentView = 'logistics'; renderView('logistics');
 });
 
 
@@ -1879,7 +1922,7 @@ async function renderView(view) {
         case 'privacy': renderPrivacy(app); break;
         case 'terms': renderTerms(app); break;
         case 'checkout': await renderCheckout(app); break;
-        case 'logistics': if (isAdmin) { await renderLogisticsDashboard(app); } else { renderView('home'); } break;
+        case 'logistics': if (isAdmin || userRole === 'vendor') { await renderLogisticsDashboard(app); } else { renderView('home'); } break;
         case 'tracking': await renderOrderTracking(app); break;
         default: await renderHome(app);
       }
@@ -2062,8 +2105,14 @@ async function renderAdminDashboard(app) {
           <div>
             <label style="display:block; margin-bottom:8px;">${t('productImage')}</label>
             <input type="file" id="adminProdFile" accept="image/*" style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--gray-200); background:var(--white);">
+            <div id="imageUploadProgress" style="margin-top:10px; display:none; gap:10px;">
+              <div style="width:100%; height:8px; background:var(--gray-200); border-radius:10px; overflow:hidden;">
+                <div id="imageProgressBar" style="height:100%; background:var(--gold); width:0%; transition:width 0.3s ease;"></div>
+              </div>
+              <small style="color:var(--text-soft);"><span id="imageProgressPercent">0</span>% - <span id="imageUploadStatus">Préparation...</span></small>
+            </div>
             <input id="adminProdImage" class="search-input" style="width:100%; margin-top:10px;" placeholder="${t('productImagePlaceholder')}">
-            <small style="display:block; color:var(--text-soft); margin-top:6px;">Chargez une image ou collez l'URL du visuel du produit.</small>
+            <small style="display:block; color:var(--text-soft); margin-top:6px;">Max 5 MB. Formats: JPEG, PNG, WebP, GIF. Ou collez une URL.</small>
           </div>
         </div>
         <div style="margin-top:20px;">
@@ -2230,18 +2279,53 @@ async function renderAdminDashboard(app) {
     const imageUrl = document.getElementById('adminProdImage')?.value?.trim() || '';
     const imageFile = document.getElementById('adminProdFile')?.files?.[0] || null;
     const description = document.getElementById('adminProdDesc')?.value?.trim() || '';
+    const saveBtn = document.getElementById('saveProductBtn');
+    const progressDiv = document.getElementById('imageUploadProgress');
+    const progressBar = document.getElementById('imageProgressBar');
+    const progressPercent = document.getElementById('imageProgressPercent');
+    const uploadStatus = document.getElementById('imageUploadStatus');
 
     if (!name || !price) { showMessage(t('fillAllFields'), 'error'); return; }
+    if (price <= 0) { showMessage('❌ Le prix doit être positif', 'error'); return; }
 
     try {
-      showMessage("Traduction automatique en cours...", "info");
+      showMessage("⏳ Traduction automatique en cours...", "info");
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = '0.6';
+      
       const [nameTrans, descTrans] = await Promise.all([
         getTranslations(name),
         getTranslations(description)
       ]);
 
-      const finalImage = imageFile ? await uploadProductImage(imageFile, `${name.replace(/\s+/g, '_')}.jpg`) : imageUrl;
+      let finalImage = imageUrl;
+      
+      // Upload de l'image si un fichier est sélectionné
+      if (imageFile) {
+        progressDiv.style.display = 'flex';
+        showMessage("⏳ Téléchargement de l'image en cours...", "info");
+        
+        try {
+          finalImage = await uploadProductImage(imageFile, `${name.replace(/\s+/g, '_')}.jpg`, (progress) => {
+            progressBar.style.width = progress + '%';
+            progressPercent.textContent = Math.round(progress);
+            uploadStatus.textContent = progress >= 100 ? '✅ Téléchargement terminé' : 'Téléchargement...';
+          });
+          
+          showMessage("✅ Image téléchargée avec succès!", "success");
+        } catch (uploadError) {
+          progressDiv.style.display = 'none';
+          showMessage(`❌ Erreur upload image: ${uploadError.message}`, 'error');
+          console.error('Upload error:', uploadError);
+          saveBtn.disabled = false;
+          saveBtn.style.opacity = '1';
+          return;
+        }
+      }
 
+      // Enregistrer le produit
+      showMessage("💾 Enregistrement du produit...", "info");
+      
       await db.collection('products').add({
         name: nameTrans,
         price,
@@ -2254,9 +2338,32 @@ async function renderAdminDashboard(app) {
         description: descTrans,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-      showMessage(t('productAdded'), 'success');
-      await loadAllData(); renderView('admin');
-    } catch (error) { showMessage(t('errorOccurred') + error.message, 'error'); }
+
+      // Réinitialiser le formulaire
+      document.getElementById('adminProdName').value = '';
+      document.getElementById('adminProdPrice').value = '';
+      document.getElementById('adminProdOldPrice').value = '';
+      document.getElementById('adminProdStock').value = '0';
+      document.getElementById('adminProdColors').value = '';
+      document.getElementById('adminProdSizes').value = '';
+      document.getElementById('adminProdImage').value = '';
+      document.getElementById('adminProdFile').value = '';
+      document.getElementById('adminProdDesc').value = '';
+      progressDiv.style.display = 'none';
+      progressBar.style.width = '0%';
+      progressPercent.textContent = '0';
+
+      showMessage("✅ Produit ajouté avec succès!", "success");
+      await loadAllData(); 
+      renderView('admin');
+    } catch (error) { 
+      progressDiv.style.display = 'none';
+      console.error('Product save error:', error);
+      showMessage(`❌ Erreur: ${error.message}`, 'error'); 
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.style.opacity = '1';
+    }
   });
 
   document.querySelectorAll('.delete-product').forEach(btn => {
@@ -2559,17 +2666,22 @@ async function createMoncashPaymentRequest({ orderId, userId, userEmail, phone, 
       response: payload
     };
 
+    // 🔒 IMPORTANT: Ne JAMAIS marquer comme 'paid' au moment de la création
+    // Le paiement doit être vérifiépar la confirmation MonCash réelle
     await db.collection('orders').doc(orderId).update({
       paymentProvider: 'MonCash',
       paymentReference: requestRecord.reference,
-      paymentStatus: requestRecord.status === 'success' ? 'paid' : 'pending_payment',
-      status: requestRecord.status === 'success' ? 'validated' : 'awaiting_payment'
+      // ⚠️ JAMAIS 'paid' ou 'validated' jusqu'à confirmation réelle
+      paymentStatus: 'pending_payment',
+      status: 'awaiting_payment',
+      moncashPaymentInitiatedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
     await db.collection('moncash_requests').add(requestRecord);
+    console.log('✅ Demande MonCash créée (En attente de confirmation réelle):', {orderId, reference: requestRecord.reference});
     return requestRecord;
   } catch (e) {
-    console.error('Erreur création demande MonCash:', e);
+    console.error('❌ Erreur création demande MonCash:', e);
     requestRecord.status = 'failed';
     requestRecord.error = e.message;
     await db.collection('moncash_requests').add(requestRecord);
@@ -2592,24 +2704,38 @@ async function verifyMoncashPayment(orderId, paymentReference) {
       throw new Error(result.error || `Verification failed (${response.status})`);
     }
 
+    // 🔒 IMPORTANT: Seul 'paid' = paiement confirmé par MonCash
     const status = result.status === 'paid' ? 'paid' : result.status === 'failed' ? 'failed' : 'pending_payment';
     const orderStatus = status === 'paid' ? 'validated' : status === 'failed' ? 'cancelled' : 'awaiting_payment';
 
-    await db.collection('orders').doc(orderId).update({
+    // Mettre à jour la commande
+    const updateData = {
       paymentStatus: status,
       status: orderStatus,
-      paymentDetails: result
-    });
+      paymentDetails: result,
+      lastVerificationAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    // Si confirmé payé, enregistrer la date de confirmation
+    if (status === 'paid') {
+      updateData.paymentConfirmedAt = firebase.firestore.FieldValue.serverTimestamp();
+      updateData.paymentConfirmed = true;
+    }
 
+    await db.collection('orders').doc(orderId).update(updateData);
+
+    // Enregistrer la vérification pour l'audit
     await db.collection('moncash_requests').add({
       orderId,
       paymentReference,
       provider: 'MonCash',
       status,
       response: result,
+      verificationStatus: 'checked',
       checkedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
+    console.log(`✅ Paiement vérifié: ${status}`, {orderId, reference: paymentReference});
     return result;
   } catch (e) {
     console.error('Erreur verification MonCash:', e);
@@ -2619,20 +2745,85 @@ async function verifyMoncashPayment(orderId, paymentReference) {
 
 async function refundUser(userId, amount, orderId) {
   try {
+    // 🔒 SÉCURITÉ: Vérifier que l'ordre existe et que le paiement a réellement eu lieu
+    const orderDoc = await db.collection('orders').doc(orderId).get();
+    if (!orderDoc.exists) {
+      throw new Error(t('orderNotFound') || 'Commande non trouvée');
+    }
+    
+    const order = orderDoc.data();
+    
+    // 🔒 SÉCURITÉ: Vérifier que l'utilisateur correspond
+    if (order.userId !== userId) {
+      throw new Error('Utilisateur ne correspond pas à la commande');
+    }
+    
+    // 🔒 SÉCURITÉ: Vérifier qu'un paiement réel a été effectué AVANT de rembourser
+    if (order.paymentStatus !== 'paid' && order.paymentStatus !== 'completed') {
+      throw new Error(`Impossible de rembourser: Paiement non confirmé (statut: ${order.paymentStatus})`);
+    }
+    
+    // 🔒 SÉCURITÉ: Pour MonCash, vérifier qu'il existe un paiement réel enregistré
+    if (order.paymentMethod === 'MonCash' || order.paymentProvider === 'MonCash') {
+      const moncashSnap = await db.collection('moncash_requests')
+        .where('orderId', '==', orderId)
+        .where('status', '==', 'success')
+        .get();
+      
+      if (moncashSnap.empty) {
+        throw new Error('Aucun paiement MonCash valide trouvé. Remboursement refusé.');
+      }
+    }
+    
+    // 🔒 SÉCURITÉ: Effectuer le remboursement en transaction atomique
     const userRef = db.collection('users').doc(userId);
     await db.runTransaction(async (transaction) => {
       const userDoc = await transaction.get(userRef);
-      if (!userDoc.exists) throw "Kliyan sa a pa egziste!";
+      if (!userDoc.exists) throw new Error(t('userNotFound') || 'Utilisateur non trouvé');
+      
       const currentBalance = userDoc.data().balance || 0;
-      transaction.update(userRef, { balance: currentBalance + amount, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      
+      // Mettre à jour le solde
+      transaction.update(userRef, {
+        balance: currentBalance + amount,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      
+      // Enregistrer la transaction de remboursement pour l'audit
+      transaction.set(db.collection('refund_transactions').doc(), {
+        userId,
+        orderId,
+        amount,
+        paymentMethod: order.paymentMethod,
+        status: 'completed',
+        processedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        processedBy: currentUser?.uid,
+        notes: `Remboursement sécurisé de ${amount} pour commande #${orderId.substring(0, 6)}`
+      });
+      
+      // Notifier l'utilisateur
       transaction.set(db.collection('notifications').doc(), {
-        targetUserId: userId, title: t('refund'),
-        message: `Nou remèt ou ${formatPrice(amount)} pou kòmand #${orderId.substring(0, 6)} ki anile a.`,
-        type: 'refund', read: false, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        targetUserId: userId,
+        title: t('refund'),
+        message: `Nou remèt ou ${formatPrice(amount)} pou kòmand #${orderId.substring(0, 6)}.`,
+        type: 'refund',
+        read: false,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      
+      // Mettre à jour le statut de la commande
+      transaction.update(db.collection('orders').doc(orderId), {
+        status: 'refunded',
+        refundedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        refundAmount: amount
       });
     });
-    showMessage('✅ Lajan an remèt kliyan an!', 'success');
-  } catch (e) { showMessage('Erreur remboursement: ' + e, 'error'); }
+    
+    showMessage('✅ Lajan an remèt kliyan an avèk sikyrite!', 'success');
+  } catch (e) {
+    console.error('Erreur remboursement sécurisé:', e);
+    showMessage('❌ Erreur remboursement: ' + e.message, 'error');
+  }
 }
 
 async function updatePresence() {
@@ -4820,7 +5011,7 @@ let currentTrackingOrderId = null;
 let activeTrackingInterval = null;
 
 async function renderLogisticsDashboard(app) {
-  if (!isAdmin) { renderView('home'); return; }
+  if (!(isAdmin || userRole === 'vendor')) { renderView('home'); return; }
 
   const activeOrders = orders.filter(o => ['pending', 'validated', 'processing', 'in_transit'].includes(o.status));
   const deliveredOrders = orders.filter(o => o.status === 'delivered' || o.status === 'completed');

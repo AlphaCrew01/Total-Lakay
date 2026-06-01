@@ -50,6 +50,15 @@
   <!-- Ton Script Principal -->
   <script src="app.js" defer></script>
 
+  <!-- 🔒 Module d'Audit & Sécurité -->
+  <script src="audit-security.js" defer></script>
+
+  <!-- ✅ Corrections & Validations -->
+  <script src="corrections.js" defer></script>
+
+  <!-- 🚀 Fix d'Initialisation (Double Chargement) -->
+  <script src="initialization-fix.js" defer></script>
+
 </head>
 
 <body>
@@ -70,6 +79,7 @@
       <button id="navHome" class="nav-item active">🏠 <span data-i18n="home">Akèy</span></button>
       <button id="navShop" class="nav-item">🛍️ <span data-i18n="shop">Boutik</span></button>
       <button id="navAI" class="nav-item">🤖 <span data-i18n="aiAssistant">Asistan IA</span></button>
+      <button id="navLogistics" class="nav-item admin-or-vendor-only hidden">🚚 <span data-i18n="logistics">Logistique</span></button>
 
       <!-- Menu Profil (visible si connecté) -->
       <button id="navProfile" class="nav-item user-only hidden">👤 <span data-i18n="profile">Profil</span></button>
@@ -141,7 +151,7 @@
           </div>
 
           <div class="menu-divider"></div>
-          <a href="#" id="menuLogistics" class="admin-only hidden">🚚 <span data-i18n="logistics">Logistique</span></a>
+          <a href="#" id="menuLogistics" class="admin-or-vendor-only hidden">🚚 <span data-i18n="logistics">Logistique</span></a>
 
 
           <a href="#" id="linkServices">🛠️ <span data-i18n="servicesTitle">Sèvis</span></a>
