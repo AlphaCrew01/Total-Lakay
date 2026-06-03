@@ -64,6 +64,15 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
+function normalizeRole(rawRole) {
+  if (!rawRole) return 'client';
+  const normalized = String(rawRole).trim().toLowerCase();
+  if (['admin', 'administrator', 'administrateur', 'adm'].includes(normalized)) return 'admin';
+  if (['vendor', 'vendeur', 'seller', 'marchand', 'commerçant', 'shopkeeper'].includes(normalized)) return 'vendor';
+  if (['client', 'customer', 'utilisateur', 'user', 'clientèle', 'clientel'].includes(normalized)) return 'client';
+  return normalized;
+}
+
 function getLocationPromise() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
@@ -1208,6 +1217,9 @@ function debounce(func, delay) {
 // AUTHENTIFICATION AVEC RÔLES
 // ============================================
 auth.onAuthStateChanged(async (user) => {
+  console.log('🔐 ============ AUTH STATE CHANGED ============');
+  console.log('👤 User:', user ? user.email : 'null (déconnecté)');
+  
   currentUser = user;
   const authBtn = document.getElementById('authBtn');
   const logoutBtn = document.getElementById('logoutBtn');
@@ -1215,64 +1227,131 @@ auth.onAuthStateChanged(async (user) => {
   const userElements = document.querySelectorAll('.user-only');
 
   if (user) {
+    console.log('✅ Utilisateur connecté:', user.uid);
+    console.log('📧 Email vérifié?', user.emailVerified);
+    
     if (!user.emailVerified) {
+      console.warn('⚠️ Email NON vérifié');
       showMessage(t('emailVerifyWarning'), 'error');
       setTimeout(() => { if (currentUser && !currentUser.emailVerified) auth.signOut(); }, 5000);
       return;
     }
 
     try {
+      console.log('📄 Chargement du document Firestore...');
       const userDoc = await db.collection('users').doc(user.uid).get();
+      
       if (userDoc.exists) {
-        userRole = userDoc.data().role || 'client';
+        console.log('✅ Document trouvé dans Firestore');
+        const userData = userDoc.data();
+        console.log('📋 Données Firestore:', userData);
+
+        const rawRole = userData.role || userData.userType || userData.user_type || userData.type || userData.roleType || userData.role_type || 'client';
+        console.log('📌 Rôles bruts détectés:', { role: userData.role, userType: userData.userType, rawRole });
+
+        userRole = normalizeRole(rawRole);
+        console.log('🎯 Rôle normalisé:', userRole);
+
+        if (userData.role !== userRole) {
+          await db.collection('users').doc(user.uid).set({ role: userRole }, { merge: true });
+          console.log('🔄 Firestore mis à jour role normalisé:', userRole);
+        }
+
         isAdmin = (userRole === 'admin');
-        isPremium = userDoc.data().isPremium || isAdmin; // Les admins sont premium d'office
+        console.log('👑 isAdmin calculé:', isAdmin);
+
+        isPremium = userData.isPremium || isAdmin;
+        console.log('⭐ isPremium:', isPremium);
 
         // Vérifier consentement
-        if (!isAdmin && !userDoc.data().termsAccepted) {
+        if (!isAdmin && !userData.termsAccepted) {
+          console.log('⚠️ Consentement requis');
           document.getElementById('consentModal')?.classList.remove('hidden');
         }
       } else {
-        userRole = 'client'; isAdmin = false;
+        console.warn('⚠️ Document NOT trouvé, création...');
+        userRole = 'client';
+        isAdmin = false;
         await db.collection('users').doc(user.uid).set({
           email: user.email, displayName: user.displayName || '',
           photoURL: user.photoURL || '', role: 'client',
-          emailVerified: true, termsAccepted: false, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          emailVerified: true, termsAccepted: false, 
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
+        console.log('✅ Nouveau document créé avec role: client');
         document.getElementById('consentModal')?.classList.remove('hidden');
       }
-    } catch (e) { userRole = 'client'; isAdmin = false; }
+    } catch (e) {
+      console.error('❌ Erreur chargement profil:', e);
+      userRole = 'client';
+      isAdmin = false;
+    }
 
+    // === AFFICHAGE DES ÉLÉMENTS SELON LE RÔLE ===
+    console.log('🎨 Application de la visibilité des éléments...');
+    
     if (authBtn) authBtn.classList.add('hidden');
     if (logoutBtn) logoutBtn.classList.remove('hidden');
     userElements.forEach(el => el.classList.remove('hidden'));
 
     if (isAdmin) {
+      console.log('👑 Affichage: Éléments ADMIN');
       adminElements.forEach(el => el.classList.remove('hidden'));
     } else {
+      console.log('👤 Affichage: Éléments USER standard');
       adminElements.forEach(el => el.classList.add('hidden'));
     }
 
     document.querySelectorAll('.admin-or-vendor-only').forEach(el => {
       el.classList.toggle('hidden', !(isAdmin || userRole === 'vendor'));
     });
+    
+    console.log('✅ Visibilité appliquée');
+
+    // === MISE À JOUR DE LA PRÉSENCE ===
+    updatePresence();
+    setInterval(updatePresence, 2 * 60 * 1000);
+    
+  } else {
+    // === UTILISATEUR DÉCONNECTÉ ===
+    console.log('🚪 Utilisateur déconnecté');
+    if (authBtn) authBtn.classList.remove('hidden');
     if (logoutBtn) logoutBtn.classList.add('hidden');
     adminElements.forEach(el => el.classList.add('hidden'));
     userElements.forEach(el => el.classList.add('hidden'));
-    isAdmin = false; userRole = null;
+    isAdmin = false;
+    userRole = null;
+    console.log('✅ État réinitialisé');
   }
 
-  if (user) {
-    updatePresence();
-    setInterval(updatePresence, 2 * 60 * 1000); // Mettre à jour toutes les 2 minutes
+  // === REDIRECTION POST-CONNEXION ===
+  console.log('🎯 Correction vue si nécessaire...');
+  if (currentView === 'admin' && !isAdmin) {
+    console.log('⚠️ Redirection: admin -> home (non-admin)');
+    currentView = 'home';
   }
-
-  if (currentView === 'admin' && !isAdmin) currentView = 'home';
-  if (currentView === 'logistics' && !(isAdmin || userRole === 'vendor')) currentView = 'home';
+  if (currentView === 'logistics' && !(isAdmin || userRole === 'vendor')) {
+    console.log('⚠️ Redirection: logistics -> home (non-autorisé)');
+    currentView = 'home';
+  }
+  
+  console.log('📊 État Final:', {
+    user: user?.email || 'null',
+    isAdmin,
+    userRole,
+    currentView
+  });
+  
   applyRoleBasedVisibility?.();
   renderView(currentView);
-  if (isAdmin) loadAllData();
+  
+  if (isAdmin) {
+    console.log('📂 Chargement des données admin...');
+    loadAllData();
+  }
+  
   loadNotifications();
+  console.log('🔐 ==========================================\n');
 });
 
 // ============================================

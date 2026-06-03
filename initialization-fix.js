@@ -164,7 +164,7 @@ const fixedAuthStateListener = async (user) => {
 
 // Remplacer l'écoute auth
 if (window.auth) {
-  auth.onAuthStateChanged(fixedAuthStateListener);
+  console.log('⚠️ Auth listener in initialization-fix.js disabled; app.js controls authentication state.');
 }
 
 // ============================================
