@@ -5,7 +5,23 @@
    ============================================ */
 
 // ============================================
-// 🔄 SYSTÈME DE VERSIONING ET MISE À JOUR
+// � PROTECTION: REDIRECTION DES ANCIENNES PAGES VERS INDEX.HTML
+// ============================================
+(function redirectOldPages() {
+  const pathname = window.location.pathname;
+  const filename = pathname.split('/').pop();
+  
+  // Rediriger les anciennes pages HTML (admin.html, client.html, vendeur.html) vers index.html
+  if (filename && ['admin.html', 'client.html', 'vendeur.html'].includes(filename)) {
+    console.log('🔐 Redirection détectée:', filename, '→ index.html');
+    window.location.replace('./index.html');
+    // Stop execution immédiatement
+    throw new Error('Page redirected to index.html');
+  }
+})();
+
+// ============================================
+// �🔄 SYSTÈME DE VERSIONING ET MISE À JOUR
 // ============================================
 const APP_VERSION = '2026-06-03-v1';
 
@@ -2198,6 +2214,18 @@ function refreshProductGrid() {
 // RENDU VUES
 // ============================================
 async function renderView(view) {
+  // 🔐 PROTECTION: Vérifier les permissions avant de rendre les vues protégées
+  if (view === 'admin' && !isAdmin) {
+    console.warn('🔐 ACCÈS REFUSÉ: Tentative d\'accès à la vue admin sans permissions');
+    currentView = 'home';
+    view = 'home';
+  }
+  if (view === 'logistics' && !(isAdmin || userRole === 'vendor')) {
+    console.warn('🔐 ACCÈS REFUSÉ: Tentative d\'accès à la vue logistics sans permissions');
+    currentView = 'home';
+    view = 'home';
+  }
+
   currentView = view;
   const app = document.getElementById('appContent');
   if (!app) return;

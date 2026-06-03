@@ -50,6 +50,17 @@
   <!-- Ton Script Principal -->
   <script src="app.js" defer></script>
 
+  <!-- 🔒 REDIRECTION IMMÉDIATE - PRÉVENTION PAGE SÉLECTION RÔLE -->
+  <script>
+    // Rediriger immédiatement vers index.html avant que le DOM ne se rende
+    // Cela empêche l'affichage de la page intermédiaire de sélection de rôle
+    if (window.location.pathname.endsWith('admin.html') || 
+        window.location.pathname.endsWith('client.html') || 
+        window.location.pathname.endsWith('vendeur.html')) {
+      window.location.replace('./index.html');
+    }
+  </script>
+
 </head>
 
 <body data-page-role="vendor">

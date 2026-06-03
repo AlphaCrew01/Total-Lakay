@@ -587,7 +587,8 @@ auth.onAuthStateChanged(async (user) => {
   currentUser = user;
 
   if (!user) {
-    window.location.href = 'admin.html';
+    console.warn('🔐 Utilisateur non authentifié, redirection vers index.html');
+    window.location.replace('./index.html');
     return;
   }
 
@@ -596,15 +597,16 @@ auth.onAuthStateChanged(async (user) => {
     isAdmin = userDoc.data()?.role === 'admin';
 
     if (!isAdmin) {
-      window.location.href = 'admin.html';
+      console.warn('🔐 Utilisateur non admin, redirection vers index.html');
+      window.location.replace('./index.html');
       return;
     }
 
     // Load data
     await loadProducts();
   } catch (error) {
-    console.error('Auth error:', error);
-    window.location.href = 'admin.html';
+    console.error('🔐 Erreur authentification:', error);
+    window.location.replace('./index.html');
   }
 });
 
@@ -613,7 +615,7 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
 });
 
 document.getElementById('backToAdmin').addEventListener('click', () => {
-  window.location.href = 'admin.html';
+  window.location.href = './index.html';
 });
 
 // ============================================
