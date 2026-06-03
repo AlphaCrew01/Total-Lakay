@@ -164,10 +164,69 @@ function escapeHtml(text) {
 function normalizeRole(rawRole) {
   if (!rawRole) return 'client';
   const normalized = String(rawRole).trim().toLowerCase();
+  
+  // Normalisation stricte des rôles
   if (['admin', 'administrator', 'administrateur', 'adm'].includes(normalized)) return 'admin';
   if (['vendor', 'vendeur', 'seller', 'marchand', 'commerçant', 'shopkeeper'].includes(normalized)) return 'vendor';
   if (['client', 'customer', 'utilisateur', 'user', 'clientèle', 'clientel'].includes(normalized)) return 'client';
-  return normalized;
+  
+  // Par défaut, si le rôle n'est pas reconnu, retourner 'client'
+  console.warn('⚠️ Rôle non reconnu:', rawRole, '→ défaut: client');
+  return 'client';
+}
+
+// ============================================
+// 🔐 FONCTION: Validation stricte du rôle
+// ============================================
+function isValidRole(role) {
+  return ['admin', 'vendor', 'client'].includes(role);
+}
+
+// ============================================
+// 🔐 FONCTION: Récupération sécurisée du rôle depuis Firestore
+// ============================================
+async function getUserRoleFromFirestore(uid) {
+  if (!uid) {
+    console.warn('⚠️ UID manquant pour récupération rôle');
+    return 'client';
+  }
+
+  try {
+    const userDoc = await db.collection('users').doc(uid).get();
+    
+    if (!userDoc.exists) {
+      console.log('ℹ️ Document utilisateur n\'existe pas, création...');
+      return 'client'; // Sera créé dans onAuthStateChanged
+    }
+
+    const userData = userDoc.data();
+    if (!userData) {
+      console.warn('⚠️ Données utilisateur vides');
+      return 'client';
+    }
+
+    // Récupérer le rôle depuis tous les champs possibles (pour compatibilité)
+    const rawRole = userData.role || userData.userType || userData.user_type || userData.type || userData.roleType || userData.role_type;
+    
+    if (!rawRole) {
+      console.warn('⚠️ Aucun champ rôle trouvé pour:', uid);
+      return 'client';
+    }
+
+    // Normaliser et valider le rôle
+    const normalizedRole = normalizeRole(rawRole);
+    
+    // Si le rôle a changé, mettre à jour Firestore
+    if (userData.role !== normalizedRole) {
+      console.log('🔄 Mise à jour rôle dans Firestore:', rawRole, '→', normalizedRole);
+      await db.collection('users').doc(uid).set({ role: normalizedRole }, { merge: true });
+    }
+
+    return normalizedRole;
+  } catch (e) {
+    console.error('❌ Erreur récupération rôle:', e);
+    return 'client'; // Rôle par défaut en cas d'erreur
+  }
 }
 
 function getLocationPromise() {
@@ -1463,7 +1522,8 @@ function debounce(func, delay) {
 }
 
 // ============================================
-// AUTHENTIFICATION AVEC RÔLES
+// ============================================
+// 🔐 AUTHENTIFICATION AVEC RÔLES - DISTRIBUTION BASÉE SUR FIRESTORE
 // ============================================
 auth.onAuthStateChanged(async (user) => {
   console.log('🔐 ============ AUTH STATE CHANGED ============');
@@ -1479,6 +1539,7 @@ auth.onAuthStateChanged(async (user) => {
     console.log('✅ Utilisateur connecté:', user.uid);
     console.log('📧 Email vérifié?', user.emailVerified);
     
+    // === VÉRIFICATION EMAIL ===
     if (!user.emailVerified) {
       console.warn('⚠️ Email NON vérifié');
       showMessage(t('emailVerifyWarning'), 'error');
@@ -1487,75 +1548,81 @@ auth.onAuthStateChanged(async (user) => {
     }
 
     try {
-      console.log('📄 Chargement du document Firestore...');
-      const userDoc = await db.collection('users').doc(user.uid).get();
+      console.log('📄 Récupération du rôle depuis Firestore...');
       
-      if (userDoc.exists) {
-        console.log('✅ Document trouvé dans Firestore');
-        const userData = userDoc.data();
-        console.log('📋 Données Firestore:', userData);
-
-        const rawRole = userData.role || userData.userType || userData.user_type || userData.type || userData.roleType || userData.role_type || 'client';
-        console.log('📌 Rôles bruts détectés:', { role: userData.role, userType: userData.userType, rawRole });
-
-        userRole = normalizeRole(rawRole);
-        console.log('🎯 Rôle normalisé:', userRole);
-
-        if (userData.role !== userRole) {
-          await db.collection('users').doc(user.uid).set({ role: userRole }, { merge: true });
-          console.log('🔄 Firestore mis à jour role normalisé:', userRole);
-        }
-
-        isAdmin = (userRole === 'admin');
-        console.log('👑 isAdmin calculé:', isAdmin);
-
-        isPremium = userData.isPremium || isAdmin;
-        console.log('⭐ isPremium:', isPremium);
-
-        // Vérifier consentement
-        if (!isAdmin && !userData.termsAccepted) {
-          console.log('⚠️ Consentement requis');
-          document.getElementById('consentModal')?.classList.remove('hidden');
-        }
-      } else {
-        console.warn('⚠️ Document NOT trouvé, création...');
+      // Récupérer le rôle depuis Firestore
+      userRole = await getUserRoleFromFirestore(user.uid);
+      console.log('🎯 Rôle récupéré:', userRole);
+      
+      // Valider le rôle
+      if (!isValidRole(userRole)) {
+        console.warn('⚠️ Rôle invalide détecté:', userRole, '→ défaut: client');
         userRole = 'client';
-        isAdmin = false;
-        await db.collection('users').doc(user.uid).set({
-          email: user.email, displayName: user.displayName || '',
-          photoURL: user.photoURL || '', role: 'client',
-          emailVerified: true, termsAccepted: false, 
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        console.log('✅ Nouveau document créé avec role: client');
+      }
+      
+      // Calculer isAdmin basé UNIQUEMENT sur le rôle Firestore
+      isAdmin = (userRole === 'admin');
+      console.log('👑 isAdmin calculé:', isAdmin, '(basé sur Firestore)');
+
+      // Charger les données utilisateur depuis Firestore
+      const userDoc = await db.collection('users').doc(user.uid).get();
+      const userData = userDoc.data() || {};
+      
+      // Calculer isPremium
+      isPremium = userData.isPremium || isAdmin;
+      console.log('⭐ isPremium:', isPremium);
+
+      // === VÉRIFICATION CONSENTEMENT ===
+      if (!isAdmin && !userData.termsAccepted) {
+        console.log('⚠️ Consentement requis');
         document.getElementById('consentModal')?.classList.remove('hidden');
       }
+      
+      // S'assurer que le document existe avec le bon rôle
+      if (!userDoc.exists || userDoc.data().role !== userRole) {
+        console.log('📝 Création/mise à jour du document utilisateur...');
+        await db.collection('users').doc(user.uid).set({
+          email: user.email,
+          displayName: user.displayName || '',
+          photoURL: user.photoURL || '',
+          role: userRole, // ← RÔLE DEPUIS FIRESTORE
+          emailVerified: true,
+          termsAccepted: userData.termsAccepted || false,
+          isPremium: isPremium,
+          createdAt: userData.createdAt || firebase.firestore.FieldValue.serverTimestamp(),
+          lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+        console.log('✅ Document utilisateur mis à jour');
+      }
+      
     } catch (e) {
       console.error('❌ Erreur chargement profil:', e);
       userRole = 'client';
       isAdmin = false;
     }
 
-    // === AFFICHAGE DES ÉLÉMENTS SELON LE RÔLE ===
-    console.log('🎨 Application de la visibilité des éléments...');
+    // === AFFICHAGE DES ÉLÉMENTS SELON LE RÔLE (FIRESTORE) ===
+    console.log('🎨 Répartition des éléments UI selon rôle:', userRole);
     
     if (authBtn) authBtn.classList.add('hidden');
     if (logoutBtn) logoutBtn.classList.remove('hidden');
     userElements.forEach(el => el.classList.remove('hidden'));
 
+    // Afficher les éléments admin uniquement si rôle === 'admin' (de Firestore)
     if (isAdmin) {
-      console.log('👑 Affichage: Éléments ADMIN');
+      console.log('👑 AFFICHAGE: Éléments ADMIN');
       adminElements.forEach(el => el.classList.remove('hidden'));
     } else {
-      console.log('👤 Affichage: Éléments USER standard');
+      console.log('👤 AFFICHAGE: Éléments USER standard');
       adminElements.forEach(el => el.classList.add('hidden'));
     }
 
+    // Afficher les éléments vendor/admin
     document.querySelectorAll('.admin-or-vendor-only').forEach(el => {
       el.classList.toggle('hidden', !(isAdmin || userRole === 'vendor'));
     });
     
-    console.log('✅ Visibilité appliquée');
+    console.log('✅ Répartition des rôles appliquée (basée Firestore)');
 
     // === MISE À JOUR DE LA PRÉSENCE ===
     updatePresence();
@@ -1574,29 +1641,39 @@ auth.onAuthStateChanged(async (user) => {
   }
 
   // === REDIRECTION POST-CONNEXION ===
-  console.log('🎯 Correction vue si nécessaire...');
+  console.log('🎯 Vérification des redirections selon rôle...');
+  
+  // Redirection stricte: si l'utilisateur n'a pas le rôle, le rediriger
   if (currentView === 'admin' && !isAdmin) {
-    console.log('⚠️ Redirection: admin -> home (non-admin)');
+    console.log('⚠️ Redirection: admin → home (rôle:', userRole, ')');
     currentView = 'home';
   }
   if (currentView === 'logistics' && !(isAdmin || userRole === 'vendor')) {
-    console.log('⚠️ Redirection: logistics -> home (non-autorisé)');
+    console.log('⚠️ Redirection: logistics → home (rôle:', userRole, ')');
     currentView = 'home';
   }
   
-  console.log('📊 État Final:', {
+  console.log('📊 État Final Authentification:', {
     user: user?.email || 'null',
-    isAdmin,
-    userRole,
-    currentView
+    rôle: userRole,
+    isAdmin: isAdmin,
+    isPremium: isPremium,
+    vue: currentView
   });
   
   applyRoleBasedVisibility?.();
   renderView(currentView);
   
-  if (isAdmin) {
-    console.log('📂 Chargement des données admin...');
+  // === CHARGEMENT DES DONNÉES SELON LE RÔLE ===
+  if (user && isAdmin) {
+    console.log('📂 Chargement données admin (rôle: admin)...');
     loadAllData();
+  } else if (user && userRole === 'vendor') {
+    console.log('📦 Chargement données livreur (rôle: vendor)...');
+    // À implémenter si nécessaire
+  } else if (user) {
+    console.log('🛍️ Chargement données client (rôle: client)...');
+    // À implémenter si nécessaire
   }
   
   loadNotifications();
@@ -1919,13 +1996,35 @@ document.getElementById('navProfile')?.addEventListener('click', (e) => {
   currentView = 'profile'; renderView('profile');
 });
 document.getElementById('navAdmin')?.addEventListener('click', (e) => {
-  e.preventDefault(); setActiveNav('navAdmin');
-  currentView = 'admin'; renderView('admin');
+  e.preventDefault();
+  
+  // 🔐 VÉRIFICATION DE PERMISSION: Seul un admin peut accéder
+  if (!isAdmin) {
+    console.warn('🔐 ACCÈS REFUSÉ: Utilisateur tente d\'accéder à Admin (rôle:', userRole, ')');
+    showMessage('⛔ Accès refusé. Seuls les administrateurs peuvent accéder à cette zone.', 'error');
+    return;
+  }
+  
+  console.log('✅ Accès Admin autorisé (rôle: admin)');
+  setActiveNav('navAdmin');
+  currentView = 'admin';
+  renderView('admin');
 });
 
 document.getElementById('navLogistics')?.addEventListener('click', (e) => {
-  e.preventDefault(); setActiveNav('navLogistics');
-  currentView = 'logistics'; renderView('logistics');
+  e.preventDefault();
+  
+  // 🔐 VÉRIFICATION DE PERMISSION: Admin ou Vendor peuvent accéder
+  if (!(isAdmin || userRole === 'vendor')) {
+    console.warn('🔐 ACCÈS REFUSÉ: Utilisateur tente d\'accéder à Logistics (rôle:', userRole, ')');
+    showMessage('⛔ Accès refusé. Seuls les administrateurs et livreurs peuvent accéder à cette zone.', 'error');
+    return;
+  }
+  
+  console.log('✅ Accès Logistics autorisé (rôle:', userRole, ')');
+  setActiveNav('navLogistics');
+  currentView = 'logistics';
+  renderView('logistics');
 });
 
 
@@ -2306,7 +2405,28 @@ function productCardHTML(product) {
 }
 
 async function renderAdminDashboard(app) {
-  if (!isAdmin) { app.innerHTML = `<div class="card text-center"><p>⛔ ${t('adminOnly')}</p></div>`; return; }
+  // 🔐 DOUBLE VÉRIFICATION: S'assurer que l'utilisateur a le rôle 'admin' depuis Firestore
+  if (!isAdmin || userRole !== 'admin') {
+    console.error('🔐 SÉCURITÉ: Tentative d\'accès au dashboard admin sans rôle admin');
+    console.log('État:', { isAdmin, userRole, uid: currentUser?.uid });
+    
+    // Réactualiser le rôle depuis Firestore pour être sûr
+    if (currentUser) {
+      userRole = await getUserRoleFromFirestore(currentUser.uid);
+      isAdmin = (userRole === 'admin');
+    }
+    
+    // Si toujours pas admin, afficher un message d'erreur
+    if (!isAdmin) {
+      app.innerHTML = `<div class="card text-center" style="padding:40px;">
+        <p style="font-size:1.3rem; margin:0;">⛔ ${t('adminOnly')}</p>
+        <p style="color:var(--text-soft); margin-top:10px;">Rôle détecté: ${userRole}</p>
+      </div>`;
+      return;
+    }
+  }
+  
+  console.log('✅ Dashboard admin autorisé (rôle Firestore: admin)');
   await loadMoncashConfig();
   await loadAllData();
   const onlineCount = await getOnlineUsersCount();
@@ -2678,14 +2798,54 @@ async function renderAdminDashboard(app) {
     }
   });
 
-  // ============================================
-  // SAUVEGARDE PRODUIT AVEC UPLOAD AMÉLIORÉ
-  // ============================================
+// 🔐 GUARDS POUR LES OPÉRATIONS SENSIBLES
+// Vérification stricte des rôles pour les opérations critiques
+async function requireAdminRole(operationName) {
+  if (!currentUser) {
+    console.error(`🔐 SÉCURITÉ: ${operationName} tentée sans utilisateur authentifié`);
+    throw new Error('Non authentifié');
+  }
+  
+  // Vérifier le rôle depuis Firestore (ne jamais faire confiance à userRole seul)
+  const actualRole = await getUserRoleFromFirestore(currentUser.uid);
+  if (actualRole !== 'admin') {
+    console.error(`🔐 SÉCURITÉ: ${operationName} tentée par utilisateur non-admin (rôle: ${actualRole})`);
+    throw new Error(`Opération "${operationName}" réservée aux administrateurs`);
+  }
+  
+  console.log(`✅ ${operationName} autorisée (rôle admin vérifié depuis Firestore)`);
+  return true;
+}
+
+async function requireVendorOrAdminRole(operationName) {
+  if (!currentUser) {
+    console.error(`🔐 SÉCURITÉ: ${operationName} tentée sans utilisateur authentifié`);
+    throw new Error('Non authentifié');
+  }
+  
+  // Vérifier le rôle depuis Firestore
+  const actualRole = await getUserRoleFromFirestore(currentUser.uid);
+  if (actualRole !== 'vendor' && actualRole !== 'admin') {
+    console.error(`🔐 SÉCURITÉ: ${operationName} tentée par utilisateur non-autorisé (rôle: ${actualRole})`);
+    throw new Error(`Opération "${operationName}" réservée aux vendeurs et administrateurs`);
+  }
+  
+  console.log(`✅ ${operationName} autorisée (rôle ${actualRole} vérifié depuis Firestore)`);
+  return true;
+}
+
+// ============================================
+// SAUVEGARDE PRODUIT AVEC UPLOAD AMÉLIORÉ
+// ============================================
   document.getElementById('saveProductBtn')?.addEventListener('click', async () => {
-    const name = document.getElementById('adminProdName')?.value.trim();
-    const price = parseFloat(document.getElementById('adminProdPrice')?.value);
-    const oldPrice = parseFloat(document.getElementById('adminProdOldPrice')?.value) || null;
-    const category = document.getElementById('adminProdCategory')?.value;
+    // 🔐 VÉRIFICATION STRICTE: Seuls les admins peuvent ajouter des produits
+    try {
+      await requireAdminRole('Ajout de produit');
+    } catch (error) {
+      showMessage(`🔐 ${error.message}`, 'error');
+      return;
+    }
+
     const stock = parseInt(document.getElementById('adminProdStock')?.value) || 0;
     const colorsRaw = document.getElementById('adminProdColors')?.value?.trim() || '';
     const sizesRaw = document.getElementById('adminProdSizes')?.value?.trim() || '';
@@ -2832,6 +2992,14 @@ async function renderAdminDashboard(app) {
 
   document.querySelectorAll('.delete-product').forEach(btn => {
     btn.addEventListener('click', async (e) => {
+      // 🔐 VÉRIFICATION STRICTE: Seuls les admins peuvent supprimer des produits
+      try {
+        await requireAdminRole('Suppression de produit');
+      } catch (error) {
+        showMessage(`🔐 ${error.message}`, 'error');
+        return;
+      }
+
       if (confirm(t('confirmDelete'))) {
         await db.collection('products').doc(e.currentTarget.dataset.id).delete();
         showMessage(t('productDeleted'), 'success');
@@ -2842,6 +3010,15 @@ async function renderAdminDashboard(app) {
 
   document.querySelectorAll('.status-select').forEach(select => {
     select.addEventListener('change', async (e) => {
+      // 🔐 VÉRIFICATION STRICTE: Seuls les admins et vendeurs peuvent changer le statut
+      try {
+        await requireVendorOrAdminRole('Mise à jour du statut de commande');
+      } catch (error) {
+        showMessage(`🔐 ${error.message}`, 'error');
+        e.target.value = orders.find(o => o.id === e.target.dataset.orderId)?.status || 'pending';
+        return;
+      }
+
       const orderId = e.target.dataset.orderId;
       const newStatus = e.target.value;
       const order = orders.find(o => o.id === orderId);
@@ -2883,6 +3060,14 @@ async function renderAdminDashboard(app) {
 
   document.querySelectorAll('.verify-payment-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
+      // 🔐 VÉRIFICATION STRICTE: Seuls les admins peuvent vérifier les paiements
+      try {
+        await requireAdminRole('Vérification de paiement');
+      } catch (error) {
+        showMessage(`🔐 ${error.message}`, 'error');
+        return;
+      }
+
       const orderId = e.currentTarget.dataset.orderId;
       const paymentReference = e.currentTarget.dataset.paymentReference;
       try {
@@ -2923,6 +3108,14 @@ async function renderAdminDashboard(app) {
 
   document.querySelectorAll('.toggle-role').forEach(btn => {
     btn.addEventListener('click', async (e) => {
+      // 🔐 VÉRIFICATION STRICTE: Seuls les admins peuvent changer les rôles
+      try {
+        await requireAdminRole('Modification de rôle utilisateur');
+      } catch (error) {
+        showMessage(`🔐 ${error.message}`, 'error');
+        return;
+      }
+
       const uid = e.currentTarget.dataset.uid;
       const currentRole = e.currentTarget.dataset.role;
       const newRole = currentRole === 'admin' ? 'client' : 'admin';
@@ -2933,6 +3126,14 @@ async function renderAdminDashboard(app) {
   });
 
   document.getElementById('sendNotifBtn')?.addEventListener('click', async () => {
+    // 🔐 VÉRIFICATION STRICTE: Seuls les admins peuvent envoyer des notifications
+    try {
+      await requireAdminRole('Envoi de notification');
+    } catch (error) {
+      showMessage(`🔐 ${error.message}`, 'error');
+      return;
+    }
+
     const target = document.getElementById('notifTarget')?.value;
     const title = document.getElementById('notifTitle')?.value.trim();
     const reason = document.getElementById('notifReason')?.value?.trim() || '';
@@ -5475,7 +5676,29 @@ let currentTrackingOrderId = null;
 let activeTrackingInterval = null;
 
 async function renderLogisticsDashboard(app) {
-  if (!(isAdmin || userRole === 'vendor')) { renderView('home'); return; }
+  // 🔐 VÉRIFICATION STRICTE: Admin ou Vendor peuvent accéder
+  if (!(isAdmin || userRole === 'vendor')) {
+    console.error('🔐 SÉCURITÉ: Tentative d\'accès au dashboard logistics sans permission');
+    console.log('État:', { isAdmin, userRole, uid: currentUser?.uid });
+    
+    // Réactualiser le rôle depuis Firestore pour être sûr
+    if (currentUser) {
+      userRole = await getUserRoleFromFirestore(currentUser.uid);
+      isAdmin = (userRole === 'admin');
+    }
+    
+    // Si toujours pas autorisé, afficher un message d'erreur
+    if (!(isAdmin || userRole === 'vendor')) {
+      app.innerHTML = `<div class="card text-center" style="padding:40px;">
+        <p style="font-size:1.3rem; margin:0;">⛔ Accès refusé</p>
+        <p style="color:var(--text-soft); margin-top:10px;">Seuls les administrateurs et livreurs peuvent accéder à cette zone.</p>
+        <p style="color:var(--text-soft); margin-top:10px;">Rôle détecté: ${userRole}</p>
+      </div>`;
+      return;
+    }
+  }
+  
+  console.log('✅ Dashboard logistics autorisé (rôle Firestore:', userRole, ')');
 
   const activeOrders = orders.filter(o => ['pending', 'validated', 'processing', 'in_transit'].includes(o.status));
   const deliveredOrders = orders.filter(o => o.status === 'delivered' || o.status === 'completed');
