@@ -4,6 +4,87 @@
    Recherche & Filtres - Toutes traductions
    ============================================ */
 
+// ============================================
+// 🔄 SYSTÈME DE VERSIONING ET MISE À JOUR
+// ============================================
+const APP_VERSION = '2026-06-03-v1';
+
+// Ajouter les versions aux ressources pour éviter le cache
+(function initVersioning() {
+  // Versionner app.js et style.css dans le HTML
+  const links = document.querySelectorAll('link[rel="stylesheet"], script[src*="app.js"]');
+  links.forEach(link => {
+    if (link.href && !link.href.includes('?v=')) {
+      link.href += '?v=' + APP_VERSION;
+    }
+    if (link.src && !link.src.includes('?v=')) {
+      link.src += '?v=' + APP_VERSION;
+    }
+  });
+  
+  console.log('📌 Total Lakay Version:', APP_VERSION);
+})();
+
+// Service Worker: Détection de mise à jour
+(function initUpdateDetection() {
+  if (!navigator.serviceWorker) return;
+  
+  // Vérifier les mises à jour toutes les 60 secondes
+  let updateCheckInterval = setInterval(async () => {
+    try {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (reg) reg.update();
+    } catch (e) {
+      console.warn('Update check failed:', e);
+    }
+  }, 60000);
+  
+  // Gérer les messages du Service Worker
+  navigator.serviceWorker.addEventListener('message', event => {
+    if (event.data.type === 'SW_UPDATE_AVAILABLE') {
+      console.log('🔄 Nouvelle version disponible:', event.data.version);
+      
+      // Afficher notification de mise à jour
+      const updateNotif = document.createElement('div');
+      updateNotif.style.cssText = `
+        position: fixed; top: 0; left: 0; right: 0;
+        background: linear-gradient(135deg, #050a14, #1a2a4a);
+        color: white; padding: 15px 20px;
+        text-align: center; z-index: 9999;
+        font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      `;
+      updateNotif.innerHTML = `
+        <span>🎉 Une nouvelle version est disponible!</span>
+        <button style="
+          margin-left: 15px; padding: 6px 15px;
+          background: #c8963e; color: white;
+          border: none; border-radius: 5px;
+          cursor: pointer; font-weight: 600;
+          transition: all 0.3s ease;
+        " onmouseover="this.style.background='#d4a850'" onmouseout="this.style.background='#c8963e'"
+        onclick="location.reload()">Actualiser</button>
+      `;
+      document.body.insertBefore(updateNotif, document.body.firstChild);
+      
+      // Auto-reload après 30 secondes
+      setTimeout(() => {
+        if (document.body.contains(updateNotif)) {
+          location.reload();
+        }
+      }, 30000);
+    }
+  });
+  
+  // Enregistrer le Service Worker
+  navigator.serviceWorker.register('sw.js?v=' + APP_VERSION)
+    .then(reg => {
+      console.log('✅ Service Worker enregistré:', reg.scope);
+    })
+    .catch(err => {
+      console.warn('⚠️ Service Worker non disponible:', err);
+    });
+})();
+
 // ---------- GESTION DES ERREURS GLOBALE ----------
 window.onerror = function (msg, url, lineNo, columnNo, error) {
   console.error('Total Lakay Error:', msg, url, lineNo);
@@ -927,13 +1008,78 @@ function updateCartCount() {
   renderCart();
 }
 
+// ============================================
+// 🖼️ SYSTÈME D'UPLOAD D'IMAGES OPTIMISÉ
+// ============================================
+
+/**
+ * Compression d'image via Canvas
+ */
+async function compressImage(file, maxWidth = 1200, maxHeight = 1200, quality = 0.8) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      const img = new Image();
+      img.src = e.target.result;
+      
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        
+        // Calculer les nouvelles dimensions
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round(height * (maxWidth / width));
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round(width * (maxHeight / height));
+            height = maxHeight;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Convertir en blob avec compression
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error('Compression échouée'));
+            }
+          },
+          'image/jpeg',
+          quality
+        );
+      };
+      
+      img.onerror = () => reject(new Error('Erreur lecture image'));
+    };
+    
+    reader.onerror = () => reject(new Error('Erreur lecture fichier'));
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Upload d'image avec gestion complète des erreurs et timeout
+ */
 async function uploadProductImage(file, fileName, onProgress = null) {
   if (!file) return null;
   
-  // Validation du fichier
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
   const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+  const UPLOAD_TIMEOUT = 120000; // 2 minutes
+  const MAX_RETRIES = 3;
   
+  // Validation initiale
   if (!ALLOWED_TYPES.includes(file.type)) {
     throw new Error(`Format non autorisé. Acceptés: JPEG, PNG, WebP, GIF. Reçu: ${file.type}`);
   }
@@ -943,31 +1089,118 @@ async function uploadProductImage(file, fileName, onProgress = null) {
   }
   
   try {
+    // Compression d'image si nécessaire
+    let uploadFile = file;
+    if (file.size > 2 * 1024 * 1024) {
+      // Compresser si > 2 MB
+      console.log('📦 Compression d\'image en cours...');
+      if (onProgress) onProgress(5); // 5% compression
+      
+      uploadFile = await compressImage(file, 1200, 1200, 0.75);
+      console.log(`✅ Image compressée: ${(file.size / 1024).toFixed(0)}KB → ${(uploadFile.size / 1024).toFixed(0)}KB`);
+    }
+    
+    if (onProgress) onProgress(10); // 10% prêt
+    
     const safeName = (fileName || file.name || 'product').replace(/[^a-zA-Z0-9-_\.]/g, '_');
     const storageRef = storage.ref().child(`product_images/${Date.now()}_${safeName}`);
     
-    // Upload avec suivi de la progression
-    const uploadTask = storageRef.put(file);
-    
-    // Écouter la progression
-    uploadTask.on('state_changed',
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        if (onProgress) onProgress(progress);
-        console.log(`Upload ${progress.toFixed(0)}% terminé`);
-      },
-      (error) => {
-        console.error('Erreur upload:', error);
-        throw new Error(`Erreur upload: ${error.message}`);
+    // Envelopper l'upload dans une Promise avec gestion d'erreur et timeout
+    return new Promise((resolve, reject) => {
+      let uploadTimedOut = false;
+      let uploadAborted = false;
+      
+      // Timeout de sécurité
+      const timeoutId = setTimeout(() => {
+        uploadTimedOut = true;
+        uploadAborted = true;
+        reject(new Error('Timeout upload (120s). Vérifiez votre connexion réseau.'));
+      }, UPLOAD_TIMEOUT);
+      
+      try {
+        const uploadTask = storageRef.put(uploadFile);
+        
+        // Écouter les changements d'état
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            if (uploadAborted) return;
+            
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            // Mapper 10-99% pour progress
+            const mappedProgress = 10 + (progress * 0.89);
+            
+            try {
+              if (onProgress && typeof onProgress === 'function') {
+                onProgress(Math.min(99, mappedProgress));
+              }
+            } catch (callbackError) {
+              console.error('Erreur callback progress:', callbackError);
+              // Ne pas arrêter l'upload si le callback échoue
+            }
+            
+            console.log(`📤 Upload ${progress.toFixed(0)}%`);
+          },
+          (error) => {
+            clearTimeout(timeoutId);
+            uploadAborted = true;
+            
+            let errorMessage = error.message;
+            
+            // Gérer les erreurs Firebase spécifiques
+            if (error.code === 'storage/unauthorized') {
+              errorMessage = 'Authentification requise. Vérifiez vos permissions.';
+            } else if (error.code === 'storage/quota-exceeded') {
+              errorMessage = 'Quota de stockage dépassé.';
+            } else if (error.code === 'storage/unauthenticated') {
+              errorMessage = 'Vous devez être connecté pour uploader.';
+            }
+            
+            console.error('❌ Erreur upload:', errorMessage);
+            reject(new Error(errorMessage));
+          },
+          async () => {
+            // Upload complété
+            if (uploadAborted) return;
+            
+            clearTimeout(timeoutId);
+            
+            try {
+              console.log('✅ Upload terminé, récupération URL...');
+              
+              // Récupérer l'URL avec timeout
+              const urlTimeoutId = setTimeout(() => {
+                uploadAborted = true;
+                reject(new Error('Timeout récupération URL (30s).'));
+              }, 30000);
+              
+              const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+              clearTimeout(urlTimeoutId);
+              
+              if (uploadAborted) return;
+              
+              // Vérifier que l'URL est valide
+              if (!downloadURL || typeof downloadURL !== 'string') {
+                throw new Error('URL téléchargement invalide.');
+              }
+              
+              console.log('🎉 URL obtenue:', downloadURL.substring(0, 50) + '...');
+              if (onProgress) onProgress(100);
+              
+              resolve(downloadURL);
+            } catch (urlError) {
+              clearTimeout(urlTimeoutId);
+              console.error('❌ Erreur récupération URL:', urlError.message);
+              reject(new Error(`Erreur récupération URL: ${urlError.message}`));
+            }
+          }
+        );
+      } catch (error) {
+        clearTimeout(timeoutId);
+        uploadAborted = true;
+        console.error('❌ Erreur setup upload:', error.message);
+        reject(new Error(`Erreur setup upload: ${error.message}`));
       }
-    );
-    
-    // Attendre la fin de l'upload
-    const snapshot = await uploadTask;
-    const downloadURL = await snapshot.ref.getDownloadURL();
-    
-    if (onProgress) onProgress(100);
-    return downloadURL;
+    });
   } catch (error) {
     console.error('❌ Erreur upload image:', error.message);
     throw error;
@@ -2347,6 +2580,79 @@ async function renderAdminDashboard(app) {
     document.getElementById('adminClientsList').classList.add('hidden');
   });
 
+  // ============================================
+  // GESTION DU DRAG & DROP
+  // ============================================
+  const fileInput = document.getElementById('adminProdFile');
+  const imageContainer = fileInput?.parentElement;
+  
+  if (imageContainer) {
+    // Style pour drag & drop
+    const setupDragDrop = () => {
+      imageContainer.style.cursor = 'pointer';
+      
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        imageContainer.addEventListener(eventName, preventDefaults, false);
+      });
+      
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      ['dragenter', 'dragover'].forEach(eventName => {
+        imageContainer.addEventListener(eventName, () => {
+          imageContainer.style.backgroundColor = 'rgba(212, 175, 55, 0.1)';
+          imageContainer.style.borderColor = 'var(--gold)';
+          imageContainer.style.borderWidth = '2px';
+        }, false);
+      });
+      
+      ['dragleave', 'drop'].forEach(eventName => {
+        imageContainer.addEventListener(eventName, () => {
+          imageContainer.style.backgroundColor = '';
+          imageContainer.style.borderColor = 'var(--gray-200)';
+          imageContainer.style.borderWidth = '1px';
+        }, false);
+      });
+      
+      imageContainer.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length > 0) {
+          fileInput.files = files;
+          // Trigger change event pour feedback utilisateur
+          fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+          showMessage('📁 Fichier sélectionné! ' + files[0].name, 'success');
+        }
+      }, false);
+    };
+    
+    setupDragDrop();
+  }
+  
+  // Afficher le nom du fichier sélectionné
+  fileInput?.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const sizeKB = (file.size / 1024).toFixed(0);
+      const isValid = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type);
+      
+      if (isValid && file.size <= 5 * 1024 * 1024) {
+        showMessage(`✅ Image prête: ${file.name} (${sizeKB} KB)`, 'success');
+      } else if (!isValid) {
+        showMessage(`❌ Format non supporté: ${file.type}`, 'error');
+        e.target.value = '';
+      } else {
+        showMessage(`❌ Fichier trop volumineux: ${sizeKB} KB > 5120 KB`, 'error');
+        e.target.value = '';
+      }
+    }
+  });
+
+  // ============================================
+  // SAUVEGARDE PRODUIT AVEC UPLOAD AMÉLIORÉ
+  // ============================================
   document.getElementById('saveProductBtn')?.addEventListener('click', async () => {
     const name = document.getElementById('adminProdName')?.value.trim();
     const price = parseFloat(document.getElementById('adminProdPrice')?.value);
@@ -2364,9 +2670,22 @@ async function renderAdminDashboard(app) {
     const progressPercent = document.getElementById('imageProgressPercent');
     const uploadStatus = document.getElementById('imageUploadStatus');
 
-    if (!name || !price) { showMessage(t('fillAllFields'), 'error'); return; }
-    if (price <= 0) { showMessage('❌ Le prix doit être positif', 'error'); return; }
+    // Validation basique
+    if (!name || !price) { 
+      showMessage(t('fillAllFields'), 'error'); 
+      return; 
+    }
+    if (price <= 0) { 
+      showMessage('❌ Le prix doit être positif', 'error'); 
+      return; 
+    }
+    if (!imageFile && !imageUrl) { 
+      showMessage('❌ Sélectionnez une image ou collez une URL', 'error'); 
+      return; 
+    }
 
+    let uploadTimeoutId = null;
+    
     try {
       showMessage("⏳ Traduction automatique en cours...", "info");
       saveBtn.disabled = true;
@@ -2382,28 +2701,65 @@ async function renderAdminDashboard(app) {
       // Upload de l'image si un fichier est sélectionné
       if (imageFile) {
         progressDiv.style.display = 'flex';
-        showMessage("⏳ Téléchargement de l'image en cours...", "info");
+        progressBar.style.width = '0%';
+        progressPercent.textContent = '0';
+        uploadStatus.textContent = 'Préparation...';
+        
+        showMessage("📤 Téléchargement de l'image en cours...", "info");
         
         try {
-          finalImage = await uploadProductImage(imageFile, `${name.replace(/\s+/g, '_')}.jpg`, (progress) => {
-            progressBar.style.width = progress + '%';
-            progressPercent.textContent = Math.round(progress);
-            uploadStatus.textContent = progress >= 100 ? '✅ Téléchargement terminé' : 'Téléchargement...';
-          });
+          // Callback de progression avec gestion robuste
+          const progressCallback = (progress) => {
+            try {
+              progressBar.style.width = Math.min(99, progress) + '%';
+              progressPercent.textContent = Math.round(Math.min(99, progress));
+              
+              if (progress < 10) {
+                uploadStatus.textContent = '📦 Compression...';
+              } else if (progress < 99) {
+                uploadStatus.textContent = `📤 Téléchargement ${Math.round(progress)}%...`;
+              } else {
+                uploadStatus.textContent = '⏳ Finalisation...';
+              }
+            } catch (e) {
+              console.error('Erreur maj UI progress:', e);
+            }
+          };
           
-          showMessage("✅ Image téléchargée avec succès!", "success");
+          // Upload avec timeout de sécurité global
+          uploadTimeoutId = setTimeout(() => {
+            throw new Error('Timeout global upload (150s). Vérifiez votre connexion.');
+          }, 150000); // 2.5 min de timeout total
+          
+          finalImage = await uploadProductImage(
+            imageFile, 
+            `${name.replace(/\s+/g, '_')}.jpg`, 
+            progressCallback
+          );
+          
+          clearTimeout(uploadTimeoutId);
+          uploadTimeoutId = null;
+          
+          progressBar.style.width = '100%';
+          progressPercent.textContent = '100';
+          uploadStatus.textContent = '✅ Téléchargement terminé!';
+          
+          showMessage("✅ Image téléchargée et prête!", "success");
         } catch (uploadError) {
+          clearTimeout(uploadTimeoutId);
           progressDiv.style.display = 'none';
-          showMessage(`❌ Erreur upload image: ${uploadError.message}`, 'error');
-          console.error('Upload error:', uploadError);
           saveBtn.disabled = false;
           saveBtn.style.opacity = '1';
+          
+          const errorMsg = uploadError.message || 'Erreur inconnue lors du téléchargement';
+          console.error('❌ Erreur upload détaillée:', uploadError);
+          showMessage(`❌ Erreur téléchargement: ${errorMsg}`, 'error');
           return;
         }
       }
 
-      // Enregistrer le produit
-      showMessage("💾 Enregistrement du produit...", "info");
+      // Enregistrer le produit dans Firebase
+      showMessage("💾 Enregistrement du produit en base de données...", "info");
       
       await db.collection('products').add({
         name: nameTrans,
@@ -2432,13 +2788,14 @@ async function renderAdminDashboard(app) {
       progressBar.style.width = '0%';
       progressPercent.textContent = '0';
 
-      showMessage("✅ Produit ajouté avec succès!", "success");
+      showMessage("🎉 Produit ajouté avec succès!", "success");
       await loadAllData(); 
       renderView('admin');
     } catch (error) { 
+      clearTimeout(uploadTimeoutId);
       progressDiv.style.display = 'none';
-      console.error('Product save error:', error);
-      showMessage(`❌ Erreur: ${error.message}`, 'error'); 
+      console.error('❌ Erreur sauvegarde produit:', error);
+      showMessage(`❌ Erreur: ${error.message || 'Erreur inconnue'}`, 'error'); 
     } finally {
       saveBtn.disabled = false;
       saveBtn.style.opacity = '1';

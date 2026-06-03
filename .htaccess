@@ -1,0 +1,62 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  
+  # Rediriger tout vers index.html (SPA)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.html [QSA,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  # Désactiver le cache par défaut (sauf les exceptions)
+  Header set Cache-Control "public, max-age=0, must-revalidate"
+  
+  # Cache court pour HTML (5 minutes)
+  <FilesMatch "\.(html)$">
+    Header set Cache-Control "public, max-age=300, must-revalidate"
+  </FilesMatch>
+  
+  # Cache long pour JS/CSS versionnés (1 an - utilise versioning via query params)
+  <FilesMatch "\.(js|css)\?v=">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  
+  # Cache pour Service Worker (1 heure)
+  <FilesMatch "sw\.js$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+    Header set Service-Worker-Allowed "/"
+  </FilesMatch>
+  
+  # Cache pour manifest (1 heure)
+  <FilesMatch "manifest\.json$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
+  
+  # Cache long pour images (30 jours)
+  <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico)$">
+    Header set Cache-Control "public, max-age=2592000, immutable"
+  </FilesMatch>
+  
+  # Ajouter les types de contenu appropriés
+  AddType application/javascript js
+  AddType text/css css
+  AddType application/manifest+json json
+</IfModule>
+
+# Compression GZIP
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# Sécurité: Empêcher l'accès aux fichiers sensibles
+<FilesMatch "^\.">
+  Deny from all
+</FilesMatch>
+
+<FilesMatch "\.(md|env|config|backup)$">
+  Deny from all
+</FilesMatch>
+
+# Performance: Utiliser ETags
+FileETag MTime Size
