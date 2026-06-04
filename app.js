@@ -125,6 +125,7 @@ let aiHistory = []; // 🧠 Mémoire de la conversation
 const FREE_AI_LIMIT = 15; // Limite gratuite augmentée à 15 par jour
 let isPremium = false; // Statut premium de l'utilisateur
 let presenceInterval = null;
+let renderTimeout = null;
 
 function applyRoleBasedVisibility() {
   const authBtn = document.getElementById('authBtn');
@@ -155,11 +156,27 @@ function resetSessionState() {
     clearInterval(presenceInterval);
     presenceInterval = null;
   }
+  if (renderTimeout) {
+    clearTimeout(renderTimeout);
+    renderTimeout = null;
+  }
 
   document.getElementById('loginModal')?.classList.add('hidden');
   document.getElementById('notifModal')?.classList.add('hidden');
   document.getElementById('buyModal')?.classList.add('hidden');
   document.getElementById('cartModal')?.classList.add('hidden');
+  document.getElementById('dropdownMenu')?.classList.add('hidden');
+
+  const app = document.getElementById('appContent');
+  if (app) {
+    app.style.transition = 'none';
+    app.style.opacity = '0';
+    app.style.transform = 'translateY(10px)';
+    app.innerHTML = '';
+  }
+
+  const searchBar = document.getElementById('searchFilterBar');
+  if (searchBar) searchBar.classList.add('hidden');
 
   notifications = [];
   updateNotifBadge();
@@ -1801,9 +1818,14 @@ document.getElementById('registerBtn')?.addEventListener('click', () => {
     .catch(err => showMessage(t('errorOccurred') + err.message, 'error'));
 });
 
-document.getElementById('logoutBtn')?.addEventListener('click', () => {
-  auth.signOut();
-  showMessage(t('loggedOut'), 'success');
+document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+  try {
+    await auth.signOut();
+    resetSessionState();
+    showMessage(t('loggedOut'), 'success');
+  } catch (e) {
+    showMessage(t('errorOccurred') + e.message, 'error');
+  }
 });
 
 // ============================================
@@ -2340,24 +2362,35 @@ async function renderView(view) {
     view = 'home';
   }
 
+  if (renderTimeout) {
+    clearTimeout(renderTimeout);
+    renderTimeout = null;
+  }
+
   currentView = view;
   const app = document.getElementById('appContent');
   if (!app) return;
 
-  // Animation de sortie
+  const searchBar = document.getElementById('searchFilterBar');
+  if (searchBar) {
+    if (view === 'shop' || view === 'specialOffers') {
+      searchBar.classList.remove('hidden');
+    } else {
+      searchBar.classList.add('hidden');
+    }
+  }
+
+  document.getElementById('dropdownMenu')?.classList.add('hidden');
+  app.style.transition = 'none';
   app.style.opacity = '0';
   app.style.transform = 'translateY(10px)';
+  app.innerHTML = '';
 
-  setTimeout(async () => {
+  renderTimeout = setTimeout(async () => {
+    app.style.transition = 'all 0.4s ease-out';
+
     // Afficher/cacher la barre de recherche
-    const searchBar = document.getElementById('searchFilterBar');
-    if (searchBar) {
-      if (view === 'shop' || view === 'specialOffers') {
-        searchBar.classList.remove('hidden');
-      } else {
-        searchBar.classList.add('hidden');
-      }
-    }
+    // (déjà géré au-dessus pour éviter retard et vieux contenu restant)
 
     if (isAdmin && (view === 'home' || view === 'admin')) {
       await renderAdminDashboard(app);
@@ -2390,7 +2423,7 @@ async function renderView(view) {
     // Traduire le nouveau contenu
     applyLanguage(false);
     window.scrollTo(0, 0);
-  }, 200);
+  }, 0);
 }
 function productCardHTML(product) {
   const hasPromo = product.oldPrice && product.oldPrice > product.price;
@@ -4143,9 +4176,14 @@ async function renderProfile(app) {
   });
 
   // Logout Logic
-  document.getElementById('profileLogoutBtn')?.addEventListener('click', () => {
-    auth.signOut();
-    showMessage(t('loggedOut'), 'success');
+  document.getElementById('profileLogoutBtn')?.addEventListener('click', async () => {
+    try {
+      await auth.signOut();
+      resetSessionState();
+      showMessage(t('loggedOut'), 'success');
+    } catch (e) {
+      showMessage(t('errorOccurred') + e.message, 'error');
+    }
   });
 }
 

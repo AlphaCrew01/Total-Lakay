@@ -118,6 +118,17 @@ html {
   scroll-behavior: smooth;
   font-size: 16px;
   overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  touch-action: manipulation;
+}
+
+body,
+button,
+input,
+select,
+textarea,
+a {
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -412,6 +423,7 @@ button {
   overflow-y: auto;
   transform-origin: top right;
   animation: dropdownFade 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: min(100vw - 20px, 320px);
 }
 
 @keyframes dropdownFade {
@@ -574,11 +586,12 @@ button {
   flex: 1;
   background: var(--gray-100);
   border: 2px solid transparent;
-  padding: 14px 24px;
+  padding: 14px 20px;
   border-radius: var(--radius-xl);
   font-size: 1rem;
   transition: var(--transition);
   outline: none;
+  min-width: 0;
 }
 
 .search-input:focus {
@@ -620,13 +633,14 @@ button {
    ============================================ */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 30px;
-  padding: 40px 0;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  padding: 36px 0;
 }
 
 .product-card {
   background: var(--white);
+  min-width: 0;
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-md);
@@ -760,15 +774,17 @@ button {
   align-items: center;
   justify-content: center;
   z-index: 2000;
-  padding: 20px;
+  padding: 12px;
 }
 
 .modal-content {
   background: var(--white);
   width: 100%;
   max-width: 520px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
   border-radius: var(--radius-lg);
-  padding: 36px;
+  padding: 32px;
   position: relative;
   box-shadow: var(--shadow-xl);
   border: 1px solid var(--glass-dark-border);
@@ -1062,24 +1078,52 @@ textarea::placeholder {
   }
 
   .search-container {
-    flex-direction: row;
-    gap: 8px;
+    flex-direction: column;
+    gap: 12px;
   }
 
   .search-input {
     padding: 10px 16px;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
 
   .filter-container {
     justify-content: center;
-    gap: 8px;
+    gap: 10px;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .filter-select,
   .price-input {
-    padding: 8px 12px;
-    font-size: 0.8rem;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    min-width: 100%;
+  }
+
+  .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .card-premium {
+    padding: 18px !important;
+  }
+
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .product-info {
+    padding: 16px;
+  }
+
+  .product-img-container {
+    height: 180px;
+  }
+
+  .modal-content {
+    max-width: 100%;
   }
 }
 
@@ -1123,18 +1167,84 @@ textarea::placeholder {
   transition: var(--transition);
 }
 
-.lang-select-mobile:hover {
-  border-color: var(--gold);
-}
+  .navbar {
+    padding-right: 12px;
+  }
 
-.lang-select-mobile option {
-  background: var(--blue-deep);
-  color: var(--white);
-}
+  .search-filter-bar {
+    padding: 16px;
+    border-radius: var(--radius);
+    margin-top: -20px;
+  }
 
-/* ============================================
-   WHATSAPP & AI BUBBLES
-   ============================================ */
+  .filter-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .search-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .filter-select,
+  .price-input,
+  .search-input,
+  .btn,
+  .btn-menu,
+  .nav-item,
+  .lang-select,
+  .currency-select,
+  input,
+  textarea,
+  select {
+    min-height: 48px;
+  }
+
+  .btn,
+  .btn-menu,
+  .nav-item {
+    min-width: 48px;
+  }
+
+  .btn-menu {
+    width: 50px;
+    height: 50px;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    max-width: 100%;
+    padding: 0 10px;
+  }
+
+  .drawer {
+    width: 100%;
+    max-width: 100%;
+    right: -100%;
+    min-height: 100vh;
+  }
+
+  .drawer.open {
+    right: 0;
+  }
+
+  .dropdown-content {
+    left: 10px;
+    right: 10px;
+    width: auto;
+    max-width: calc(100vw - 20px);
+  }
+
+  .drawer-header,
+  .drawer-content,
+  .drawer-footer {
+    padding: 16px;
+  }
 .whatsapp-float,
 .ai-bubble {
   position: fixed;
@@ -1389,6 +1499,31 @@ textarea::placeholder {
 .field-container {
   position: relative;
   margin-bottom: 20px;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-responsive table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 520px;
+}
+
+.table-responsive th,
+.table-responsive td {
+  padding: 12px 14px;
+  white-space: nowrap;
+}
+
+button,
+input,
+select,
+textarea {
+  font-size: 1rem;
+  line-height: 1.4;
 }
 
 .validation-icon {
