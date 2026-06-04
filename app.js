@@ -1690,8 +1690,10 @@ document.getElementById('authBtn')?.addEventListener('click', () => {
   if (modal) modal.classList.remove('hidden');
   if (loginCard) loginCard.classList.remove('hidden');
   if (registerForm) registerForm.classList.add('hidden');
-  document.getElementById('loginEmail').value = '';
-  document.getElementById('loginPassword').value = '';
+  const loginEmailEl = document.getElementById('loginEmail');
+  const loginPasswordEl = document.getElementById('loginPassword');
+  if (loginEmailEl) loginEmailEl.value = '';
+  if (loginPasswordEl) loginPasswordEl.value = '';
   applyLanguage();
 });
 
@@ -1753,9 +1755,12 @@ document.getElementById('switchToRegister')?.addEventListener('click', (e) => {
   e.preventDefault();
   document.getElementById('loginFormCard').classList.add('hidden');
   document.getElementById('registerForm').classList.remove('hidden');
-  document.getElementById('registerName').value = '';
-  document.getElementById('registerEmail').value = '';
-  document.getElementById('registerPassword').value = '';
+  const regNameEl = document.getElementById('registerName');
+  const regEmailEl = document.getElementById('registerEmail');
+  const regPasswordEl = document.getElementById('registerPassword');
+  if (regNameEl) regNameEl.value = '';
+  if (regEmailEl) regEmailEl.value = '';
+  if (regPasswordEl) regPasswordEl.value = '';
   applyLanguage();
 });
 
@@ -2161,7 +2166,8 @@ document.getElementById('submitOrder')?.addEventListener('click', async () => {
     });
 
     document.getElementById('buyModal')?.classList.add('hidden');
-    document.getElementById('orderAddress').value = '';
+    const orderAddressEl = document.getElementById('orderAddress');
+    if (orderAddressEl) orderAddressEl.value = '';
     const successMessage = paymentMethod === 'MonCash'
       ? '✅ Commande enregistrée. Complétez votre paiement MonCash depuis votre application MonCash.'
       : t('orderSuccess');

@@ -357,14 +357,22 @@ async function editProduct(productId) {
   if (!product) return;
 
   // Populate form
-  document.getElementById('pmName').value = product.name || '';
-  document.getElementById('pmDescription').value = product.description || '';
-  document.getElementById('pmCategory').value = product.category || '';
-  document.getElementById('pmPrice').value = product.price || '';
-  document.getElementById('pmOldPrice').value = product.oldPrice || '';
-  document.getElementById('pmStock').value = product.stock || '';
-  document.getElementById('pmColors').value = (product.colors || []).join(', ');
-  document.getElementById('pmSizes').value = (product.sizes || []).join(', ');
+  const pmNameEl = document.getElementById('pmName');
+  const pmDescriptionEl = document.getElementById('pmDescription');
+  const pmCategoryEl = document.getElementById('pmCategory');
+  const pmPriceEl = document.getElementById('pmPrice');
+  const pmOldPriceEl = document.getElementById('pmOldPrice');
+  const pmStockEl = document.getElementById('pmStock');
+  const pmColorsEl = document.getElementById('pmColors');
+  const pmSizesEl = document.getElementById('pmSizes');
+  if (pmNameEl) pmNameEl.value = product.name || '';
+  if (pmDescriptionEl) pmDescriptionEl.value = product.description || '';
+  if (pmCategoryEl) pmCategoryEl.value = product.category || '';
+  if (pmPriceEl) pmPriceEl.value = product.price || '';
+  if (pmOldPriceEl) pmOldPriceEl.value = product.oldPrice || '';
+  if (pmStockEl) pmStockEl.value = product.stock || '';
+  if (pmColorsEl) pmColorsEl.value = (product.colors || []).join(', ');
+  if (pmSizesEl) pmSizesEl.value = (product.sizes || []).join(', ');
 
   // Clear images for new upload (user can add more images)
   imageFiles = [];
