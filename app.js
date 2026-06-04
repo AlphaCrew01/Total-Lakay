@@ -4,23 +4,6 @@
    Recherche & Filtres - Toutes traductions
    ============================================ */
 
-// ============================================
-// � PROTECTION: REDIRECTION DES ANCIENNES PAGES VERS INDEX.HTML
-// ============================================
-(function redirectOldPages() {
-  const pathname = window.location.pathname;
-  const filename = pathname.split('/').pop();
-  
-  // Rediriger les anciennes pages HTML (admin.html, client.html, vendeur.html) vers index.html
-  if (filename && ['admin.html', 'client.html', 'vendeur.html'].includes(filename)) {
-    console.log('🔐 Redirection détectée:', filename, '→ index.html');
-    window.location.replace('./index.html');
-    // Stop execution immédiatement
-    throw new Error('Page redirected to index.html');
-  }
-})();
-
-// ============================================
 // �🔄 SYSTÈME DE VERSIONING ET MISE À JOUR
 // ============================================
 const APP_VERSION = '2026-06-03-v1';
@@ -141,6 +124,49 @@ let moncashConfig = { clientId: '', clientSecret: '', mode: 'sandbox' };
 let aiHistory = []; // 🧠 Mémoire de la conversation
 const FREE_AI_LIMIT = 15; // Limite gratuite augmentée à 15 par jour
 let isPremium = false; // Statut premium de l'utilisateur
+let presenceInterval = null;
+
+function applyRoleBasedVisibility() {
+  const authBtn = document.getElementById('authBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const adminEls = document.querySelectorAll('.admin-only');
+  const vendorEls = document.querySelectorAll('.vendor-only');
+  const userEls = document.querySelectorAll('.user-only');
+  const adminOrVendorEls = document.querySelectorAll('.admin-or-vendor-only');
+  const clientEls = document.querySelectorAll('.client-only');
+
+  if (authBtn) authBtn.classList.toggle('hidden', !!currentUser);
+  if (logoutBtn) logoutBtn.classList.toggle('hidden', !currentUser);
+  userEls.forEach(el => el.classList.toggle('hidden', !currentUser));
+  adminEls.forEach(el => el.classList.toggle('hidden', !isAdmin));
+  vendorEls.forEach(el => el.classList.toggle('hidden', userRole !== 'vendor'));
+  adminOrVendorEls.forEach(el => el.classList.toggle('hidden', !(isAdmin || userRole === 'vendor')));
+  clientEls.forEach(el => el.classList.toggle('hidden', !(userRole === 'client' && currentUser)));
+}
+
+function resetSessionState() {
+  currentUser = null;
+  userRole = null;
+  isAdmin = false;
+  isPremium = false;
+  selectedProductId = null;
+
+  if (presenceInterval) {
+    clearInterval(presenceInterval);
+    presenceInterval = null;
+  }
+
+  document.getElementById('loginModal')?.classList.add('hidden');
+  document.getElementById('notifModal')?.classList.add('hidden');
+  document.getElementById('buyModal')?.classList.add('hidden');
+  document.getElementById('cartModal')?.classList.add('hidden');
+
+  notifications = [];
+  updateNotifBadge();
+  currentView = 'home';
+  applyRoleBasedVisibility();
+  renderView('home');
+}
 
 const exchangeRates = {
   HTG: 1,
@@ -1604,40 +1630,23 @@ auth.onAuthStateChanged(async (user) => {
     // === AFFICHAGE DES ÉLÉMENTS SELON LE RÔLE (FIRESTORE) ===
     console.log('🎨 Répartition des éléments UI selon rôle:', userRole);
     
-    if (authBtn) authBtn.classList.add('hidden');
-    if (logoutBtn) logoutBtn.classList.remove('hidden');
-    userElements.forEach(el => el.classList.remove('hidden'));
-
-    // Afficher les éléments admin uniquement si rôle === 'admin' (de Firestore)
-    if (isAdmin) {
-      console.log('👑 AFFICHAGE: Éléments ADMIN');
-      adminElements.forEach(el => el.classList.remove('hidden'));
-    } else {
-      console.log('👤 AFFICHAGE: Éléments USER standard');
-      adminElements.forEach(el => el.classList.add('hidden'));
-    }
-
-    // Afficher les éléments vendor/admin
-    document.querySelectorAll('.admin-or-vendor-only').forEach(el => {
-      el.classList.toggle('hidden', !(isAdmin || userRole === 'vendor'));
-    });
-    
+    applyRoleBasedVisibility();
     console.log('✅ Répartition des rôles appliquée (basée Firestore)');
 
     // === MISE À JOUR DE LA PRÉSENCE ===
+    if (presenceInterval) {
+      clearInterval(presenceInterval);
+      presenceInterval = null;
+    }
     updatePresence();
-    setInterval(updatePresence, 2 * 60 * 1000);
+    presenceInterval = setInterval(updatePresence, 2 * 60 * 1000);
     
   } else {
     // === UTILISATEUR DÉCONNECTÉ ===
     console.log('🚪 Utilisateur déconnecté');
-    if (authBtn) authBtn.classList.remove('hidden');
-    if (logoutBtn) logoutBtn.classList.add('hidden');
-    adminElements.forEach(el => el.classList.add('hidden'));
-    userElements.forEach(el => el.classList.add('hidden'));
-    isAdmin = false;
-    userRole = null;
+    resetSessionState();
     console.log('✅ État réinitialisé');
+    return;
   }
 
   // === REDIRECTION POST-CONNEXION ===
