@@ -1,10 +1,13 @@
 /* ============================================
-   PRODUCT MANAGER - Total Lakay
+   PRODUCT MANAGER - Total Lakay v2.0
    Image compression, validation, multi-upload
    Full CRUD operations
+   Supabase Storage: tamdcigvxeswtawwymyi
    ============================================ */
 
-// Firebase Config
+// ============================================
+// FIREBASE CONFIG
+// ============================================
 const firebaseConfig = {
   apiKey: "AIzaSyBA_cEX_pHmlUZ4xv10GIOLVOv9g_-iolQ",
   authDomain: "total-lakay.firebaseapp.com",
@@ -22,29 +25,29 @@ const db = firebase.firestore();
 // ============================================
 // SUPABASE CONFIG (Storage uniquement)
 // ============================================
-const SUPABASE_URL = 'https://olosjhobtvnbbwmpawxc.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_FV4OONJpcEIyJ0-jbDQq0g_bWnAq-a5';
+const SUPABASE_URL = 'https://tamdcigvxeswtawwymyi.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_mAtPj_VI0O7SsZM6x9guzQ_WKtpDDPu';
+const SUPABASE_BUCKET = 'product-images';
 
 // ============================================
 // STATE MANAGEMENT
 // ============================================
-
 let currentUser = null;
 let isAdmin = false;
 let products = [];
-let categories = ['clothing', 'school', 'home', 'electronics'];
 let selectedProductId = null;
 let imageFiles = [];
-let currentTab = 'all';
+let existingImageUrls = []; // Pour garder les images existantes lors de l'édition
+let isSubmitting = false;
 
 // Image compression settings
 const IMAGE_CONFIG = {
-  maxSize: 5 * 1024 * 1024, // 5MB
-  allowedFormats: ['image/jpeg', 'image/png', 'image/webp'],
+  maxSize: 8 * 1024 * 1024, // 8MB avant compression
+  allowedFormats: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
   maxWidth: 1200,
   maxHeight: 1200,
-  quality: 0.8,
-  maxImages: 5
+  quality: 0.82,
+  maxImages: 6
 };
 
 // ============================================
@@ -53,30 +56,54 @@ const IMAGE_CONFIG = {
 
 function showToast(message, type = 'success') {
   const container = document.getElementById('pmToastContainer');
+  if (!container) return;
   const toast = document.createElement('div');
   toast.className = `pm-toast ${type}`;
-  toast.textContent = message;
+  toast.innerHTML = message;
   container.appendChild(toast);
+
+  // Auto-remove
   setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateX(400px)';
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
+    toast.classList.add('fade-out');
+    setTimeout(() => toast.remove(), 400);
+  }, 3500);
 }
 
 function showProgress(text, percent) {
   const container = document.getElementById('pmUploadProgress');
-  document.getElementById('pmUploadText').textContent = text;
-  document.getElementById('pmUploadPercent').textContent = `${percent}%`;
-  document.getElementById('pmProgressFill').style.width = `${percent}%`;
+  if (!container) return;
+  const textEl = document.getElementById('pmUploadText');
+  const percentEl = document.getElementById('pmUploadPercent');
+  const fillEl = document.getElementById('pmProgressFill');
+
+  if (textEl) textEl.textContent = text;
+  if (percentEl) percentEl.textContent = `${Math.round(percent)}%`;
+  if (fillEl) fillEl.style.width = `${Math.round(percent)}%`;
+
   container.classList.add('active');
   if (percent >= 100) {
-    setTimeout(() => container.classList.remove('active'), 1000);
+    setTimeout(() => container.classList.remove('active'), 1200);
   }
 }
 
+function hideProgress() {
+  const container = document.getElementById('pmUploadProgress');
+  if (container) container.classList.remove('active');
+}
+
 function getPlaceholderImage() {
-  return 'placeholder-image.svg';
+  return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Crect width='80' height='80' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='28' fill='%23bbb'%3E📦%3C/text%3E%3C/svg%3E`;
+}
+
+function formatPrice(price) {
+  return Math.round(price).toLocaleString('fr-FR');
+}
+
+function sanitizeFileName(name) {
+  return name
+    .replace(/[^a-zA-Z0-9\-_.]/g, '_')
+    .replace(/__+/g, '_')
+    .toLowerCase();
 }
 
 // ============================================
@@ -84,30 +111,31 @@ function getPlaceholderImage() {
 // ============================================
 
 async function validateAndCompressImage(file) {
-  try {
-    if (file.size > IMAGE_CONFIG.maxSize) {
-      throw new Error(`Fichier trop volumineux (${(file.size / 1024 / 1024).toFixed(2)}MB). Max: 5MB`);
-    }
-
-    if (!IMAGE_CONFIG.allowedFormats.includes(file.type)) {
-      throw new Error(`Format non autorisé. Formats acceptés: JPG, PNG, WEBP`);
-    }
-
-    const canvas = await compressImage(file);
-
-    return new Promise((resolve, reject) => {
-      canvas.toBlob(
-        (blob) => {
-          const compressedFile = new File([blob], file.name, { type: 'image/jpeg' });
-          resolve(compressedFile);
-        },
-        'image/jpeg',
-        IMAGE_CONFIG.quality
-      );
-    });
-  } catch (error) {
-    throw new Error(`Erreur image: ${error.message}`);
+  if (!IMAGE_CONFIG.allowedFormats.includes(file.type)) {
+    throw new Error(`Format non autorisé: ${file.type}. Formats acceptés: JPG, PNG, WEBP, GIF`);
   }
+
+  if (file.size > IMAGE_CONFIG.maxSize) {
+    throw new Error(`Fichier trop volumineux (${(file.size / 1024 / 1024).toFixed(1)}MB). Max: 8MB`);
+  }
+
+  const canvas = await compressImage(file);
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) return reject(new Error('Échec compression image'));
+        const compressedFile = new File(
+          [blob],
+          `${Date.now()}_${sanitizeFileName(file.name.replace(/\.[^/.]+$/, ''))}.jpg`,
+          { type: 'image/jpeg' }
+        );
+        resolve(compressedFile);
+      },
+      'image/jpeg',
+      IMAGE_CONFIG.quality
+    );
+  });
 }
 
 async function compressImage(file) {
@@ -117,106 +145,131 @@ async function compressImage(file) {
       const img = new Image();
       img.onload = () => {
         try {
+          let { width, height } = img;
+
+          // Calcul proportionnel
+          const ratio = Math.min(
+            IMAGE_CONFIG.maxWidth / width,
+            IMAGE_CONFIG.maxHeight / height,
+            1
+          );
+          width = Math.max(Math.round(width * ratio), 100);
+          height = Math.max(Math.round(height * ratio), 100);
+
           const canvas = document.createElement('canvas');
-          let width = img.width;
-          let height = img.height;
-
-          if (width > height) {
-            if (width > IMAGE_CONFIG.maxWidth) {
-              height *= IMAGE_CONFIG.maxWidth / width;
-              width = IMAGE_CONFIG.maxWidth;
-            }
-          } else {
-            if (height > IMAGE_CONFIG.maxHeight) {
-              width *= IMAGE_CONFIG.maxHeight / height;
-              height = IMAGE_CONFIG.maxHeight;
-            }
-          }
-
-          width = Math.max(width, 100);
-          height = Math.max(height, 100);
-
           canvas.width = width;
           canvas.height = height;
+
           const ctx = canvas.getContext('2d');
           if (!ctx) throw new Error('Impossible de créer le contexte canvas');
 
+          // Amélioration qualité rendu
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
           ctx.drawImage(img, 0, 0, width, height);
+
           resolve(canvas);
         } catch (err) {
           reject(new Error(`Erreur compression: ${err.message}`));
         }
       };
       img.onerror = () => reject(new Error('Erreur chargement image - format invalide'));
-      img.onabort = () => reject(new Error('Chargement image annulé'));
       img.src = e.target.result;
     };
     reader.onerror = () => reject(new Error('Erreur lecture fichier'));
-    reader.onabort = () => reject(new Error('Lecture fichier annulée'));
     reader.readAsDataURL(file);
   });
 }
 
 // ============================================
-// UPLOAD IMAGE — SUPABASE (remplace Firebase Storage)
+// UPLOAD IMAGE — SUPABASE STORAGE
 // ============================================
 
 async function uploadProductImage(file, onProgress) {
   try {
     const compressed = await validateAndCompressImage(file);
-    const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9-_.]/g, '_')}`;
+    const fileName = compressed.name;
 
-    if (onProgress) onProgress(30);
+    if (onProgress) onProgress(20);
 
-    const response = await fetch(
-      `${SUPABASE_URL}/storage/v1/object/product-images/${fileName}`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
-          'Content-Type': 'image/jpeg',
-          'x-upsert': 'true'
-        },
-        body: compressed
-      }
-    );
+    const uploadUrl = `${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${fileName}`;
+    const response = await fetch(uploadUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'image/jpeg',
+        'x-upsert': 'true'
+      },
+      body: compressed
+    });
 
     if (!response.ok) {
-      const err = await response.json();
-      throw new Error(err.message || 'Upload échoué');
+      let errMsg = 'Upload échoué';
+      try {
+        const errData = await response.json();
+        errMsg = errData.error || errData.message || errMsg;
+      } catch (_) {}
+      throw new Error(`${errMsg} (HTTP ${response.status})`);
     }
 
     if (onProgress) onProgress(100);
 
-    return `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
-
+    return `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${fileName}`;
   } catch (error) {
     throw new Error(`Upload image échoué: ${error.message}`);
   }
 }
 
+async function deleteSupabaseImage(imageUrl) {
+  try {
+    const parts = imageUrl.split(`/public/${SUPABASE_BUCKET}/`);
+    if (parts.length < 2) return;
+    const fileName = parts[1];
+
+    await fetch(`${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${fileName}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+  } catch (e) {
+    console.warn('Erreur suppression image Supabase:', e);
+  }
+}
+
 // ============================================
-// IMAGE HANDLING
+// IMAGE HANDLING — DROP ZONE
 // ============================================
 
 function setupImageUpload() {
   const dropZone = document.getElementById('pmImageDrop');
-  const fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.multiple = true;
-  fileInput.accept = 'image/jpeg,image/png,image/webp';
-  fileInput.style.display = 'none';
-  dropZone.appendChild(fileInput);
+  if (!dropZone) return;
 
-  dropZone.addEventListener('click', () => fileInput.click());
+  let fileInput = dropZone.querySelector('input[type="file"]');
+  if (!fileInput) {
+    fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.multiple = true;
+    fileInput.accept = 'image/jpeg,image/png,image/webp,image/gif';
+    fileInput.style.display = 'none';
+    dropZone.appendChild(fileInput);
+  }
 
-  dropZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropZone.classList.add('dragover');
+  dropZone.addEventListener('click', (e) => {
+    if (!e.target.closest('.pm-existing-img-remove')) {
+      fileInput.click();
+    }
   });
 
-  dropZone.addEventListener('dragleave', () => {
-    dropZone.classList.remove('dragover');
+  ['dragenter', 'dragover'].forEach(ev => {
+    dropZone.addEventListener(ev, (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+  });
+
+  ['dragleave', 'dragend'].forEach(ev => {
+    dropZone.addEventListener(ev, () => {
+      dropZone.classList.remove('dragover');
+    });
   });
 
   dropZone.addEventListener('drop', (e) => {
@@ -227,46 +280,74 @@ function setupImageUpload() {
 
   fileInput.addEventListener('change', (e) => {
     handleImageSelection(e.target.files);
+    e.target.value = '';
   });
 }
 
 async function handleImageSelection(files) {
   const newFiles = Array.from(files);
+  const totalCount = existingImageUrls.length + imageFiles.length + newFiles.length;
 
-  if (imageFiles.length + newFiles.length > IMAGE_CONFIG.maxImages) {
-    showToast(`Maximum ${IMAGE_CONFIG.maxImages} images autorisées`, 'warning');
+  if (totalCount > IMAGE_CONFIG.maxImages) {
+    showToast(`⚠️ Maximum ${IMAGE_CONFIG.maxImages} images autorisées`, 'warning');
     return;
   }
 
+  if (newFiles.length === 0) return;
+
+  showProgress('Validation des images...', 5);
+
   try {
-    showProgress('Validation des images...', 0);
     for (let i = 0; i < newFiles.length; i++) {
+      showProgress(`Compression image ${i + 1}/${newFiles.length}...`, 5 + ((i / newFiles.length) * 90));
       const validated = await validateAndCompressImage(newFiles[i]);
       imageFiles.push(validated);
-      showProgress(`Préparation image ${i + 1}/${newFiles.length}...`, ((i + 1) / newFiles.length) * 100);
     }
     updateImagePreviews();
-    showToast(`${newFiles.length} image(s) ajoutée(s)`, 'success');
+    showToast(`✅ ${newFiles.length} image(s) ajoutée(s)`, 'success');
   } catch (error) {
-    showToast(error.message, 'error');
+    showToast(`❌ ${error.message}`, 'error');
+  } finally {
+    hideProgress();
   }
 }
 
 function updateImagePreviews() {
   const container = document.getElementById('pmImagePreviews');
-  container.innerHTML = imageFiles.map((file, index) => {
+  if (!container) return;
+
+  const existingHTML = existingImageUrls.map((url, index) => `
+    <div class="pm-image-preview existing" data-index="${index}">
+      <img src="${url}" alt="Image ${index + 1}" loading="lazy" onerror="this.src='${getPlaceholderImage()}'">
+      <button class="pm-image-preview-close" onclick="removeExistingImage(${index})" type="button" title="Supprimer">×</button>
+      <span class="pm-img-badge">Actuelle</span>
+    </div>
+  `).join('');
+
+  const newHTML = imageFiles.map((file, index) => {
     const url = URL.createObjectURL(file);
     return `
-      <div class="pm-image-preview">
-        <img src="${url}" alt="Preview ${index}">
-        <button class="pm-image-preview-close" onclick="removeImage(${index})" type="button">×</button>
+      <div class="pm-image-preview new" data-index="${index}">
+        <img src="${url}" alt="Nouvelle image ${index + 1}">
+        <button class="pm-image-preview-close" onclick="removeNewImage(${index})" type="button" title="Supprimer">×</button>
+        <span class="pm-img-badge new-badge">Nouvelle</span>
       </div>
     `;
   }).join('');
+
+  const countLeft = IMAGE_CONFIG.maxImages - existingImageUrls.length - imageFiles.length;
+  const hint = countLeft > 0 ? `<p class="pm-img-count">Vous pouvez encore ajouter ${countLeft} image(s)</p>` : '';
+
+  container.innerHTML = existingHTML + newHTML + hint;
 }
 
-function removeImage(index) {
+function removeNewImage(index) {
   imageFiles.splice(index, 1);
+  updateImagePreviews();
+}
+
+function removeExistingImage(index) {
+  existingImageUrls.splice(index, 1);
   updateImagePreviews();
 }
 
@@ -275,70 +356,106 @@ function removeImage(index) {
 // ============================================
 
 async function loadProducts() {
+  const listEl = document.getElementById('pmAllProducts');
+  if (listEl) listEl.innerHTML = '<div class="pm-loading"><span class="pm-spinner"></span> Chargement...</div>';
+
   try {
     const snap = await db.collection('products').orderBy('createdAt', 'desc').get();
     products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderProducts();
     updateStatistics();
   } catch (error) {
-    showToast(`Erreur chargement: ${error.message}`, 'error');
+    showToast(`❌ Erreur chargement: ${error.message}`, 'error');
+    if (listEl) listEl.innerHTML = '<div class="pm-empty-state"><div class="pm-empty-state-icon">⚠️</div><div>Erreur de chargement. Réessayez.</div></div>';
   }
 }
 
 async function saveProduct() {
+  if (isSubmitting) return;
+
   const form = document.getElementById('pmProductForm');
+  if (!form) return;
 
-  if (!form.checkValidity()) {
-    form.reportValidity();
-    showToast('❌ Veuillez remplir tous les champs requis', 'error');
-    return;
-  }
+  const name = document.getElementById('pmName')?.value.trim();
+  const category = document.getElementById('pmCategory')?.value;
+  const priceVal = document.getElementById('pmPrice')?.value;
+  const stockVal = document.getElementById('pmStock')?.value;
 
-  const name = document.getElementById('pmName').value.trim();
-  const category = document.getElementById('pmCategory').value;
-  const price = document.getElementById('pmPrice').value;
-  const stock = document.getElementById('pmStock').value;
-
-  if (!name || !category || !price || stock === '') {
+  if (!name || !category || !priceVal || stockVal === '') {
     showToast('❌ Nom, catégorie, prix et stock sont obligatoires', 'error');
     return;
   }
 
+  const price = parseFloat(priceVal);
+  const stock = parseInt(stockVal);
+  const oldPriceVal = document.getElementById('pmOldPrice')?.value;
+  const oldPrice = oldPriceVal ? parseFloat(oldPriceVal) : null;
+
+  if (isNaN(price) || price < 0) {
+    showToast('❌ Prix invalide', 'error');
+    return;
+  }
+  if (isNaN(stock) || stock < 0) {
+    showToast('❌ Stock invalide', 'error');
+    return;
+  }
+
+  isSubmitting = true;
+  const submitBtn = document.getElementById('pmSubmitBtn');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.7';
+  }
+
   try {
-    showProgress('Préparation du produit...', 10);
+    showProgress('Préparation...', 5);
 
     const productData = {
-      name: name,
-      description: document.getElementById('pmDescription').value.trim(),
-      category: category,
-      price: parseFloat(price),
-      oldPrice: document.getElementById('pmOldPrice').value ? parseFloat(document.getElementById('pmOldPrice').value) : null,
-      stock: parseInt(stock),
-      colors: document.getElementById('pmColors').value.split(',').map(c => c.trim()).filter(c => c),
-      sizes: document.getElementById('pmSizes').value.split(',').map(s => s.trim()).filter(s => s),
+      name,
+      description: document.getElementById('pmDescription')?.value.trim() || '',
+      category,
+      price,
+      oldPrice,
+      stock,
+      colors: parseCommaSeparated(document.getElementById('pmColors')?.value),
+      sizes: parseCommaSeparated(document.getElementById('pmSizes')?.value),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
-    let imageUrls = [];
+    // Upload nouvelles images
+    let newUploadedUrls = [];
     if (imageFiles.length > 0) {
-      showProgress('Upload des images...', 30);
-      imageUrls = await Promise.all(
-        imageFiles.map((file, index) =>
-          uploadProductImage(file, (progress) => {
-            const totalProgress = 30 + ((index + (progress / 100)) / imageFiles.length) * 60;
-            showProgress(`Upload image ${index + 1}/${imageFiles.length}...`, Math.round(totalProgress));
-          })
-        )
+      showProgress(`Upload de ${imageFiles.length} image(s)...`, 20);
+      const uploadPromises = imageFiles.map((file, index) =>
+        uploadProductImage(file, (progress) => {
+          const total = 20 + ((index + progress / 100) / imageFiles.length) * 65;
+          showProgress(`Upload image ${index + 1}/${imageFiles.length}...`, total);
+        })
       );
+      newUploadedUrls = await Promise.all(uploadPromises);
     }
 
-    if (imageUrls.length > 0) {
-      productData.images = imageUrls;
-      productData.image = imageUrls[0];
+    // Fusion images existantes + nouvelles
+    const allImages = [...existingImageUrls, ...newUploadedUrls];
+
+    if (allImages.length > 0) {
+      productData.images = allImages;
+      productData.image = allImages[0];
+    } else if (!selectedProductId) {
+      // Nouveau produit sans image — ok
+      productData.images = [];
+      productData.image = null;
     }
 
-    showProgress('Sauvegarde en base de données...', 90);
+    showProgress('Sauvegarde...', 90);
+
     if (selectedProductId) {
+      // Si on edit, supprimer les images retirées de Supabase
+      const oldProduct = products.find(p => p.id === selectedProductId);
+      if (oldProduct?.images) {
+        const removedImages = (oldProduct.images || []).filter(url => !existingImageUrls.includes(url));
+        await Promise.all(removedImages.map(url => deleteSupabaseImage(url)));
+      }
       await db.collection('products').doc(selectedProductId).update(productData);
       showToast('✅ Produit mis à jour avec succès', 'success');
     } else {
@@ -349,92 +466,119 @@ async function saveProduct() {
 
     resetForm();
     await loadProducts();
-    showProgress('Terminé', 100);
+    showProgress('Terminé !', 100);
+
   } catch (error) {
     console.error('Save error:', error);
     showToast(`❌ Erreur: ${error.message}`, 'error');
+    hideProgress();
+  } finally {
+    isSubmitting = false;
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = '1';
+    }
   }
 }
 
-async function editProduct(productId) {
+function parseCommaSeparated(value) {
+  if (!value) return [];
+  return value.split(',').map(v => v.trim()).filter(v => v.length > 0);
+}
+
+function editProduct(productId) {
   selectedProductId = productId;
   const product = products.find(p => p.id === productId);
-
   if (!product) return;
 
-  const pmNameEl = document.getElementById('pmName');
-  const pmDescriptionEl = document.getElementById('pmDescription');
-  const pmCategoryEl = document.getElementById('pmCategory');
-  const pmPriceEl = document.getElementById('pmPrice');
-  const pmOldPriceEl = document.getElementById('pmOldPrice');
-  const pmStockEl = document.getElementById('pmStock');
-  const pmColorsEl = document.getElementById('pmColors');
-  const pmSizesEl = document.getElementById('pmSizes');
-  if (pmNameEl) pmNameEl.value = product.name || '';
-  if (pmDescriptionEl) pmDescriptionEl.value = product.description || '';
-  if (pmCategoryEl) pmCategoryEl.value = product.category || '';
-  if (pmPriceEl) pmPriceEl.value = product.price || '';
-  if (pmOldPriceEl) pmOldPriceEl.value = product.oldPrice || '';
-  if (pmStockEl) pmStockEl.value = product.stock || '';
-  if (pmColorsEl) pmColorsEl.value = (product.colors || []).join(', ');
-  if (pmSizesEl) pmSizesEl.value = (product.sizes || []).join(', ');
+  // Remplir le formulaire
+  setValue('pmName', product.name || '');
+  setValue('pmDescription', product.description || '');
+  setValue('pmCategory', product.category || '');
+  setValue('pmPrice', product.price || '');
+  setValue('pmOldPrice', product.oldPrice || '');
+  setValue('pmStock', product.stock ?? '');
+  setValue('pmColors', (product.colors || []).join(', '));
+  setValue('pmSizes', (product.sizes || []).join(', '));
 
+  // Charger images existantes
+  existingImageUrls = Array.isArray(product.images) ? [...product.images] : (product.image ? [product.image] : []);
   imageFiles = [];
   updateImagePreviews();
 
-  document.getElementById('pmFormTitle').textContent = 'Modifier le Produit';
-  document.getElementById('pmSubmitText').textContent = '✏️ Mettre à jour';
-  document.getElementById('pmSubmitBtn').className = 'pm-btn pm-btn-primary';
+  // Mettre à jour l'UI du formulaire
+  const formTitle = document.getElementById('pmFormTitle');
+  const submitText = document.getElementById('pmSubmitText');
+  const submitBtn = document.getElementById('pmSubmitBtn');
+  if (formTitle) formTitle.textContent = '✏️ Modifier le Produit';
+  if (submitText) submitText.textContent = 'Mettre à jour';
+  if (submitBtn) submitBtn.className = 'pm-btn pm-btn-warning';
 
-  document.querySelector('.pm-sidebar').scrollIntoView({ behavior: 'smooth' });
+  // Scroll vers le formulaire
+  const sidebar = document.querySelector('.pm-sidebar');
+  if (sidebar) sidebar.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-async function deleteProduct(productId) {
+function setValue(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.value = value;
+}
+
+function deleteProduct(productId) {
   const product = products.find(p => p.id === productId);
   if (!product) return;
 
   const modal = document.getElementById('pmConfirmModal');
-  document.getElementById('pmConfirmText').textContent = `Êtes-vous sûr de vouloir supprimer "${product.name}"? Cette action est irréversible et supprimera aussi les images.`;
+  const confirmText = document.getElementById('pmConfirmText');
+  if (confirmText) {
+    confirmText.textContent = `Supprimer "${product.name}" ? Cette action est irréversible et supprimera aussi toutes les images associées.`;
+  }
 
-  document.getElementById('pmConfirmBtn').onclick = async () => {
-    try {
+  const confirmBtn = document.getElementById('pmConfirmBtn');
+  if (confirmBtn) {
+    // Nettoyer ancien handler
+    const newBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+
+    newBtn.onclick = async () => {
       modal.classList.remove('active');
-      showProgress('Suppression en cours...', 50);
-
-      // Suppression images Supabase
-      if (product.images && Array.isArray(product.images)) {
-        for (const imageUrl of product.images) {
-          try {
-            const fileName = imageUrl.split('/product-images/')[1];
-            await fetch(`${SUPABASE_URL}/storage/v1/object/product-images/${fileName}`, {
-              method: 'DELETE',
-              headers: { 'Authorization': `Bearer ${SUPABASE_KEY}` }
-            });
-          } catch (e) {
-            console.warn('Erreur suppression image:', e);
-          }
+      showProgress('Suppression en cours...', 30);
+      try {
+        // Supprimer images Supabase
+        const imagesToDelete = product.images || (product.image ? [product.image] : []);
+        if (imagesToDelete.length > 0) {
+          showProgress('Suppression des images...', 60);
+          await Promise.all(imagesToDelete.map(url => deleteSupabaseImage(url)));
         }
+
+        await db.collection('products').doc(productId).delete();
+        showToast('✅ Produit supprimé avec succès', 'success');
+        await loadProducts();
+        showProgress('Terminé', 100);
+      } catch (error) {
+        showToast(`❌ Erreur suppression: ${error.message}`, 'error');
+        hideProgress();
       }
+    };
+  }
 
-      await db.collection('products').doc(productId).delete();
-      showToast('✅ Produit supprimé avec succès', 'success');
-      await loadProducts();
-    } catch (error) {
-      showToast(`❌ Erreur suppression: ${error.message}`, 'error');
-      console.error('Delete error:', error);
-    }
-  };
-
-  modal.classList.add('active');
+  if (modal) modal.classList.add('active');
 }
 
 function resetForm() {
-  document.getElementById('pmProductForm').reset();
+  const form = document.getElementById('pmProductForm');
+  if (form) form.reset();
   selectedProductId = null;
   imageFiles = [];
-  document.getElementById('pmImagePreviews').innerHTML = '';
-  document.getElementById('pmFormTitle').textContent = 'Ajouter un Produit';
-  document.getElementById('pmSubmitText').textContent = '➕ Ajouter Produit';
+  existingImageUrls = [];
+  updateImagePreviews();
+
+  const formTitle = document.getElementById('pmFormTitle');
+  const submitText = document.getElementById('pmSubmitText');
+  const submitBtn = document.getElementById('pmSubmitBtn');
+  if (formTitle) formTitle.textContent = '➕ Ajouter un Produit';
+  if (submitText) submitText.textContent = 'Ajouter Produit';
+  if (submitBtn) submitBtn.className = 'pm-btn pm-btn-primary';
 }
 
 // ============================================
@@ -442,104 +586,147 @@ function resetForm() {
 // ============================================
 
 function renderProducts() {
-  const filtered = getFilteredProducts();
+  const search = document.getElementById('pmSearch')?.value.toLowerCase().trim() || '';
 
-  document.getElementById('pmAllProducts').innerHTML = renderProductsTable(products);
+  const filtered = search
+    ? products.filter(p =>
+        (p.name || '').toLowerCase().includes(search) ||
+        (p.description || '').toLowerCase().includes(search) ||
+        (p.category || '').toLowerCase().includes(search)
+      )
+    : products;
 
-  const lowStock = products.filter(p => p.stock <= 5);
-  document.getElementById('pmLowstockProducts').innerHTML =
-    lowStock.length === 0
-      ? '<div class="pm-empty-state"><div class="pm-empty-state-icon">📦</div><div class="pm-empty-state-text">Aucun produit en rupture</div></div>'
-      : renderProductsTable(lowStock);
-
+  const lowStock = products.filter(p => (p.stock ?? 0) <= 5 && (p.stock ?? 0) > 0);
+  const outOfStock = products.filter(p => (p.stock ?? 0) === 0);
   const promos = products.filter(p => p.oldPrice && p.oldPrice > p.price);
-  document.getElementById('pmPromoProducts').innerHTML =
-    promos.length === 0
-      ? '<div class="pm-empty-state"><div class="pm-empty-state-icon">🔥</div><div class="pm-empty-state-text">Aucune promotion active</div></div>'
-      : renderProductsTable(promos);
+
+  const allEl = document.getElementById('pmAllProducts');
+  const lowStockEl = document.getElementById('pmLowstockProducts');
+  const outOfStockEl = document.getElementById('pmOutofstockProducts');
+  const promoEl = document.getElementById('pmPromoProducts');
+
+  if (allEl) allEl.innerHTML = renderProductsTable(filtered, search ? `${filtered.length} résultat(s) pour "${search}"` : null);
+  if (lowStockEl) lowStockEl.innerHTML = lowStock.length === 0
+    ? emptyState('📦', 'Aucun produit en stock faible')
+    : renderProductsTable(lowStock);
+  if (outOfStockEl) outOfStockEl.innerHTML = outOfStock.length === 0
+    ? emptyState('✅', 'Aucun produit en rupture de stock')
+    : renderProductsTable(outOfStock);
+  if (promoEl) promoEl.innerHTML = promos.length === 0
+    ? emptyState('🔥', 'Aucune promotion active')
+    : renderProductsTable(promos);
 }
 
-function renderProductsTable(productList) {
+function emptyState(icon, text) {
+  return `<div class="pm-empty-state"><div class="pm-empty-state-icon">${icon}</div><div class="pm-empty-state-text">${text}</div></div>`;
+}
+
+function renderProductsTable(productList, subtitle = null) {
   if (productList.length === 0) {
-    return '<div class="pm-empty-state"><div class="pm-empty-state-icon">📭</div><div class="pm-empty-state-text">Aucun produit trouvé</div></div>';
+    return emptyState('📭', 'Aucun produit trouvé');
   }
 
+  const subtitleHTML = subtitle ? `<div class="pm-results-subtitle">${subtitle}</div>` : '';
+
   return `
+    ${subtitleHTML}
     <div class="pm-products-list">
       <div class="pm-products-header">
-        <div></div>
+        <div>Image</div>
         <div>Produit</div>
         <div>Prix</div>
         <div>Stock</div>
         <div>Catégorie</div>
         <div>Actions</div>
       </div>
-      ${productList.map(p => `
-        <div class="pm-product-row">
-          <img src="${p.image || getPlaceholderImage()}" alt="${p.name}" class="pm-product-image" onerror="this.src='${getPlaceholderImage()}'">
-          <div>
-            <div class="pm-product-name">${p.name}</div>
-            <div style="font-size: 0.85rem; color: var(--text-soft);">${p.description?.substring(0, 50) || 'N/A'}...</div>
+      ${productList.map(p => {
+        const stockClass = p.stock === 0 ? 'out' : p.stock <= 5 ? 'low' : 'ok';
+        const stockIcon = p.stock === 0 ? '🔴' : p.stock <= 5 ? '⚠️' : '✅';
+        const discountPct = (p.oldPrice && p.oldPrice > p.price)
+          ? Math.round((1 - p.price / p.oldPrice) * 100)
+          : null;
+
+        return `
+          <div class="pm-product-row" data-id="${p.id}">
+            <div class="pm-product-img-wrap">
+              <img src="${p.image || getPlaceholderImage()}" alt="${escapeHtml(p.name)}" class="pm-product-image" loading="lazy" onerror="this.src='${getPlaceholderImage()}'">
+              ${p.images && p.images.length > 1 ? `<span class="pm-img-count-badge">${p.images.length}</span>` : ''}
+            </div>
+            <div class="pm-product-info">
+              <div class="pm-product-name">${escapeHtml(p.name)}</div>
+              <div class="pm-product-desc">${escapeHtml((p.description || '').substring(0, 55))}${p.description?.length > 55 ? '…' : ''}</div>
+              ${p.colors?.length ? `<div class="pm-product-tags">${p.colors.slice(0, 3).map(c => `<span class="pm-tag color-tag">${escapeHtml(c)}</span>`).join('')}</div>` : ''}
+            </div>
+            <div class="pm-product-price-col">
+              <div class="pm-product-price">${formatPrice(p.price)} G</div>
+              ${p.oldPrice ? `<div class="pm-product-old-price">${formatPrice(p.oldPrice)} G</div>` : ''}
+              ${discountPct ? `<span class="pm-discount-badge">-${discountPct}%</span>` : ''}
+            </div>
+            <div class="pm-product-stock ${stockClass}">
+              ${stockIcon} ${p.stock ?? 'N/A'}
+            </div>
+            <div class="pm-product-cat">
+              <span class="pm-cat-badge">${escapeHtml(p.category || '-')}</span>
+            </div>
+            <div class="pm-product-actions">
+              <button class="pm-product-btn pm-product-btn-edit" onclick="editProduct('${p.id}')" title="Modifier">✏️</button>
+              <button class="pm-product-btn pm-product-btn-delete" onclick="deleteProduct('${p.id}')" title="Supprimer">🗑️</button>
+            </div>
           </div>
-          <div class="pm-product-price">${Math.round(p.price).toLocaleString()} G</div>
-          <div class="pm-product-stock ${p.stock <= 5 ? 'low' : 'ok'}">
-            ${p.stock} ${p.stock <= 5 ? '⚠️' : ''}
-          </div>
-          <div>${p.category?.charAt(0).toUpperCase() + p.category?.slice(1)}</div>
-          <div class="pm-product-actions">
-            <button class="pm-product-btn pm-product-btn-edit" onclick="editProduct('${p.id}')">✏️</button>
-            <button class="pm-product-btn pm-product-btn-delete" onclick="deleteProduct('${p.id}')">🗑️</button>
-          </div>
-        </div>
-      `).join('')}
+        `;
+      }).join('')}
     </div>
   `;
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 function updateStatistics() {
-  const stats = {
-    total: products.length,
-    lowStock: products.filter(p => p.stock <= 5).length,
-    outOfStock: products.filter(p => p.stock === 0).length,
-    totalInventory: products.reduce((sum, p) => sum + (p.stock || 0), 0),
-    promo: products.filter(p => p.oldPrice && p.oldPrice > p.price).length,
-    avgPrice: products.length > 0 ? Math.round(products.reduce((sum, p) => sum + (p.price || 0), 0) / products.length) : 0
-  };
+  const total = products.length;
+  const lowStock = products.filter(p => (p.stock ?? 0) <= 5 && (p.stock ?? 0) > 0).length;
+  const outOfStock = products.filter(p => (p.stock ?? 0) === 0).length;
+  const totalInventory = products.reduce((sum, p) => sum + (p.stock || 0), 0);
+  const promo = products.filter(p => p.oldPrice && p.oldPrice > p.price).length;
+  const avgPrice = total > 0
+    ? Math.round(products.reduce((sum, p) => sum + (p.price || 0), 0) / total)
+    : 0;
 
-  document.getElementById('pmStats').innerHTML = `
+  const statsEl = document.getElementById('pmStats');
+  if (!statsEl) return;
+
+  statsEl.innerHTML = `
     <div class="pm-stat-card">
       <div class="pm-stat-label">📦 Total Produits</div>
-      <div class="pm-stat-value">${stats.total}</div>
+      <div class="pm-stat-value">${total}</div>
     </div>
-    <div class="pm-stat-card">
+    <div class="pm-stat-card warning">
       <div class="pm-stat-label">⚠️ Stock Faible</div>
-      <div class="pm-stat-value" style="color: var(--warning);">${stats.lowStock}</div>
+      <div class="pm-stat-value">${lowStock}</div>
     </div>
-    <div class="pm-stat-card">
-      <div class="pm-stat-label">🔥 En Rupture</div>
-      <div class="pm-stat-value" style="color: var(--danger);">${stats.outOfStock}</div>
+    <div class="pm-stat-card danger">
+      <div class="pm-stat-label">🔴 En Rupture</div>
+      <div class="pm-stat-value">${outOfStock}</div>
     </div>
     <div class="pm-stat-card">
       <div class="pm-stat-label">📊 Stock Total</div>
-      <div class="pm-stat-value">${stats.totalInventory}</div>
+      <div class="pm-stat-value">${totalInventory.toLocaleString('fr-FR')}</div>
     </div>
     <div class="pm-stat-card">
       <div class="pm-stat-label">💰 Prix Moyen</div>
-      <div class="pm-stat-value">${stats.avgPrice.toLocaleString()} G</div>
+      <div class="pm-stat-value">${avgPrice.toLocaleString('fr-FR')} G</div>
     </div>
-    <div class="pm-stat-card">
+    <div class="pm-stat-card promo">
       <div class="pm-stat-label">🎉 Promotions</div>
-      <div class="pm-stat-value" style="color: var(--gold);">${stats.promo}</div>
+      <div class="pm-stat-value">${promo}</div>
     </div>
   `;
-}
-
-function getFilteredProducts() {
-  const search = document.getElementById('pmSearch').value.toLowerCase();
-  return products.filter(p =>
-    p.name.toLowerCase().includes(search) ||
-    (p.description || '').toLowerCase().includes(search)
-  );
 }
 
 // ============================================
@@ -547,44 +734,63 @@ function getFilteredProducts() {
 // ============================================
 
 let searchTimeout;
-document.getElementById('pmSearch').addEventListener('input', () => {
+document.getElementById('pmSearch')?.addEventListener('input', () => {
   clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => {
-    renderProducts();
-  }, 300);
+  searchTimeout = setTimeout(() => renderProducts(), 250);
 });
 
 // ============================================
 // TABS
 // ============================================
 
-document.querySelectorAll('.pm-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.pm-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.pm-tab-content').forEach(c => c.classList.remove('active'));
+function setupTabs() {
+  document.querySelectorAll('.pm-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.pm-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.pm-tab-content').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
 
-    tab.classList.add('active');
-    const tabId = `pm${tab.dataset.tab.charAt(0).toUpperCase() + tab.dataset.tab.slice(1)}Products`;
-    document.getElementById(tabId).classList.add('active');
+      const key = tab.dataset.tab;
+      const tabId = `pm${key.charAt(0).toUpperCase() + key.slice(1)}Products`;
+      document.getElementById(tabId)?.classList.add('active');
+    });
   });
-});
+}
 
 // ============================================
 // FORM HANDLING
 // ============================================
 
-document.getElementById('pmProductForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  saveProduct();
-});
+function setupForm() {
+  const form = document.getElementById('pmProductForm');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    saveProduct();
+  });
 
-document.getElementById('pmAddNewBtn').addEventListener('click', () => {
-  if (selectedProductId) {
+  document.getElementById('pmAddNewBtn')?.addEventListener('click', () => {
+    if (selectedProductId) {
+      resetForm();
+      showToast('ℹ️ Formulaire réinitialisé', 'info');
+    } else {
+      document.querySelector('.pm-sidebar')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  document.getElementById('pmCancelBtn')?.addEventListener('click', () => {
     resetForm();
-  } else {
-    document.querySelector('.pm-sidebar').scrollIntoView({ behavior: 'smooth' });
-  }
-});
+  });
+
+  document.getElementById('pmConfirmCancel')?.addEventListener('click', () => {
+    document.getElementById('pmConfirmModal')?.classList.remove('active');
+  });
+
+  document.getElementById('pmConfirmModal')?.addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) {
+      e.currentTarget.classList.remove('active');
+    }
+  });
+}
 
 // ============================================
 // AUTHENTICATION
@@ -594,7 +800,7 @@ auth.onAuthStateChanged(async (user) => {
   currentUser = user;
 
   if (!user) {
-    console.warn('🔐 Utilisateur non authentifié, redirection vers index.html');
+    console.warn('🔐 Non authentifié, redirection...');
     window.location.replace('./index.html');
     return;
   }
@@ -604,23 +810,23 @@ auth.onAuthStateChanged(async (user) => {
     isAdmin = userDoc.data()?.role === 'admin';
 
     if (!isAdmin) {
-      console.warn('🔐 Utilisateur non admin, redirection vers index.html');
+      console.warn('🔐 Accès refusé (non admin), redirection...');
       window.location.replace('./index.html');
       return;
     }
 
     await loadProducts();
   } catch (error) {
-    console.error('🔐 Erreur authentification:', error);
+    console.error('🔐 Erreur auth:', error);
     window.location.replace('./index.html');
   }
 });
 
-document.getElementById('logoutBtn').addEventListener('click', () => {
-  auth.signOut();
+document.getElementById('logoutBtn')?.addEventListener('click', () => {
+  auth.signOut().then(() => window.location.replace('./index.html'));
 });
 
-document.getElementById('backToAdmin').addEventListener('click', () => {
+document.getElementById('backToAdmin')?.addEventListener('click', () => {
   window.location.href = './index.html';
 });
 
@@ -630,9 +836,7 @@ document.getElementById('backToAdmin').addEventListener('click', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
   setupImageUpload();
-  applyLanguage();
+  setupTabs();
+  setupForm();
+  document.title = 'Gestion Produits — Total Lakay';
 });
-
-function applyLanguage() {
-  document.title = 'Gestion des Produits - Total Lakay';
-}
