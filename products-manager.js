@@ -18,7 +18,12 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
-const storage = firebase.storage();
+
+// ============================================
+// SUPABASE CONFIG (Storage uniquement)
+// ============================================
+const SUPABASE_URL = 'https://olosjhobtvnbbwmpawxc.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_FV4OONJpcEIyJ0-jbDQq0g_bWnAq-a5';
 
 // ============================================
 // STATE MANAGEMENT
@@ -80,20 +85,16 @@ function getPlaceholderImage() {
 
 async function validateAndCompressImage(file) {
   try {
-    // Check file size
     if (file.size > IMAGE_CONFIG.maxSize) {
       throw new Error(`Fichier trop volumineux (${(file.size / 1024 / 1024).toFixed(2)}MB). Max: 5MB`);
     }
 
-    // Check format
     if (!IMAGE_CONFIG.allowedFormats.includes(file.type)) {
       throw new Error(`Format non autorisé. Formats acceptés: JPG, PNG, WEBP`);
     }
 
-    // Compress image
     const canvas = await compressImage(file);
-    
-    // Convert to blob
+
     return new Promise((resolve, reject) => {
       canvas.toBlob(
         (blob) => {
@@ -120,7 +121,6 @@ async function compressImage(file) {
           let width = img.width;
           let height = img.height;
 
-          // Calculate dimensions maintaining aspect ratio
           if (width > height) {
             if (width > IMAGE_CONFIG.maxWidth) {
               height *= IMAGE_CONFIG.maxWidth / width;
@@ -133,7 +133,6 @@ async function compressImage(file) {
             }
           }
 
-          // Set minimum dimensions
           width = Math.max(width, 100);
           height = Math.max(height, 100);
 
@@ -141,7 +140,7 @@ async function compressImage(file) {
           canvas.height = height;
           const ctx = canvas.getContext('2d');
           if (!ctx) throw new Error('Impossible de créer le contexte canvas');
-          
+
           ctx.drawImage(img, 0, 0, width, height);
           resolve(canvas);
         } catch (err) {
@@ -158,28 +157,39 @@ async function compressImage(file) {
   });
 }
 
+// ============================================
+// UPLOAD IMAGE — SUPABASE (remplace Firebase Storage)
+// ============================================
+
 async function uploadProductImage(file, onProgress) {
   try {
     const compressed = await validateAndCompressImage(file);
     const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9-_.]/g, '_')}`;
-    const storageRef = storage.ref().child(`product_images/${fileName}`);
-    
-    const uploadTask = storageRef.put(compressed);
-    
-    return new Promise((resolve, reject) => {
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          if (onProgress) onProgress(progress);
+
+    if (onProgress) onProgress(30);
+
+    const response = await fetch(
+      `${SUPABASE_URL}/storage/v1/object/product-images/${fileName}`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'image/jpeg',
+          'x-upsert': 'true'
         },
-        (error) => reject(error),
-        async () => {
-          const url = await uploadTask.snapshot.ref.getDownloadURL();
-          resolve(url);
-        }
-      );
-    });
+        body: compressed
+      }
+    );
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.message || 'Upload échoué');
+    }
+
+    if (onProgress) onProgress(100);
+
+    return `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
+
   } catch (error) {
     throw new Error(`Upload image échoué: ${error.message}`);
   }
@@ -199,7 +209,7 @@ function setupImageUpload() {
   dropZone.appendChild(fileInput);
 
   dropZone.addEventListener('click', () => fileInput.click());
-  
+
   dropZone.addEventListener('dragover', (e) => {
     e.preventDefault();
     dropZone.classList.add('dragover');
@@ -222,7 +232,7 @@ function setupImageUpload() {
 
 async function handleImageSelection(files) {
   const newFiles = Array.from(files);
-  
+
   if (imageFiles.length + newFiles.length > IMAGE_CONFIG.maxImages) {
     showToast(`Maximum ${IMAGE_CONFIG.maxImages} images autorisées`, 'warning');
     return;
@@ -277,15 +287,13 @@ async function loadProducts() {
 
 async function saveProduct() {
   const form = document.getElementById('pmProductForm');
-  
-  // Validate form
+
   if (!form.checkValidity()) {
     form.reportValidity();
     showToast('❌ Veuillez remplir tous les champs requis', 'error');
     return;
   }
 
-  // Validate that at least name, price, and category are filled
   const name = document.getElementById('pmName').value.trim();
   const category = document.getElementById('pmCategory').value;
   const price = document.getElementById('pmPrice').value;
@@ -311,7 +319,6 @@ async function saveProduct() {
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
-    // Upload images if any new ones were added
     let imageUrls = [];
     if (imageFiles.length > 0) {
       showProgress('Upload des images...', 30);
@@ -327,10 +334,9 @@ async function saveProduct() {
 
     if (imageUrls.length > 0) {
       productData.images = imageUrls;
-      productData.image = imageUrls[0]; // Primary image
+      productData.image = imageUrls[0];
     }
 
-    // Save or update
     showProgress('Sauvegarde en base de données...', 90);
     if (selectedProductId) {
       await db.collection('products').doc(selectedProductId).update(productData);
@@ -353,10 +359,9 @@ async function saveProduct() {
 async function editProduct(productId) {
   selectedProductId = productId;
   const product = products.find(p => p.id === productId);
-  
+
   if (!product) return;
 
-  // Populate form
   const pmNameEl = document.getElementById('pmName');
   const pmDescriptionEl = document.getElementById('pmDescription');
   const pmCategoryEl = document.getElementById('pmCategory');
@@ -374,16 +379,13 @@ async function editProduct(productId) {
   if (pmColorsEl) pmColorsEl.value = (product.colors || []).join(', ');
   if (pmSizesEl) pmSizesEl.value = (product.sizes || []).join(', ');
 
-  // Clear images for new upload (user can add more images)
   imageFiles = [];
   updateImagePreviews();
 
-  // Update UI
   document.getElementById('pmFormTitle').textContent = 'Modifier le Produit';
   document.getElementById('pmSubmitText').textContent = '✏️ Mettre à jour';
   document.getElementById('pmSubmitBtn').className = 'pm-btn pm-btn-primary';
 
-  // Scroll to form
   document.querySelector('.pm-sidebar').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -393,19 +395,20 @@ async function deleteProduct(productId) {
 
   const modal = document.getElementById('pmConfirmModal');
   document.getElementById('pmConfirmText').textContent = `Êtes-vous sûr de vouloir supprimer "${product.name}"? Cette action est irréversible et supprimera aussi les images.`;
-  
+
   document.getElementById('pmConfirmBtn').onclick = async () => {
     try {
       modal.classList.remove('active');
       showProgress('Suppression en cours...', 50);
-      
-      // Delete images from storage
+
+      // Suppression images Supabase
       if (product.images && Array.isArray(product.images)) {
         for (const imageUrl of product.images) {
           try {
-            const ref = storage.refFromURL(imageUrl);
-            await ref.delete().catch(e => {
-              console.warn('Avertissement: Image non supprimée du storage:', e);
+            const fileName = imageUrl.split('/product-images/')[1];
+            await fetch(`${SUPABASE_URL}/storage/v1/object/product-images/${fileName}`, {
+              method: 'DELETE',
+              headers: { 'Authorization': `Bearer ${SUPABASE_KEY}` }
             });
           } catch (e) {
             console.warn('Erreur suppression image:', e);
@@ -413,7 +416,6 @@ async function deleteProduct(productId) {
         }
       }
 
-      // Delete product from Firestore
       await db.collection('products').doc(productId).delete();
       showToast('✅ Produit supprimé avec succès', 'success');
       await loadProducts();
@@ -441,20 +443,17 @@ function resetForm() {
 
 function renderProducts() {
   const filtered = getFilteredProducts();
-  
-  // Render all products
+
   document.getElementById('pmAllProducts').innerHTML = renderProductsTable(products);
-  
-  // Render low stock
+
   const lowStock = products.filter(p => p.stock <= 5);
-  document.getElementById('pmLowstockProducts').innerHTML = 
-    lowStock.length === 0 
+  document.getElementById('pmLowstockProducts').innerHTML =
+    lowStock.length === 0
       ? '<div class="pm-empty-state"><div class="pm-empty-state-icon">📦</div><div class="pm-empty-state-text">Aucun produit en rupture</div></div>'
       : renderProductsTable(lowStock);
-  
-  // Render promos
+
   const promos = products.filter(p => p.oldPrice && p.oldPrice > p.price);
-  document.getElementById('pmPromoProducts').innerHTML = 
+  document.getElementById('pmPromoProducts').innerHTML =
     promos.length === 0
       ? '<div class="pm-empty-state"><div class="pm-empty-state-icon">🔥</div><div class="pm-empty-state-text">Aucune promotion active</div></div>'
       : renderProductsTable(promos);
@@ -563,7 +562,7 @@ document.querySelectorAll('.pm-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.pm-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.pm-tab-content').forEach(c => c.classList.remove('active'));
-    
+
     tab.classList.add('active');
     const tabId = `pm${tab.dataset.tab.charAt(0).toUpperCase() + tab.dataset.tab.slice(1)}Products`;
     document.getElementById(tabId).classList.add('active');
@@ -610,7 +609,6 @@ auth.onAuthStateChanged(async (user) => {
       return;
     }
 
-    // Load data
     await loadProducts();
   } catch (error) {
     console.error('🔐 Erreur authentification:', error);
@@ -636,6 +634,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function applyLanguage() {
-  // Simple language support - can be extended
   document.title = 'Gestion des Produits - Total Lakay';
 }
